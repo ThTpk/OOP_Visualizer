@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>5 · Inheritance — OOP 01276131</title>
+<meta name="description" content="Superclass and subclass, the is-a test, super(), method overriding, the Open-Closed Principle, and when composition is the better answer.">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23ff7a2f'/%3E%3Ctext x='16' y='23' font-family='sans-serif' font-size='18' font-weight='bold' fill='white' text-anchor='middle'%3EO%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<a class="skiplink" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">OO</span>
+      <span class="brand-txt">Object-Oriented Programming<small>01276131 · KMITL</small></span>
+    </a>
+    <button class="iconbtn navtoggle" data-nav-toggle aria-expanded="false" aria-label="Menu">☰</button>
+    <nav class="navlinks" aria-label="Main">
+      <a href="../index.html">Home</a>
+      <a href="../syllabus.html">Syllabus</a>
+      <a href="../studio/index.html">UML Studio</a>
+      <a href="../labs/index.html">Labs</a>
+      <a href="../sandbox/index.html">Playground</a>
+      <button class="iconbtn" data-theme-toggle aria-label="Toggle theme">☀</button>
+    </nav>
+  </div>
+  <div class="progressbar"></div>
+</header>
+
+<main id="main">
+<div class="wrap">
+  <div class="chaphead">
+    <span class="chapnum">CHAPTER 5 · WEEK 5</span>
+    <h1>Inheritance</h1>
+    <p class="lede">
+      A subclass takes everything the superclass has and adds its own specifics. The reason is not elegance —
+      it is that a shared rule should have exactly one place to be changed.
+    </p>
+    <ul class="objectives">
+      <li>Apply the <i>is-a</i> test to decide whether inheritance is legitimate</li>
+      <li>Call a superclass constructor correctly with <code>super()</code></li>
+      <li>Override a method, and say why overriding removes <code>if</code> statements</li>
+      <li>State the Open–Closed Principle and show a design that obeys it</li>
+      <li>Recognise when composition is the right answer instead</li>
+    </ul>
+  </div>
+
+  <div class="chapter-layout">
+  <div>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="why">5.1 — Measure the duplication first</h2>
+    <p class="prose">
+      Here are several employee types, each written independently. They share an id, a name, an email, a phone
+      number, an address, a hire date. Move the sliders and watch the two numbers that matter: how many lines,
+      and <b>how many files you must edit when a shared rule changes</b>.
+    </p>
+
+    <div data-viz="duplication"></div>
+
+    <div class="note note-why">
+      <b>The second number is the real one.</b> Extra lines are annoying. Extra <i>edit sites</i> are where bugs come
+      from, because sooner or later somebody updates six of seven and the seventh quietly behaves differently
+      for the rest of the system's life.
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="syntax">5.2 — Syntax and vocabulary</h2>
+    <p class="prose">
+      The class being inherited from is the <b>superclass</b> (or parent, or base). The class inheriting is the
+      <b>subclass</b> (or child, or derived). In Python you put the parent in parentheses.
+    </p>
+
+    <div class="codeblock">
+      <div class="codehead">the whole syntax</div>
+<pre data-hl="6"><code>class Animal:
+    def __init__(self, name):
+        self.name = name
+    def move(self):
+        print('moving')
+
+class Dog(Animal):          # Dog inherits everything Animal has
+    def bark(self):
+        print('woof')
+
+d = Dog('Rex')
+d.move()                    # inherited from Animal
+d.bark()                    # Dog's own
+print(d.name)               # Animal's __init__ ran</code></pre>
+    </div>
+
+    <figure class="figframe">
+      <svg viewBox="0 0 640 200" role="img" aria-label="Animal superclass with Dog and Cat subclasses, joined by hollow triangle arrows">
+        <g font-size="12">
+          <rect x="250" y="16" width="140" height="56" rx="4" class="svg-surf"/>
+          <text x="320" y="38" text-anchor="middle" class="svg-ink" font-weight="700">Animal</text>
+          <line x1="250" y1="46" x2="390" y2="46" class="svg-line"/>
+          <text x="262" y="63" class="svg-ink2 svg-mono" font-size="10.5">+ move()</text>
+
+          <rect x="80"  y="134" width="140" height="56" rx="4" class="svg-surf"/>
+          <text x="150" y="156" text-anchor="middle" class="svg-ink" font-weight="700">Dog</text>
+          <line x1="80" y1="164" x2="220" y2="164" class="svg-line"/>
+          <text x="92" y="181" class="svg-ink2 svg-mono" font-size="10.5">+ bark()</text>
+
+          <rect x="420" y="134" width="140" height="56" rx="4" class="svg-surf"/>
+          <text x="490" y="156" text-anchor="middle" class="svg-ink" font-weight="700">Cat</text>
+          <line x1="420" y1="164" x2="560" y2="164" class="svg-line"/>
+          <text x="432" y="181" class="svg-ink2 svg-mono" font-size="10.5">+ purr()</text>
+
+          <path d="M150 134 V100 H306" class="svg-line"/>
+          <path d="M320 80 l-13 10 h26 z" fill="var(--bg-code)" stroke="var(--line-2)" stroke-width="1.5"/>
+          <path d="M490 134 V100 H334" class="svg-line"/>
+          <path d="M306 90 H334" class="svg-line"/>
+          <text x="400" y="118" class="svg-ink3" font-size="10.5">hollow triangle points at the parent</text>
+        </g>
+      </svg>
+      <figcaption>In UML, <b>generalization</b>: a solid line with a hollow triangle, always pointing at the superclass.</figcaption>
+    </figure>
+
+    <p class="prose">
+      Everything in Python already inherits from <code>object</code>. In older code you will see
+      <code>class Student(object):</code> written out; modern Python omits it.
+    </p>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="isa">5.3 — The is-a test</h2>
+    <p class="prose">
+      A class may inherit only if two things are true:
+    </p>
+    <ol class="steps prose-wide">
+      <li><b>It really is a kind of the parent.</b> A <code>Truck</code> is a kind of <code>Car</code>, so it may
+      inherit from <code>Car</code>. A motorcycle is not a car, so it may not — however many attributes they share.</li>
+      <li><b>It adds something specific.</b> A superclass holds the <i>general</i>; the subclass holds the
+      <i>specific</i> — a truck adds a load capacity. A subclass that adds nothing is just a longer name for the parent.</li>
+    </ol>
+
+    <div class="vs">
+      <div class="vs-side vs-bad">
+        <div class="vs-head">✗ inheriting for the fields</div>
+<pre><code>class Employee:
+    def __init__(self, emp_id, name, salary): ...
+
+class Payslip(Employee):     # a payslip is NOT an employee
+    def __init__(self, emp_id, name, salary, month):
+        super().__init__(emp_id, name, salary)
+        self.month = month
+
+# nonsense that the type system now permits:
+payslips = [p for p in staff if isinstance(p, Employee)]
+#            a payslip turns up in a list of employees</code></pre>
+        <div class="vs-note">Shared fields are a coincidence, not a relationship. Everything that accepts an
+        <code>Employee</code> will now silently accept a <code>Payslip</code>.</div>
+      </div>
+      <div class="vs-side vs-good">
+        <div class="vs-head">✓ association instead</div>
+<pre><code>class Employee:
+    def __init__(self, emp_id, name, salary): ...
+
+class Payslip:               # separate class, holds a reference
+    def __init__(self, employee, month, gross):
+        self.__employee = employee     # association
+        self.__month = month
+        self.__gross = gross
+
+    def get_employee_name(self):
+        return self.__employee.get_name()</code></pre>
+        <div class="vs-note">A payslip <i>refers to</i> an employee. One fact, one place, and no false is-a claim.</div>
+      </div>
+    </div>
+
+    <div class="note note-exam">
+      <b>Say it out loud.</b> “A truck <i>is a</i> car.” ✓ · “A payslip <i>is an</i> employee.” ✗ ·
+      “A car <i>has an</i> engine.” → composition, not inheritance · “A dog <i>is an</i> animal.” ✓
+      If the sentence sounds wrong in English, the inheritance is wrong in code.
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="constructors">5.4 — Constructors across the hierarchy</h2>
+    <p class="prose">There are three cases, and you must be able to tell them apart in the exam.</p>
+
+    <div class="grid grid-3">
+      <div class="card">
+        <h4 class="mt-0">1 · Subclass has no <code>__init__</code></h4>
+        <p class="muted" style="font-size:.86rem">It uses the superclass's constructor unchanged.</p>
+<pre style="margin:0"><code>class Dog(Animal):
+    def bark(self):
+        print('woof')
+
+d = Dog('Rex')   # Animal.__init__</code></pre>
+      </div>
+      <div class="card">
+        <h4 class="mt-0">2 · Subclass has its own, and does not call up</h4>
+        <p class="muted" style="font-size:.86rem">The parent's constructor <b>never runs</b> — the parent's attributes do not exist.</p>
+<pre style="margin:0"><code>class Dog(Animal):
+    def __init__(self, breed):
+        self.breed = breed
+
+d = Dog('Beagle')
+d.name   # AttributeError</code></pre>
+      </div>
+      <div class="card">
+        <h4 class="mt-0">3 · Subclass extends the parent's</h4>
+        <p class="muted" style="font-size:.86rem">The usual and correct case.</p>
+<pre style="margin:0"><code>class Dog(Animal):
+    def __init__(self, name, breed):
+        super().__init__(name)
+        self.breed = breed</code></pre>
+      </div>
+    </div>
+
+    <p class="prose">
+      You will also see the parent called by name: <code>Animal.__init__(self, name)</code>. It works for a single
+      parent, but <code>super()</code> is the form to use — <a href="09-multiple-inheritance.html#super">chapter 9</a>
+      shows the bug the class-name form causes once more than one parent is involved.
+    </p>
+
+    <div class="note note-trap">
+      <b>Case 2 is the commonest silent bug in Lab 4.</b> You add an <code>__init__</code> to the subclass to store one
+      extra field, forget <code>super().__init__(…)</code>, and every inherited attribute vanishes. The error appears
+      much later, as <code>AttributeError</code> in a method you did not touch.
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="override">5.5 — Method overriding</h2>
+    <p class="prose">
+      A subclass can redefine a method it inherited. Same name, same call, different body. Python looks on the
+      object's own class first and only walks up the tree if it finds nothing.
+    </p>
+
+    <div class="codeblock">
+      <div class="codehead">the parent is searched only if the child has nothing</div>
+<pre data-hl="6,7"><code>class Parent:
+    def show(self):
+        print('Inside Parent')
+
+class Child(Parent):
+    def show(self):                   # overrides Parent.show
+        print('Inside Child')
+
+Child().show()      # Inside Child
+Parent().show()     # Inside Parent — the parent is unaffected</code></pre>
+    </div>
+
+    <p class="prose">
+      An override does not have to discard the parent's work. Call up first, then add:
+    </p>
+    <div class="codeblock">
+      <div class="codehead">extending rather than replacing</div>
+<pre data-hl="3"><code>class ScienceTeacher(Teacher):
+    def welcome_students(self):
+        super().welcome_students()     # everything the parent does…
+        print('Lab safety briefing at 9am')   # …plus our own</code></pre>
+    </div>
+
+    <p class="prose">
+      Overriding is what makes <a href="06-polymorphism.html">polymorphism</a> possible, and that is where it pays off:
+      a single loop can command a warrior, an archer and a mage without an <code>if</code> in sight.
+    </p>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="ocp">5.6 — The Open–Closed Principle</h2>
+    <blockquote>
+      Software components should be closed for modification, but open for extension.
+    </blockquote>
+    <p class="prose">
+      Once a class is written and tested, do not touch it again. When something new is needed, <b>add</b> a subclass
+      rather than editing the original. The reason is risk: an edit to a tested class can break every caller;
+      a new class can break nothing, because nothing calls it yet.
+    </p>
+
+    <div class="vs">
+      <div class="vs-side vs-bad">
+        <div class="vs-head">✗ editing the original</div>
+<pre data-hl="4,5,6"><code>class Polygon:
+    def area(self, shape, *dims):
+        if shape == 'triangle':
+            return 0.5 * dims[0] * dims[1]
+        elif shape == 'square':          # ← added last week
+            return dims[0] ** 2
+        elif shape == 'circle':          # ← added today
+            return 3.14159 * dims[0] ** 2</code></pre>
+        <div class="vs-note">Every new shape re-opens a class that already worked, so every shape re-tests
+        every other shape.</div>
+      </div>
+      <div class="vs-side vs-good">
+        <div class="vs-head">✓ adding a subclass</div>
+<pre data-hl="9,10,11"><code>class Polygon:
+    def area(self):
+        raise NotImplementedError
+
+class Triangle(Polygon):
+    def __init__(self, b, h): self.b, self.h = b, h
+    def area(self): return 0.5 * self.b * self.h
+
+class Square(Polygon):               # new file, nothing else touched
+    def __init__(self, s): self.s = s
+    def area(self): return self.s ** 2</code></pre>
+        <div class="vs-note">Adding <code>Square</code> changed zero existing lines, so zero existing tests can break.</div>
+      </div>
+    </div>
+
+    <div class="note note-good">
+      <b>You meet this again in week 10.</b> Open–Closed is the <b>O</b> of SOLID. The payment-processor example in
+      <a href="10-solid.html#ocp">chapter 10</a> is the same idea applied to a real refactor.
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="rpg">5.7 — Worked example: an RPG</h2>
+    <p class="prose">
+      Every character has a name, level, hp, mp, exp and a position, and every one can attack, use a skill, move,
+      level up, gain exp and die. Those go in the superclass. What <i>differs</i> is <b>how</b> each does them:
+    </p>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Class</th><th><code>attack()</code></th><th><code>use_skill()</code></th><th><code>move()</code></th></tr></thead>
+        <tbody>
+          <tr><td><b>Warrior</b></td><td>melee; power from strength; can crit; spends rage</td><td>Charge (20), Shield Block (30), Whirlwind (50)</td><td>slow (×0.8), resists slows</td></tr>
+          <tr><td><b>Archer</b></td><td>ranged; power from dexterity + accuracy; spends arrows</td><td>Multi Shot (3), Trap (1), Aimed Shot (1)</td><td>fast (×1.2), can shoot while moving</td></tr>
+          <tr><td><b>Mage</b></td><td>ranged magic; power from magic + intelligence; spends mana</td><td>Fireball (50), Teleport (30), Ice Shield (40)</td><td>normal speed, teleports to escape</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="codeblock">
+      <div class="codehead">GameCharacter and one subclass</div>
+<pre><code>class GameCharacter:
+    def __init__(self, name, level=1, hp=100, mp=50):
+        self._name = name
+        self._level = level
+        self._hp = hp
+        self._mp = mp
+        self._exp = 0
+        self._position = (0, 0)
+
+    def attack(self):
+        raise NotImplementedError('every character must define attack()')
+
+    def gain_exp(self, amount):      # identical for everyone -> stays here
+        self._exp += amount
+        while self._exp >= self._level * 100:
+            self._exp -= self._level * 100
+            self.level_up()
+
+    def level_up(self):
+        self._level += 1
+        self._hp += 10
+
+    def is_dead(self):
+        return self._hp &lt;= 0
+
+
+class Warrior(GameCharacter):
+    def __init__(self, name, strength=10, **kw):
+        super().__init__(name, **kw)
+        self.__strength = strength
+        self.__rage = 0
+
+    def attack(self):                # overridden
+        return self.__strength * 1.8
+
+    def use_skill(self, skill):
+        cost = {'charge': 20, 'shield_block': 30, 'whirlwind': 50}[skill]
+        if self.__rage &lt; cost:
+            return 'Not enough rage'
+        self.__rage -= cost
+        return f'{self._name} uses {skill}'</code></pre>
+    </div>
+
+    <h3 id="buff">When inheritance is <i>not</i> the answer: the buff system</h3>
+    <p class="prose">
+      Now add buffs — temporary boosts one character gives the team. Warrior has Battle Cry and Defensive Stance;
+      Mage has Arcane Intellect and Magic Shield; Archer has Eagle Eye and Camouflage.
+      The tempting move is to add six methods to the three character classes. Look at what they have in common instead:
+      <b>every buff can be applied, removed, checked for expiry and updated.</b>
+    </p>
+
+    <div class="codeblock">
+      <div class="codehead">buff as its own class — composition, not inheritance</div>
+<pre><code>class Buff:
+    def __init__(self, name, duration, amount):
+        self._name = name
+        self._duration = duration
+        self._amount = amount
+
+    def apply(self, character): ...
+    def remove(self, character): ...
+    def is_expired(self): ...
+    def update(self, dt): ...
+
+class TeamBuff(Buff):                 # a buff that hits every ally
+    def apply(self, party):
+        for member in party:
+            super().apply(member)
+
+class GameCharacter:
+    ...
+    def add_buff(self, buff):         # a character HAS buffs
+        self.__buffs.append(buff)
+        buff.apply(self)
+
+    def update_buffs(self, dt):
+        for b in list(self.__buffs):
+            b.update(dt)
+            if b.is_expired():
+                b.remove(self); self.__buffs.remove(b)</code></pre>
+    </div>
+
+    <div class="note note-why">
+      <b>Read the relationship carefully.</b> <code>Buff</code> and <code>GameCharacter</code> are
+      <b>composition</b> — a buff cannot exist on its own, and it dies with the character.
+      <code>TeamBuff</code> and <code>Buff</code> are <b>inheritance</b> — a team buff <i>is a</i> buff.
+      Both appear in the same small design, and picking the wrong one for either pair is the mistake the exam looks for.
+    </div>
+
+    <p class="prose">
+      This structure also absorbs the complications that always arrive later: buffs that stack
+      (<i>Healing +10 twice = +20</i>), buffs that take the maximum instead (<i>Defence +20% and +30% = 30%</i>),
+      and buffs that extend their own duration. Each is a rule inside <code>Buff</code> — not a new
+      <code>if</code> in three character classes.
+    </p>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="exercise">5.8 — Exercise: the restaurant</h2>
+    <p class="prose">
+      A restaurant takes online orders. Menu items come in four kinds, each with its own price formula:
+    </p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Kind</th><th>Price formula</th><th>Worked example</th></tr></thead>
+        <tbody>
+          <tr><td>Regular food</td><td>base + special ingredients + special requests</td><td>stir-fried pork and basil: 50 + 10 + 10 = <b>75฿</b></td></tr>
+          <tr><td>Fast food</td><td>base + size + toppings − set discount</td><td>burger: 79 + 20 + 15 − 11.40 = <b>102.60฿</b></td></tr>
+          <tr><td>Beverage</td><td>base + size + extras</td><td>bubble milk tea: 45 + 10 + 5 + 10 = <b>70฿</b></td></tr>
+          <tr><td>Dessert</td><td>base + customisation + toppings</td><td>bingsu: 89 + 30 + 25 + 40 = <b>184฿</b></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="prose">
+      Design the menu hierarchy. The trap: regular food and fast food are both <i>food</i> — they share ingredient
+      handling that beverages and desserts do not. Do not flatten them.
+    </p>
+
+    <div class="lab" data-uml="restaurant">
+      <div class="lab-head">
+        <h4>Exercise — the menu hierarchy</h4>
+        <span class="chip chip-vio">auto-marked</span>
+      </div>
+      <div class="studio">
+        <div class="studio-pal" data-uml-palette></div>
+        <div class="studio-main"><svg class="canvas" data-uml-canvas aria-label="Diagram canvas"></svg></div>
+        <div class="studio-side">
+          <button class="btn btn-s btn-primary" data-uml-run style="width:100%">✓ Check my diagram</button>
+          <div data-uml-check></div>
+          <hr>
+          <div data-uml-side></div>
+        </div>
+      </div>
+      <div class="lab-foot">Use <b>Inheritance △</b> and click the <b>child first</b>, then the parent —
+      the triangle ends up on the parent, which is how UML draws it.</div>
+    </div>
+
+    <p class="prose">
+      The full brief continues with order types (instant, pre-order, catering), four payment methods and three
+      delivery types. Each of those is its own small hierarchy — and because each subclass overrides one method,
+      adding a fifth payment method later will touch nothing that already works.
+    </p>
+
+    <h3 id="check">Check yourself</h3>
+
+    <div class="quiz" data-quiz>
+      <p class="quiz-q">A subclass defines <code>__init__</code> and does not call <code>super().__init__()</code>. What happens?</p>
+      <ul class="quiz-opts">
+        <li><button data-why="Python never calls the parent constructor for you once the child defines its own.">The parent's constructor runs first automatically</button></li>
+        <li><button data-correct data-why="The parent's <code>__init__</code> simply never executes, so none of its attributes are created. You find out later, as AttributeError, far from the real mistake.">The parent's attributes are never created</button></li>
+        <li><button data-why="It is legal Python — which is exactly the problem. Nothing warns you.">It is a syntax error</button></li>
+      </ul>
+    </div>
+
+    <div class="quiz" data-quiz>
+      <p class="quiz-q"><code>Car</code> and <code>Motorcycle</code> both have brand, model and top speed. Should <code>Motorcycle</code> inherit from <code>Car</code>?</p>
+      <ul class="quiz-opts">
+        <li><button data-why="Shared fields are a coincidence. Inheriting here means anything that accepts a Car now accepts a Motorcycle, which is false and will eventually matter.">Yes — it reuses three attributes</button></li>
+        <li><button data-correct data-why="A motorcycle is not a kind of car. If they genuinely share behaviour, lift it into a common parent such as Vehicle; otherwise leave them separate.">No — it fails the is-a test; extract a <code>Vehicle</code> parent if the sharing is real</button></li>
+        <li><button data-why="Reversing it does not help: a car is not a kind of motorcycle either.">Yes, but the other way round</button></li>
+      </ul>
+    </div>
+
+    <div class="quiz" data-quiz>
+      <p class="quiz-q">A buff can be applied to a character and dies with them. <code>TeamBuff</code> is a kind of buff. Which two relationships?</p>
+      <ul class="quiz-opts">
+        <li><button data-why="A buff is not a kind of character, and a team buff does not merely refer to a buff — it is one.">Both inheritance</button></li>
+        <li><button data-correct data-why="Character–Buff is composition: the buff is a part with no independent existence. TeamBuff–Buff is inheritance: it really is a kind of buff. One design, both relationships.">Character–Buff composition; TeamBuff–Buff inheritance</button></li>
+        <li><button data-why="Aggregation would mean the buff survives the character's death and could be moved to someone else. It cannot.">Character–Buff aggregation; TeamBuff–Buff composition</button></li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="chapnav">
+    <a class="prev" href="04-class-diagram.html"><span class="dir">← Previous</span><span class="nm">Class diagrams</span></a>
+    <a class="next" href="06-polymorphism.html"><span class="dir">Chapter 6 →</span><span class="nm">Abstraction &amp; polymorphism</span></a>
+  </div>
+
+  </div>
+  <aside class="toc" data-toc="main" aria-label="On this page"><h2>On this page</h2></aside>
+  </div>
+</div>
+</main>
+
+<footer class="footer">
+  <div class="wrap"><p class="mb-0">01276131 Object-Oriented Programming · Department of Computer Engineering, KMITL.</p></div>
+</footer>
+
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/viz.js"></script>
+<script src="../assets/js/uml-exercises.js"></script>
+<script src="../assets/js/uml.js"></script>
+</body>
+</html>

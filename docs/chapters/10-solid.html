@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>10 · The SOLID principles — OOP 01276131</title>
+<meta name="description" content="Single responsibility, open-closed, Liskov substitution, interface segregation and dependency inversion, applied as five refactors of one real class.">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23ff7a2f'/%3E%3Ctext x='16' y='23' font-family='sans-serif' font-size='18' font-weight='bold' fill='white' text-anchor='middle'%3EO%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<a class="skiplink" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">OO</span>
+      <span class="brand-txt">Object-Oriented Programming<small>01276131 · KMITL</small></span>
+    </a>
+    <button class="iconbtn navtoggle" data-nav-toggle aria-expanded="false" aria-label="Menu">☰</button>
+    <nav class="navlinks" aria-label="Main">
+      <a href="../index.html">Home</a>
+      <a href="../syllabus.html">Syllabus</a>
+      <a href="../studio/index.html">UML Studio</a>
+      <a href="../labs/index.html">Labs</a>
+      <a href="../sandbox/index.html">Playground</a>
+      <button class="iconbtn" data-theme-toggle aria-label="Toggle theme">☀</button>
+    </nav>
+  </div>
+  <div class="progressbar"></div>
+</header>
+
+<main id="main">
+<div class="wrap">
+  <div class="chaphead">
+    <span class="chapnum">CHAPTER 10 · WEEK 10</span>
+    <h1>The SOLID principles</h1>
+    <p class="lede">
+      Five guidelines from Robert C. Martin for designs that stay understandable, flexible and maintainable.
+      They are not rules to recite — each one removes a specific, nameable failure. We apply all five to the
+      same class and watch it improve.
+    </p>
+    <ul class="objectives">
+      <li>State each principle and the failure it prevents</li>
+      <li>Spot a violation in code you did not write</li>
+      <li>Apply the matching refactor</li>
+      <li>Explain when a principle costs more than it saves</li>
+    </ul>
+  </div>
+
+  <div class="chapter-layout">
+  <div>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="overview">10.1 — The five at a glance</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th></th><th>Principle</th><th>One sentence</th><th>Prevents</th></tr></thead>
+        <tbody>
+          <tr><td><b>S</b></td><td><a href="#srp">Single Responsibility</a></td><td>A class should have one, and only one, reason to change.</td><td>a change to billing breaking the shopping basket</td></tr>
+          <tr><td><b>O</b></td><td><a href="#ocp">Open–Closed</a></td><td>Open for extension, closed for modification.</td><td>re-testing working code every time something is added</td></tr>
+          <tr><td><b>L</b></td><td><a href="#lsp">Liskov Substitution</a></td><td>A subclass must be usable anywhere its base class is.</td><td>a subclass that explodes when treated as its parent</td></tr>
+          <tr><td><b>I</b></td><td><a href="#isp">Interface Segregation</a></td><td>Do not force a class to implement what it does not use.</td><td>methods whose only body is <code>raise Exception</code></td></tr>
+          <tr><td><b>D</b></td><td><a href="#dip">Dependency Inversion</a></td><td>Depend on abstractions, not on concrete details.</td><td>a high-level policy that cannot be tested or reused</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note note-why">
+      <b>Everything in this chapter is a version of one idea.</b> Isolate change. A requirement will move;
+      the only question is how many files have to move with it. Each principle shrinks that number.
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="walkthrough">10.2 — One class, five refactors</h2>
+    <p class="prose">
+      Here is an <code>Order</code> class that adds items, totals the bill and takes payment by debit or credit.
+      It works. Step through and watch each principle remove one concrete problem — and note that each step
+      leaves a <i>new</i> problem, which is what motivates the next one.
+    </p>
+
+    <div data-viz="solid"></div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="srp">10.3 — S · Single Responsibility</h2>
+    <blockquote>A class should have one and only one reason to change.</blockquote>
+    <p class="prose">
+      <b>How to test it:</b> list the reasons this class might need editing. The original <code>Order</code> had
+      three — the basket rules, the pricing rules, the payment rules. Three reasons, three responsibilities, one class.
+    </p>
+    <p class="prose">
+      Two supporting ideas go with it. <b>Cohesion</b>: the members of a class should be closely related to one
+      another. <b>Coupling</b>: a class should depend on as few others as possible.
+    </p>
+
+    <div class="panel">
+      <p class="panel-title"><span class="ic">◆</span> It applies to methods too</p>
+      <ul class="mb-0">
+        <li>One method, one job.</li>
+        <li>Roughly one screen — say under 15 lines, as appropriate.</li>
+        <li>About three parameters; more usually means the method is doing too much.</li>
+        <li>One condition per <code>if/else</code>.</li>
+        <li>One calculation per calculation.</li>
+      </ul>
+    </div>
+
+    <div class="note note-tip">
+      <b>Do not overdo it.</b> “One reason to change” is not “one method per class”. Splitting
+      <code>Account</code> into <code>AccountBalance</code>, <code>AccountNumber</code> and
+      <code>AccountOwner</code> raises coupling and helps nobody. The unit is a <i>reason to change</i>,
+      not a field.
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="ocp">10.4 — O · Open–Closed</h2>
+    <blockquote>Software components should be closed for modification but open for extension.</blockquote>
+    <p class="prose">
+      You met this in <a href="05-inheritance.html#ocp">chapter 5</a>. Once a class is written and tested,
+      do not edit it — extend it. The reason is risk arithmetic: editing a tested class puts every existing caller
+      at risk; adding a new class risks nothing, because nothing calls it yet.
+    </p>
+    <p class="prose">
+      In the payment example, <code>PaymentProcessor</code> becomes an abstract base class with one abstract
+      <code>pay()</code>. Debit and credit become subclasses. When PromptPay is added, it is a new file and
+      <b>no existing line changes</b>.
+    </p>
+
+    <div class="note note-exam">
+      <b>The giveaway symptom.</b> An <code>if/elif</code> chain on a type string — <code>if payment_type ==
+      'debit' … elif payment_type == 'credit'</code> — is almost always an Open–Closed violation. Every new type
+      means editing that function. Replace the branch with
+      <a href="06-polymorphism.html">polymorphism</a>.
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="lsp">10.5 — L · Liskov Substitution</h2>
+    <blockquote>
+      We present a way of defining the subtype relation that ensures that subtype objects preserve
+      behavioural properties of their supertypes.
+      <cite>Barbara Liskov</cite>
+    </blockquote>
+    <p class="prose">
+      In working terms: <b>anywhere the base class is accepted, a subclass must work</b>. A subclass may add
+      capability; it must never take capability away or change the meaning of what it inherited.
+    </p>
+
+    <div class="vs">
+      <div class="vs-side vs-bad">
+        <div class="vs-head">✗ the subclass changes the deal</div>
+<pre><code>class PaymentProcessor(ABC):
+    @abstractmethod
+    def pay(self, order, security_code): ...
+
+class PromptPayProcessor(PaymentProcessor):
+    def pay(self, order, security_code):
+        # PromptPay has no security code —
+        # this parameter is really a phone number
+        print(f'Phone: {security_code}')
+        order.status = 'paid'</code></pre>
+        <div class="vs-note">The parameter now means something different for this subclass. Any caller that
+        passes a real security code is silently wrong.</div>
+      </div>
+      <div class="vs-side vs-good">
+        <div class="vs-head">✓ the contract holds for all</div>
+<pre><code>class PaymentProcessor(ABC):
+    @abstractmethod
+    def pay(self, order): ...        # order only
+
+class PromptPayProcessor(PaymentProcessor):
+    def __init__(self, phone):
+        self.__phone = phone          # its own credential
+
+    def pay(self, order):
+        order.status = 'paid'</code></pre>
+        <div class="vs-note">Credentials belong to each processor, supplied at construction.
+        <code>pay(order)</code> means exactly one thing everywhere.</div>
+      </div>
+    </div>
+
+    <p class="prose">Other classic violations to recognise:</p>
+    <ul class="breaks prose-wide">
+      <li>A subclass that <b>raises</b> <code>NotImplementedError</code> for an inherited method</li>
+      <li>A subclass that <b>narrows</b> what the parent accepted (parent takes any number, child rejects negatives)</li>
+      <li>A subclass that <b>strengthens</b> what the caller must do first (an extra <code>connect()</code> the parent never needed)</li>
+      <li><code>Square(Rectangle)</code> — setting the width secretly changes the height, so code written against
+      <code>Rectangle</code> breaks</li>
+    </ul>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="isp">10.6 — I · Interface Segregation</h2>
+    <blockquote>
+      Interfaces should be separated according to their use, rather than one general interface shared by many classes.
+    </blockquote>
+    <p class="prose">
+      No class should be forced to implement a method it does not use. The symptom is unmistakable: a method whose
+      entire body is <code>pass</code>, or <code>raise Exception('not supported')</code>.
+    </p>
+
+    <div class="codeblock">
+      <div class="codehead">the parking lot from the slides <span class="tag tag-bad">violation</span></div>
+<pre data-hl="12,13,14,15"><code>class ParkingLot:
+    def park_vehicle(self, v): ...
+    def unpark_vehicle(self, v): ...
+    def get_capacity(self): ...
+    def calculate_fee(self, v): ...
+    def do_payment(self, v): ...
+
+class FreeParkingLot(ParkingLot):
+    def park_vehicle(self, v): ...
+    def unpark_vehicle(self, v): ...
+    def get_capacity(self): ...
+    def calculate_fee(self, v):
+        raise NotImplementedError('parking here is free')
+    def do_payment(self, v):
+        raise NotImplementedError('parking here is free')</code></pre>
+    </div>
+    <p class="prose">
+      <b>The fix:</b> take <code>calculate_fee</code> and <code>do_payment</code> out of
+      <code>ParkingLot</code>, and create <code>PaidParkingLot</code> and <code>FreeParkingLot</code>,
+      with only the paid one carrying the money methods.
+    </p>
+
+    <h3 id="isp2">The same problem, in the payment example</h3>
+    <p class="prose">
+      Adding SMS authentication to the abstract <code>PaymentProcessor</code> forces credit-card payments —
+      which do not use SMS — to implement <code>auth_sms()</code>. There are two good fixes, and you should
+      be able to argue for either:
+    </p>
+    <div class="grid grid-2">
+      <div class="card">
+        <h4 class="mt-0">Fix 1 · split the interface</h4>
+        <p class="muted mb-0">Add <code>PaymentProcessorSMS(PaymentProcessor)</code> that declares
+        <code>auth_sms()</code>. Debit and PayPal extend it; credit extends the plain one.
+        Simple, but the hierarchy grows a branch per combination of features.</p>
+      </div>
+      <div class="card">
+        <h4 class="mt-0">Fix 2 · composition</h4>
+        <p class="muted mb-0">Make an <code>SMSAuthorizer</code> class and hand it to the processors that need it.
+        No new branches, and the authoriser can be swapped or faked in a test. This is the fix that leads
+        straight into <b>D</b>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="dip">10.7 — D · Dependency Inversion</h2>
+    <blockquote>
+      High-level modules should not depend upon low-level modules. Both should depend upon abstractions.<br>
+      Abstractions should not depend upon details. Details should depend upon abstractions.
+    </blockquote>
+
+    <p class="prose">
+      First, the vocabulary. A <b>high-level module</b> is the code that runs the overall job — like a site
+      supervisor on a building project, who decides what must happen but does not lay the cement themselves.
+      A <b>low-level module</b> is the code that does the concrete work — the person laying the cement.
+    </p>
+    <p class="prose">
+      A well-designed system lets either side be replaced. The supervisor can direct <i>anyone</i> who knows how
+      to lay cement; the cement layer can work on <i>any</i> site. Neither is welded to the other.
+    </p>
+
+    <div class="vs">
+      <div class="vs-side vs-bad">
+        <div class="vs-head">✗ the high level builds the low level</div>
+<pre data-hl="3"><code>class SmartPhone:
+    def __init__(self):
+        self.__bt = BluetoothDevice()   # welded in
+
+    def connect(self):
+        return self.__bt.pair()
+
+# Want to test without real Bluetooth?  You can't.
+# Want to support NFC?  Edit SmartPhone.</code></pre>
+      </div>
+      <div class="vs-side vs-good">
+        <div class="vs-head">✓ the collaborator is handed in</div>
+<pre data-hl="2,3"><code>class SmartPhone:
+    def __init__(self, device):      # any device that can pair()
+        self.__device = device
+
+    def connect(self):
+        return self.__device.pair()
+
+phone = SmartPhone(BluetoothDevice())
+phone = SmartPhone(NfcDevice())      # no change to SmartPhone
+phone = SmartPhone(FakeDevice())     # testable</code></pre>
+      </div>
+    </div>
+
+    <p class="prose">
+      This pattern — create the object outside and pass it in — is called <b>dependency injection</b>.
+      It is the same move as <code>SMSAuthorizer</code> in the walkthrough, and the same move as
+      composition in <a href="06-polymorphism.html#composition">chapter 6</a>. You have now seen it three times
+      under three names, which is a sign of how central it is.
+    </p>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="exercise">10.8 — Exercise &amp; this week's lab</h2>
+    <p class="prose">
+      Build the refactored design as a class diagram. The grader checks that <code>Order</code> knows nothing
+      about concrete payment types, that each processor extends the abstraction, and that SMS authorisation is
+      composed in rather than forced on everyone.
+    </p>
+
+    <div class="lab" data-uml="solid-split">
+      <div class="lab-head">
+        <h4>Exercise — split the god class</h4>
+        <span class="chip chip-vio">auto-marked</span>
+      </div>
+      <div class="studio">
+        <div class="studio-pal" data-uml-palette></div>
+        <div class="studio-main"><svg class="canvas" data-uml-canvas aria-label="Diagram canvas"></svg></div>
+        <div class="studio-side">
+          <button class="btn btn-s btn-primary" data-uml-run style="width:100%">✓ Check my diagram</button>
+          <div data-uml-check></div>
+          <hr>
+          <div data-uml-side></div>
+        </div>
+      </div>
+      <div class="lab-foot">
+        Remember that <code>pay(order)</code> takes the order as a parameter and does not store it —
+        so <code>PaymentProcessor → Order</code> is a <b>dependency</b>, not an association.
+      </div>
+    </div>
+
+    <div class="panel">
+      <p class="panel-title"><span class="ic">◆</span> Lab 10 — apply SOLID to your group's application</p>
+      <p>Take your mini-project as it stands and audit it. For each finding, write three sentences:
+      the principle, the evidence, and the fix.</p>
+      <ul class="mb-0">
+        <li><b>S</b> — which class has more than one reason to change? List its reasons.</li>
+        <li><b>O</b> — which <code>if/elif</code> on a type would grow when you add a feature?</li>
+        <li><b>L</b> — does any subclass raise, ignore, or re-interpret an inherited method?</li>
+        <li><b>I</b> — is any class implementing a method it never uses?</li>
+        <li><b>D</b> — does any class construct a collaborator it could instead be handed?</li>
+      </ul>
+    </div>
+
+    <div class="note note-good">
+      <b>This is also Assignment 2, phase 2.</b> The legacy-code review asks for at least three code smells with
+      proposed solutions. “<code>Order</code> has three reasons to change, which violates SRP; extract the payment
+      logic into a <code>PaymentProcessor</code> hierarchy” is the kind of sentence that earns marks.
+      “The code is messy” is not.
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="limits">10.9 — When a principle costs more than it saves</h2>
+    <p class="prose">
+      These are guidelines, not laws, and applying them without judgement produces its own kind of bad code.
+    </p>
+    <ul class="breaks prose-wide">
+      <li><b>An abstract base class with one subclass</b> is pure overhead. Wait for the second case.</li>
+      <li><b>Splitting a class with one reason to change</b> raises coupling and helps nobody.</li>
+      <li><b>Injecting every dependency</b> turns constructors into ten-parameter lists and moves the
+      complexity into whoever builds the object.</li>
+      <li><b>Designing for extensions nobody asked for</b> is speculation. You will usually guess wrong, and then
+      carry the abstraction forever.</li>
+    </ul>
+    <p class="prose">
+      The honest rule: apply a principle when you can name the <b>specific change</b> it protects you from.
+      If you cannot, write the simple version and refactor when the second case actually arrives.
+    </p>
+
+    <h3 id="check">Check yourself</h3>
+
+    <div class="quiz" data-quiz>
+      <p class="quiz-q">A <code>Report</code> class formats data, writes a PDF and emails it. Which principle, and what is the evidence?</p>
+      <ul class="quiz-opts">
+        <li><button data-correct data-why="Three reasons to change — a formatting tweak, a PDF library upgrade, a mail server move — each of which can break the other two. Split into Report, PdfWriter and Mailer.">SRP — it has three independent reasons to change</button></li>
+        <li><button data-why="LSP is about subclasses honouring their base class's contract. No inheritance is involved here.">LSP — the subclass breaks the contract</button></li>
+        <li><button data-why="ISP is about classes being forced to implement methods they do not use. Nothing is being forced here.">ISP — the interface is too wide</button></li>
+      </ul>
+    </div>
+
+    <div class="quiz" data-quiz>
+      <p class="quiz-q">A <code>ReadOnlyList(list)</code> overrides <code>append()</code> to raise an exception. Which principle does it break?</p>
+      <ul class="quiz-opts">
+        <li><button data-why="Open–Closed is about extending without editing existing code — which is exactly what this subclass does. The problem is what it does once extended.">OCP</button></li>
+        <li><button data-correct data-why="Liskov: anything accepting a list may call append(). This subclass removes a capability its base class promised, so passing it where a list is expected blows up at run time. It should not inherit from list.">LSP — it removes a capability the base class promised</button></li>
+        <li><button data-why="There is nothing injected here — no high-level module depending on a low-level one.">DIP</button></li>
+      </ul>
+    </div>
+
+    <div class="quiz" data-quiz>
+      <p class="quiz-q">Your team has exactly one payment method and no plan for a second. What should you do?</p>
+      <ul class="quiz-opts">
+        <li><button data-why="An abstract base class with one implementation adds indirection and buys nothing today. If you cannot name the change it protects you from, you are speculating.">Build the abstract <code>PaymentProcessor</code> hierarchy now, to be safe</button></li>
+        <li><button data-correct data-why="Keep it simple, keep it separated. A class on its own is already testable and already respects SRP; adding the abstraction when the second method actually arrives is a small, informed refactor rather than a guess.">Write one <code>PaymentProcessor</code> class, keep it separate from <code>Order</code>, and abstract it when the second method arrives</button></li>
+        <li><button data-why="That is the original god class. Payment is a separate reason to change even when there is only one of them.">Put <code>pay()</code> back inside <code>Order</code> — it is only one method</button></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2 id="end">That is the course</h2>
+    <p class="prose">
+      Ten weeks, four pillars, three diagrams and five principles — all of them doing one job: making sure that
+      when a requirement changes, as few places as possible have to change with it.
+    </p>
+    <div class="grid grid-3">
+      <a class="card card-link" href="../studio/index.html"><h4 class="mt-0">UML Studio</h4><p class="muted mb-0">All ten diagram exercises in one place, for revision.</p></a>
+      <a class="card card-link" href="../labs/index.html"><h4 class="mt-0">Labs</h4><p class="muted mb-0">The five lab briefs, test cases and the standing rules.</p></a>
+      <a class="card card-link" href="../syllabus.html#assignments"><h4 class="mt-0">Mini-project</h4><p class="muted mb-0">What the group project must demonstrate, and how it is marked.</p></a>
+    </div>
+  </section>
+
+  <div class="chapnav">
+    <a class="prev" href="09-multiple-inheritance.html"><span class="dir">← Previous</span><span class="nm">Multiple inheritance</span></a>
+    <a class="next" href="../studio/index.html"><span class="dir">Next →</span><span class="nm">UML Studio</span></a>
+  </div>
+
+  </div>
+  <aside class="toc" data-toc="main" aria-label="On this page"><h2>On this page</h2></aside>
+  </div>
+</div>
+</main>
+
+<footer class="footer">
+  <div class="wrap"><p class="mb-0">01276131 Object-Oriented Programming · Department of Computer Engineering, KMITL.</p></div>
+</footer>
+
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/viz.js"></script>
+<script src="../assets/js/uml-exercises.js"></script>
+<script src="../assets/js/uml.js"></script>
+</body>
+</html>

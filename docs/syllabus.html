@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Syllabus · Object-Oriented Programming 01276131</title>
+<meta name="description" content="Teaching plan, assessment breakdown and assignment briefs for 01276131 Object-Oriented Programming, KMITL international programme.">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23ff7a2f'/%3E%3Ctext x='16' y='23' font-family='sans-serif' font-size='18' font-weight='bold' fill='white' text-anchor='middle'%3EO%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<a class="skiplink" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">OO</span>
+      <span class="brand-txt">Object-Oriented Programming<small>01276131 · KMITL</small></span>
+    </a>
+    <button class="iconbtn navtoggle" data-nav-toggle aria-expanded="false" aria-label="Menu">☰</button>
+    <nav class="navlinks" aria-label="Main">
+      <a href="index.html">Home</a>
+      <a href="syllabus.html">Syllabus</a>
+      <a href="studio/index.html">UML Studio</a>
+      <a href="labs/index.html">Labs</a>
+      <a href="sandbox/index.html">Playground</a>
+      <button class="iconbtn" data-theme-toggle aria-label="Toggle theme">☀</button>
+    </nav>
+  </div>
+  <div class="progressbar"></div>
+</header>
+
+<main id="main">
+<div class="wrap">
+  <div class="chaphead">
+    <span class="chapnum">COURSE INFORMATION</span>
+    <h1>Syllabus &amp; assessment</h1>
+    <p class="lede">What we cover each week, how you are marked, and what the three assignments ask for.</p>
+  </div>
+
+  <div class="chapter-layout">
+  <div>
+
+  <section>
+    <h2 id="process">Where this course sits in software development</h2>
+    <p class="prose">
+      An object-oriented application is not built by sitting down and typing classes. It moves through a pipeline,
+      and almost every artefact in this course is one stage of it. When you are stuck in a lab, it is usually because
+      you skipped a stage.
+    </p>
+
+    <figure class="figframe">
+      <svg viewBox="0 0 880 210" role="img" aria-label="Development pipeline: gather requirements, analysis and design with use case, sequence and class diagrams, implementation in Python, then test and verify">
+        <defs>
+          <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+            <path d="M0 0 L10 5 L0 10 z" fill="var(--accent)"/>
+          </marker>
+        </defs>
+        <g font-size="12.5">
+          <rect x="8"   y="62" width="150" height="64" rx="8" class="svg-surf"/>
+          <text x="83"  y="86"  text-anchor="middle" class="svg-ink" font-weight="700">Requirements</text>
+          <text x="83"  y="105" text-anchor="middle" class="svg-ink3" font-size="10.5">What is it for?</text>
+
+          <rect x="196" y="20"  width="296" height="148" rx="8" fill="color-mix(in srgb, var(--accent) 7%, var(--surface))" stroke="var(--accent)" stroke-dasharray="5 4"/>
+          <text x="344" y="40"  text-anchor="middle" class="svg-acc" font-size="10.5" font-weight="700" letter-spacing="1.2">ANALYSIS &amp; DESIGN</text>
+          <rect x="212" y="52"  width="124" height="46" rx="6" class="svg-surf"/>
+          <text x="274" y="72"  text-anchor="middle" class="svg-ink" font-size="11">Use case</text>
+          <text x="274" y="87"  text-anchor="middle" class="svg-ink3" font-size="10">week 7</text>
+          <rect x="352" y="52"  width="124" height="46" rx="6" class="svg-surf"/>
+          <text x="414" y="72"  text-anchor="middle" class="svg-ink" font-size="11">Sequence</text>
+          <text x="414" y="87"  text-anchor="middle" class="svg-ink3" font-size="10">week 8</text>
+          <rect x="282" y="110" width="124" height="46" rx="6" class="svg-surf"/>
+          <text x="344" y="130" text-anchor="middle" class="svg-ink" font-size="11">Class diagram</text>
+          <text x="344" y="145" text-anchor="middle" class="svg-ink3" font-size="10">week 4</text>
+
+          <rect x="530" y="62" width="150" height="64" rx="8" class="svg-surf"/>
+          <text x="605" y="86"  text-anchor="middle" class="svg-ink" font-weight="700">Implementation</text>
+          <text x="605" y="105" text-anchor="middle" class="svg-ink3" font-size="10.5">Python, weeks 2–10</text>
+
+          <rect x="718" y="62" width="150" height="64" rx="8" class="svg-surf"/>
+          <text x="793" y="86"  text-anchor="middle" class="svg-ink" font-weight="700">Test &amp; verify</text>
+          <text x="793" y="105" text-anchor="middle" class="svg-ink3" font-size="10.5">the lab test cases</text>
+
+          <path d="M160 94 H192" class="svg-accs" marker-end="url(#ar)"/>
+          <path d="M494 94 H526" class="svg-accs" marker-end="url(#ar)"/>
+          <path d="M682 94 H714" class="svg-accs" marker-end="url(#ar)"/>
+          <path d="M793 130 V178 H344 V172" class="svg-accs" stroke-dasharray="5 4" marker-end="url(#ar)"/>
+          <text x="560" y="194" class="svg-ink3" font-size="10.5">failures send you back to the design, not to the keyboard</text>
+        </g>
+      </svg>
+      <figcaption>The output of each stage is the input to the next. <b>A class diagram is not paperwork</b> — it is the thing you write the code from.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <h2 id="plan">Teaching plan</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Week</th><th>Topic</th><th>Lab</th></tr></thead>
+        <tbody>
+          <tr><td><b>1</b></td><td><a href="chapters/01-introduction.html">Introduction, course content, teaching plan, scoring</a><br><span class="dim">Activity: form your mini-project group</span></td><td class="dim">—</td></tr>
+          <tr><td><b>2</b></td><td><a href="chapters/02-object-and-class.html">Software development, class, object, instance, class attribute</a></td><td><a href="labs/index.html#lab1">Object and class</a></td></tr>
+          <tr><td><b>3</b></td><td><a href="chapters/03-encapsulation.html">Encapsulation, abstraction, public / private / protected, setters and getters, methods</a></td><td><a href="labs/index.html#lab2">Student registration</a></td></tr>
+          <tr><td><b>4</b></td><td><a href="chapters/04-class-diagram.html">Class diagram, relationships, multiplicities</a></td><td><a href="labs/index.html#lab3">ATM</a></td></tr>
+          <tr><td><b>5</b></td><td><a href="chapters/05-inheritance.html">Inheritance and examples</a></td><td><a href="labs/index.html#lab4">ATM 2</a></td></tr>
+          <tr><td><b>6</b></td><td><a href="chapters/06-polymorphism.html">Polymorphism and composition, abstract base class</a></td><td><a href="labs/index.html#lab5">Appointment system</a></td></tr>
+          <tr><td><b>7</b></td><td><a href="chapters/07-use-case-diagram.html">Finding requirements, use case diagram</a></td><td><a href="studio/index.html#cinema-uc">Use case diagram</a></td></tr>
+          <tr><td><b>8</b></td><td><a href="chapters/08-sequence-diagram.html">Sequence diagram and its elements</a></td><td><a href="chapters/08-sequence-diagram.html#build">Sequence diagram</a></td></tr>
+          <tr><td><b>9</b></td><td><a href="chapters/09-multiple-inheritance.html">Multiple inheritance</a></td><td>Using multiple inheritance in code</td></tr>
+          <tr><td><b>10</b></td><td><a href="chapters/10-solid.html">SOLID principles, with an example of each</a></td><td>Apply SOLID to your group's application</td></tr>
+          <tr><td><b>11–15</b></td><td>Mini-projects</td><td>Group work &amp; presentation</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2 id="marks">Assessment</h2>
+    <div class="grid grid-2">
+      <div class="card">
+        <h3 class="mt-0">Lecture</h3>
+        <div class="tablewrap" style="margin:0">
+          <table>
+            <tbody>
+              <tr><td>Mini-project</td><td style="text-align:right"><b>30%</b></td></tr>
+              <tr><td>Midterm exam</td><td style="text-align:right"><b>30%</b></td></tr>
+              <tr><td>Final exam</td><td style="text-align:right"><b>40%</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <h3 class="mt-0">Lab</h3>
+        <div class="tablewrap" style="margin:0">
+          <table>
+            <tbody>
+              <tr><td>Weekly labs</td><td style="text-align:right"><b>50%</b></td></tr>
+              <tr><td>Lab exam</td><td style="text-align:right"><b>30%</b></td></tr>
+              <tr><td>Mini-project</td><td style="text-align:right"><b>20%</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="note note-trap">
+      <b>How weekly labs are actually lost.</b> Not by failing to finish, but by breaking the standing rules:
+      storing data outside a class, duplicating the same fact in two places, leaving an attribute public,
+      writing <code>input()</code> or <code>print()</code> inside a class, or writing getters and setters nobody calls.
+      Those rules are listed in full on the <a href="labs/index.html#rules">labs page</a> — read them once, properly.
+    </div>
+  </section>
+
+  <section>
+    <h2 id="assignments">Assignments</h2>
+
+    <h3 id="a1">Assignment 1 — Game of Life simulation</h3>
+    <p><span class="chip">individual</span> <span class="chip">Pygame</span></p>
+    <p>Implement Conway's cellular automaton: simple rules, emergent complexity. Four rules govern every cell:</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Rule</th><th>Condition</th><th>Outcome</th></tr></thead>
+        <tbody>
+          <tr><td>Underpopulation</td><td>live cell, fewer than 2 live neighbours</td><td>dies of isolation</td></tr>
+          <tr><td>Survival</td><td>live cell, 2 or 3 live neighbours</td><td>lives on</td></tr>
+          <tr><td>Overpopulation</td><td>live cell, more than 3 live neighbours</td><td>dies of overcrowding</td></tr>
+          <tr><td>Reproduction</td><td>dead cell, exactly 3 live neighbours</td><td>becomes alive</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><b>Interface requirements:</b> a grid of at least 60 × 40 cells with clear contrast between alive and dead;
+    pause/play toggle; mouse click to toggle a cell while paused; <kbd>R</kbd> to clear the board; a randomise key.</p>
+    <p><b>Submit:</b> <code>main.py</code> with a proper game loop and neighbour-counting logic, plus
+    <code>README.txt</code> documenting every control.</p>
+
+    <h3 id="a2">Assignment 2 — Legacy code refactoring</h3>
+    <p><span class="chip">individual</span> <span class="chip chip-vio">three phases</span></p>
+    <ol class="steps">
+      <li><b>Analysis &amp; reverse engineering.</b> Read the supplied legacy code, reverse-engineer a UML class diagram
+      of the mess as it stands, then compare it against the SRS to see whether it even does what was asked.</li>
+      <li><b>Code review.</b> Identify at least <b>three major code smells</b> — duplicate code, poor naming, god classes,
+      broken encapsulation, no separation of concerns — and write a report with a specific fix for each.</li>
+      <li><b>Refactor.</b> Rewrite it: meaningful names, clear flow, strict compliance with the SRS, and real
+      encapsulation, inheritance and separation of concerns.</li>
+    </ol>
+    <p><b>Deliverables:</b> the current (messy) class diagram as image or PDF; the review report as PDF; the refactored Python source.</p>
+    <div class="note note-tip">
+      Work chapter 10 before you start phase 2 — the <a href="chapters/10-solid.html">SOLID chapter</a> gives you the
+      vocabulary that turns “this code is bad” into “<code>Order</code> has three reasons to change, which violates SRP.”
+      One of those sentences earns marks.
+    </div>
+
+    <h3 id="a3">Assignment 3 — Mini-application group project</h3>
+    <p><span class="chip">groups of 3–5</span> <span class="chip">30% of the lecture mark</span></p>
+    <p>Design and build a desktop application that simulates a real management system. Pick a domain:</p>
+    <div class="grid grid-4">
+      <div class="card"><b>Bank management</b><p class="muted mb-0" style="font-size:.85rem">accounts, deposits, withdrawals, transaction history</p></div>
+      <div class="card"><b>Pet shop</b><p class="muted mb-0" style="font-size:.85rem">animal inventory, food stock, sales, adoptions</p></div>
+      <div class="card"><b>Library system</b><p class="muted mb-0" style="font-size:.85rem">borrowing, returns, fines, members</p></div>
+      <div class="card"><b>Student registry</b><p class="muted mb-0" style="font-size:.85rem">enrolment, grades, GPA, records</p></div>
+    </div>
+    <p style="margin-top:1.2rem"><b>Technical requirements:</b> effective use of classes, inheritance and polymorphism;
+    full CRUD; persistence to file (<code>.txt</code>, <code>.csv</code>, <code>.json</code>) or a database; a working GUI
+    in tkinter, PyQt or Pygame; and a class presentation with a live demo.</p>
+    <p><b>Deliverables:</b> organised source code, the UML class diagram that served as your blueprint, and presentation slides.</p>
+
+    <h3 id="hw1">Homework 1 — group formation</h3>
+    <p>Form a group of 4–5 students, pick an existing website or application as the prototype you will model
+    (car rental, restaurant management, hotel rooms, library management, …), and submit your group name and members
+    through the shared sheet given in the week 1 slides.</p>
+  </section>
+
+  <section>
+    <h2 id="channels">Official channels</h2>
+    <dl class="kv">
+      <dt>Course site</dt><dd><a href="https://sites.google.com/kmitl.ac.th/object-oriented-programming/home">sites.google.com/kmitl.ac.th/object-oriented-programming</a> — slides, lab briefs, skeleton code, answer sheets</dd>
+      <dt>Classroom</dt><dd><a href="https://classroom.google.com">classroom.google.com</a> — class <i>Object Oriented Programming</i>; the join code is in the week 1 slides</dd>
+      <dt>This site</dt><dd>A visual companion. Where it differs from the slides, the slides win.</dd>
+    </dl>
+  </section>
+
+  <div class="chapnav">
+    <a class="prev" href="index.html"><span class="dir">← Back</span><span class="nm">Home</span></a>
+    <a class="next" href="chapters/01-introduction.html"><span class="dir">Chapter 1 →</span><span class="nm">Introduction</span></a>
+  </div>
+
+  </div>
+  <aside class="toc" data-toc="main" aria-label="On this page"><h2>On this page</h2></aside>
+  </div>
+</div>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <p class="mb-0">Department of Computer Engineering, Faculty of Engineering, King Mongkut's Institute of Technology Ladkrabang.</p>
+  </div>
+</footer>
+
+<script src="assets/js/site.js"></script>
+</body>
+</html>

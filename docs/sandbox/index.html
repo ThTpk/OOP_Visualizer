@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Python playground — OOP 01276131</title>
+<meta name="description" content="Run real Python in the browser. Preloaded with the lab skeletons and the examples from every chapter.">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23ff7a2f'/%3E%3Ctext x='16' y='23' font-family='sans-serif' font-size='18' font-weight='bold' fill='white' text-anchor='middle'%3EO%3C/text%3E%3C/svg%3E">
+<style>
+  .pad { display: grid; grid-template-columns: minmax(0,1.15fr) minmax(0,.85fr); gap: 1rem; align-items: start; }
+  @media (max-width: 900px) { .pad { grid-template-columns: minmax(0,1fr); } }
+  #editor {
+    width: 100%; height: 520px; resize: vertical;
+    background: var(--bg-code); color: #d7e1ef; border: 1px solid var(--line);
+    border-radius: var(--radius); padding: .9rem 1rem;
+    font-family: var(--mono); font-size: .84rem; line-height: 1.6; tab-size: 4;
+    white-space: pre; overflow-wrap: normal; overflow-x: auto;
+  }
+  #out {
+    margin: 0; height: 520px; overflow: auto;
+    background: var(--bg-code); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: .9rem 1rem; font-family: var(--mono); font-size: .82rem; line-height: 1.6;
+    white-space: pre-wrap; word-break: break-word; color: #d7e1ef;
+  }
+  #out .err { color: #fca5a5; }
+  #out .sys { color: var(--ink-3); font-style: italic; }
+  #out .ok  { color: #86e3b2; }
+</style>
+</head>
+<body>
+<a class="skiplink" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">OO</span>
+      <span class="brand-txt">Object-Oriented Programming<small>01276131 · KMITL</small></span>
+    </a>
+    <button class="iconbtn navtoggle" data-nav-toggle aria-expanded="false" aria-label="Menu">☰</button>
+    <nav class="navlinks" aria-label="Main">
+      <a href="../index.html">Home</a>
+      <a href="../syllabus.html">Syllabus</a>
+      <a href="../studio/index.html">UML Studio</a>
+      <a href="../labs/index.html">Labs</a>
+      <a href="index.html">Playground</a>
+      <button class="iconbtn" data-theme-toggle aria-label="Toggle theme">☀</button>
+    </nav>
+  </div>
+  <div class="progressbar"></div>
+</header>
+
+<main id="main">
+<div class="wrap">
+  <div class="chaphead">
+    <span class="chapnum">TOOL</span>
+    <h1>Python playground</h1>
+    <p class="lede">
+      Real CPython, compiled to WebAssembly and running in this tab. Nothing is installed and nothing is uploaded.
+      Press <kbd>Ctrl</kbd> + <kbd>Enter</kbd> to run.
+    </p>
+  </div>
+
+  <div class="lab">
+    <div class="lab-head">
+      <h4 id="snip-title">Two instances, two addresses</h4>
+      <label class="lab-hint" for="snip" style="margin-left:auto">Load:</label>
+      <select id="snip" aria-label="Load an example"></select>
+      <span class="chip" id="status">starting Python…</span>
+    </div>
+    <div class="lab-body">
+      <p class="lab-hint" id="snip-note" style="margin-top:0"></p>
+      <div class="pad">
+        <textarea id="editor" spellcheck="false" aria-label="Python code"></textarea>
+        <pre id="out" aria-live="polite" aria-label="Output"></pre>
+      </div>
+    </div>
+    <div class="lab-foot">
+      <div class="controls">
+        <button class="btn btn-s btn-primary" id="run" disabled>▶ Run</button>
+        <button class="btn btn-s btn-ghost" id="clear">Clear output</button>
+        <button class="btn btn-s btn-ghost" id="reset">↺ Reset this example</button>
+        <span class="sp" style="flex:1"></span>
+        <span class="lab-hint">Your edits are kept in this browser.</span>
+      </div>
+    </div>
+  </div>
+
+  <section>
+    <h2 id="about">What this is good for</h2>
+    <div class="grid grid-3">
+      <div class="card">
+        <h4 class="mt-0">Trying to break things</h4>
+        <p class="muted mb-0">Assign an invalid GPA. Forget <code>super().__init__()</code>. Instantiate an abstract
+        class. The error messages are the lesson, and they cost nothing here.</p>
+      </div>
+      <div class="card">
+        <h4 class="mt-0">Starting a lab</h4>
+        <p class="muted mb-0">The Lab 2 skeleton is loaded with its classes and test harness.
+        Fill in the <code>TODO</code>s, run, and see which test cases pass.</p>
+      </div>
+      <div class="card">
+        <h4 class="mt-0">Checking an exam answer</h4>
+        <p class="muted mb-0">“What does this print?” questions become “let me find out”.
+        Paste the code and run it.</p>
+      </div>
+    </div>
+
+    <div class="note note-tip">
+      <b>Limitations.</b> No file system to speak of, no <code>input()</code>, no <code>tkinter</code> or
+      <code>pygame</code>, and the first load downloads several megabytes. For the mini-project and the GUI
+      assignments, use Python on your own machine. This is for the classes and the logic.
+    </div>
+  </section>
+</div>
+</main>
+
+<footer class="footer">
+  <div class="wrap"><p class="mb-0">01276131 Object-Oriented Programming · Department of Computer Engineering, KMITL.</p></div>
+</footer>
+
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/snippets.js"></script>
+<script>
+(function () {
+  "use strict";
+  var ed = document.getElementById("editor");
+  var out = document.getElementById("out");
+  var runBtn = document.getElementById("run");
+  var statusEl = document.getElementById("status");
+  var sel = document.getElementById("snip");
+  var titleEl = document.getElementById("snip-title");
+  var noteEl = document.getElementById("snip-note");
+  var pyodide = null, pyVersion = "";
+  var NL = String.fromCharCode(10);
+  var current = "hello";
+
+  /* ---------- output helpers ---------- */
+  function write(text, cls) {
+    var span = document.createElement("span");
+    if (cls) span.className = cls;
+    span.textContent = text + "\n";
+    out.appendChild(span);
+    out.scrollTop = out.scrollHeight;
+  }
+  function setStatus(text, kind) {
+    statusEl.textContent = text;
+    statusEl.className = "chip" + (kind ? " chip-" + kind : "");
+  }
+
+  /* ---------- snippets ---------- */
+  function storeKey(id) { return "oop-pad-" + id; }
+
+  function load(id, force) {
+    var s = window.SNIPPETS[id];
+    if (!s) return;
+    current = id;
+    sel.value = id;
+    titleEl.textContent = s.title;
+    noteEl.textContent = s.note || "";
+    var saved = null;
+    if (!force) { try { saved = localStorage.getItem(storeKey(id)); } catch (e) {} }
+    ed.value = saved != null ? saved : s.code;
+    try { history.replaceState(null, "", "?load=" + id); } catch (e) {}
+  }
+
+  Object.keys(window.SNIPPETS).forEach(function (id) {
+    var o = document.createElement("option");
+    o.value = id;
+    o.textContent = window.SNIPPETS[id].title;
+    sel.appendChild(o);
+  });
+  sel.addEventListener("change", function () { load(sel.value); });
+
+  ed.addEventListener("input", function () {
+    try { localStorage.setItem(storeKey(current), ed.value); } catch (e) {}
+  });
+
+  document.getElementById("reset").addEventListener("click", function () {
+    try { localStorage.removeItem(storeKey(current)); } catch (e) {}
+    load(current, true);
+  });
+  document.getElementById("clear").addEventListener("click", function () { out.innerHTML = ""; });
+
+  /* tab inserts four spaces instead of leaving the field */
+  ed.addEventListener("keydown", function (e) {
+    if (e.key === "Tab") {
+      e.preventDefault();
+      var s = ed.selectionStart, t = ed.selectionEnd;
+      ed.value = ed.value.slice(0, s) + "    " + ed.value.slice(t);
+      ed.selectionStart = ed.selectionEnd = s + 4;
+    }
+    if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); run(); }
+  });
+
+  /* ---------- Pyodide ---------- */
+  var CDN = "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/";
+
+  function boot() {
+    setStatus("downloading Python…");
+    var s = document.createElement("script");
+    s.src = CDN + "pyodide.js";
+    s.onload = function () {
+      loadPyodide({ indexURL: CDN }).then(function (py) {
+        pyodide = py;
+        py.setStdout({ batched: function (t) { write(t); } });
+        py.setStderr({ batched: function (t) { write(t, "err"); } });
+        // a runner that hides this playground's own stack frames, so a
+        // traceback shows only the student's code
+        py.runPython([
+          "import sys, traceback",
+          "def __oop_run(src):",
+          "    g = {'__name__': '__main__'}",
+          "    try:",
+          "        exec(compile(src, '<your code>', 'exec'), g)",
+          "    except SystemExit:",
+          "        pass",
+          "    except BaseException as e:",
+          "        tb = e.__traceback__.tb_next",
+          "        sys.stderr.write(''.join(traceback.format_exception(type(e), e, tb)))",
+          ""
+        ].join(NL));
+        pyVersion = py.runPython("sys.version.split()[0]");
+        runBtn.disabled = false;
+        setStatus("Python " + pyVersion + " ready", "ok");
+        write("Python " + pyVersion + " ready (Pyodide " + py.version + "). Press Run, or Ctrl+Enter.", "sys");
+      }).catch(fail);
+    };
+    s.onerror = fail;
+    document.head.appendChild(s);
+  }
+
+  function fail() {
+    setStatus("offline", "bad");
+    write(
+      "Could not load the Python runtime.\n" +
+      "It is downloaded from a CDN the first time you open this page, so it needs an internet connection.\n" +
+      "The code in the editor is still correct Python — run it locally with:  python your_file.py",
+      "err");
+  }
+
+  function run() {
+    if (!pyodide) return;
+    out.innerHTML = "";
+    setStatus("running…");
+    var t0 = performance.now();
+    var failed = false;
+    try {
+      // the Python-side runner prints a clean traceback to stderr itself
+      pyodide.globals.get("__oop_run")(ed.value);
+      failed = out.querySelector(".err") !== null;
+    } catch (err) {
+      var msg = String(err.message || err);
+      // strip the JS-side frames; keep the Python traceback the student needs
+      var cut = msg.indexOf("Traceback (most recent call last):");
+      write(cut >= 0 ? msg.slice(cut) : msg, "err");
+      failed = true;
+    }
+    var ms = Math.round(performance.now() - t0);
+    write("\n[finished in " + ms + " ms]", "sys");
+    setStatus(failed ? "error" : "done", failed ? "bad" : "ok");
+  }
+  runBtn.addEventListener("click", run);
+
+  /* ---------- go ---------- */
+  var want = new URLSearchParams(location.search).get("load");
+  load(window.SNIPPETS[want] ? want : "hello");
+  boot();
+})();
+</script>
+</body>
+</html>

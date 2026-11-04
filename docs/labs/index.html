@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weekly labs — OOP 01276131</title>
+<meta name="description" content="The five weekly lab briefs, the test cases the staff will run, and the standing rules that decide your mark.">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23ff7a2f'/%3E%3Ctext x='16' y='23' font-family='sans-serif' font-size='18' font-weight='bold' fill='white' text-anchor='middle'%3EO%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<a class="skiplink" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">OO</span>
+      <span class="brand-txt">Object-Oriented Programming<small>01276131 · KMITL</small></span>
+    </a>
+    <button class="iconbtn navtoggle" data-nav-toggle aria-expanded="false" aria-label="Menu">☰</button>
+    <nav class="navlinks" aria-label="Main">
+      <a href="../index.html">Home</a>
+      <a href="../syllabus.html">Syllabus</a>
+      <a href="../studio/index.html">UML Studio</a>
+      <a href="index.html">Labs</a>
+      <a href="../sandbox/index.html">Playground</a>
+      <button class="iconbtn" data-theme-toggle aria-label="Toggle theme">☀</button>
+    </nav>
+  </div>
+  <div class="progressbar"></div>
+</header>
+
+<main id="main">
+<div class="wrap">
+  <div class="chaphead">
+    <span class="chapnum">LABS · 50% OF THE LAB MARK</span>
+    <h1>Weekly labs</h1>
+    <p class="lede">
+      Five briefs, each building on the one before. From Lab 3 onward the staff check your <b>class diagram first</b>
+      and only then your code — so draw before you type.
+    </p>
+  </div>
+
+  <div class="chapter-layout">
+  <div>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="rules">The standing rules</h2>
+    <p class="prose">
+      These apply to every lab from Lab 2 onward. They are where marks are most often lost, usually by students
+      whose program works perfectly.
+    </p>
+
+    <ul class="breaks prose-wide">
+      <li><b>No dictionaries for storage.</b> A <code>dict</code> of records is the parallel-list problem with
+      nicer syntax. Store instances in lists held by the owning class.</li>
+      <li><b>No data outside a class</b>, and <b>no duplicated data</b>. If one fact appears in two places, one of
+      them will go stale.</li>
+      <li><b>Every attribute private.</b> Use <code>__name</code>. Getters and setters only where something outside
+      genuinely needs them — <i>unnecessary getters and setters lose marks too</i>.</li>
+      <li><b>No <code>input()</code> and no <code>print()</code> inside a class.</b> Pass parameters in, get values
+      back. Treat every class as a service; the caller decides how to display things.</li>
+      <li><b>Store instances, not copies.</b> A non-basic class must store <i>instances</i> of the basic classes,
+      never duplicated fields.</li>
+      <li><b>Validate everything on the way in.</b> Any value entering a class goes through a check.</li>
+      <li><b>Functions that act on a class's data must be methods</b> of that class, not free functions.</li>
+      <li><b>Decide, for each class, what it may not store.</b> If a piece of data fits nowhere, that is the signal
+      to create a new class.</li>
+      <li><b>Add type hints.</b> <code>def withdraw(self, amount: float) -> bool:</code> makes the intent explicit.</li>
+    </ul>
+
+    <div class="note note-why">
+      <b>Why the rules are shaped like this.</b> Every one of them is a specific bug prevented:
+      stale copies, invalid state, untestable classes, data with no owner. Chapters
+      <a href="../chapters/02-object-and-class.html">2</a>, <a href="../chapters/03-encapsulation.html">3</a> and
+      <a href="../chapters/04-class-diagram.html">4</a> explain each failure in detail.
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="lab1">Lab 1 — Object and class</h2>
+    <p><span class="chip">week 2</span> <span class="chip chip-accent">chapter 2</span></p>
+    <p class="prose">
+      Build a simple online-game character system with <b>three classes</b> — for example <code>Player</code>,
+      <code>Weapon</code> and <code>Armor</code>. One of the three must be a component of another
+      (a weapon belongs to a player).
+    </p>
+    <ol class="steps prose-wide">
+      <li>Define the attributes and behaviours of each class.</li>
+      <li>Write all three classes including constructors. For behaviours, write the method names only and use
+      <code>pass</code> as the body.</li>
+      <li>Create three instances of each class.</li>
+      <li>Set the relationships between them.</li>
+      <li>Print the main object information in this shape:</li>
+    </ol>
+<pre data-raw="1"><code>=== Player 1 ===
+Name: Hero_01
+Level: 1
+HP: 100
+Weapon: Iron Sword (Damage: 10)
+Armor: Leather Armor (Defense: 5)
+
+=== Player 2 ===
+Name: Archer_02
+Level: 2
+HP: 120
+Weapon: Wooden Bow (Damage: 8)
+Armor: Chain Mail (Defense: 10)</code></pre>
+    <p class="prose">
+      Then add a <b>guild</b>: the program must be able to say which guild each member belongs to and who the
+      guild leader is.
+    </p>
+    <div class="note note-tip">
+      The guild is the interesting part. A guild has members, and one of those members is the leader —
+      which means the guild stores <code>Player</code> instances and one of them twice over. Make sure the leader
+      is a <i>reference to</i> a member, not a second copy of their name.
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="lab2">Lab 2 — Encapsulation (student registration)</h2>
+    <p><span class="chip">week 3</span> <span class="chip chip-accent">chapter 3</span></p>
+    <p class="prose">
+      Build the registration model with every attribute private:
+      <code>Student</code> (<code>student_id</code>, <code>student_name</code>),
+      <code>Subject</code> (<code>subject_id</code>, <code>subject_name</code>, <code>credit</code>),
+      <code>Teacher</code> (<code>teacher_id</code>, <code>teacher_name</code>).
+      You may add attributes and classes — <b>one extra class is recommended</b>, and the recommendation is
+      not accidental.
+    </p>
+    <p class="prose">
+      Each course has one teacher. Students may take any number of courses and may withdraw. After the exam they
+      receive a grade, and the system must record which grade each student got in which subject, where
+      A=4, B=3, C=2, D=1, F=0.
+    </p>
+
+    <h3 id="lab2-methods">Methods required</h3>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Method</th><th>Takes</th><th>Returns</th></tr></thead>
+        <tbody>
+          <tr><td><code>enroll_to_subject</code></td><td>Student, Subject instances</td><td><code>'Done'</code> · <code>'Already Enrolled'</code> · <code>'Error'</code> for a bad argument</td></tr>
+          <tr><td><code>drop_from_subject</code></td><td>Student, Subject</td><td><code>'Done'</code> · <code>'Not Found'</code> · <code>'Error'</code></td></tr>
+          <tr><td><code>search_student_enrolled_in_subject</code></td><td>Subject</td><td>list of enrolment instances; <code>[]</code> if none; <code>'Error'</code> if invalid</td></tr>
+          <tr><td><code>get_no_student_enrolled</code></td><td>Subject</td><td>a number; <code>'Not Found'</code> if none</td></tr>
+          <tr><td><code>search_subject_that_student_enrolled</code></td><td>Student</td><td>list of enrolment instances; <code>'Not Found'</code> if none</td></tr>
+          <tr><td><code>get_teacher_teach</code></td><td>Subject</td><td>the Teacher instance</td></tr>
+          <tr><td><code>assign_grade</code></td><td>Student, Subject, grade</td><td><code>'Done'</code></td></tr>
+          <tr><td><code>get_student_record</code></td><td>Student</td><td><code>{'CS101': ['Computer Programming 1', 'A'], …}</code></td></tr>
+          <tr><td><code>get_student_gpa</code></td><td>Student</td><td>a number</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note note-exam">
+      <b>The recommended extra class.</b> A grade belongs to neither the student nor the subject — it is a fact
+      about one student <i>in</i> one subject. That is an <code>Enrollment</code> class. Build the diagram in
+      the <a href="../studio/index.html#registration">UML Studio</a> first; the grader checks exactly this.
+    </div>
+
+    <h3 id="lab2-tests">Test cases</h3>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>#</th><th>Tests</th><th>Expected</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>enrol then list students in CS101</td><td>a dict of <code>{student_id: name}</code></td></tr>
+          <tr><td>2</td><td><code>enroll_to_subject('66010001','CS101')</code> — strings, not instances</td><td><code>'Error'</code></td></tr>
+          <tr><td>3</td><td>enrol the same pair twice</td><td><code>'Already Enrolled'</code></td></tr>
+          <tr><td>4</td><td><code>drop_from_subject</code> with invalid arguments</td><td><code>'Error'</code></td></tr>
+          <tr><td>5</td><td>drop a student who never enrolled</td><td><code>'Not Found'</code></td></tr>
+          <tr><td>6</td><td>drop successfully, then list the subject</td><td>that student is gone</td></tr>
+          <tr><td>7</td><td><code>search_student_enroll_in_subject</code></td><td>the enrolment list</td></tr>
+          <tr><td>8</td><td><code>get_no_of_student_enrolled</code></td><td>the count</td></tr>
+          <tr><td>9</td><td><code>search_subject_that_student_enrolled</code></td><td>the subject list</td></tr>
+          <tr><td>10</td><td><code>get_teacher_teach</code></td><td>the teacher's name</td></tr>
+          <tr><td>11</td><td><code>search_enrollment_subject_student</code></td><td>the enrolment instance</td></tr>
+          <tr><td>12</td><td><code>assign_grade</code> ×3</td><td><code>'Done'</code></td></tr>
+          <tr><td>13</td><td><code>get_student_record</code></td><td>the dict of subject → [name, grade]</td></tr>
+          <tr><td>14</td><td><code>get_student_gpa</code></td><td>e.g. <code>3.0</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><a class="btn btn-s" href="../sandbox/index.html?load=lab2">Open the skeleton in the playground →</a></p>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="lab3">Lab 3 — Class diagram (bank and ATM)</h2>
+    <p><span class="chip">week 4</span> <span class="chip chip-accent">chapter 4</span> <span class="chip chip-vio">diagram checked first</span></p>
+
+    <p class="prose"><b>The specification.</b></p>
+    <ul class="prose">
+      <li>The bank opens accounts for users. There is one account type: savings.
+      One user may open any number of accounts.</li>
+      <li>A user has a national ID (fictitious) and a full name. An account has an account number and an owner
+      (an instance).</li>
+      <li>Each account may request <b>one</b> ATM card. The card has a card number, and the card holds the account
+      number and a PIN.</li>
+      <li>Rates and limits: an ATM card costs <b>150฿</b> a year; the daily withdrawal limit is <b>40,000฿</b>.</li>
+      <li>An ATM has a machine number and the cash in the drawer, defaulting to <b>1,000,000฿</b>.
+      <b>The ATM stores nothing else.</b> Banknote denominations are ignored.</li>
+      <li>Activities with the bank are done <b>through ATMs only</b>: deposit, withdraw and transfer.
+      Withdrawals and transfers must not exceed the daily maximum.</li>
+      <li>Each transaction is recorded <b>in the account</b>: type (<code>D</code> deposit, <code>W</code> withdraw,
+      <code>TD</code> transfer in, <code>TW</code> transfer out), amount, ATM number, and for transfers the other
+      account number.</li>
+    </ul>
+
+    <h3 id="lab3-tasks">Tasks</h3>
+    <ol class="steps prose-wide">
+      <li>Draw the class diagram. Multiplicity is not required yet. <b>Have the staff check it before you code.</b></li>
+      <li>Write the program to match the diagram, under the standing rules above.</li>
+      <li>Create the instances: 2 users with citizen ID <code>1-1101-12345-nn-0</code>, where <code>nn</code> is the
+      last two digits of your student ID (use <code>nn+1</code> for the second user); 1 account each with a 10-digit
+      account number; 1 ATM card per account with PIN <code>1234</code>; 2 ATMs.</li>
+      <li>After the test cases pass, have the staff check again and report whether the class diagram needed changing.</li>
+    </ol>
+
+    <h3 id="lab3-tests">Test cases</h3>
+    <ol class="prose">
+      <li>Insert card into ATM</li>
+      <li>Deposit</li>
+      <li>Deposit a negative amount</li>
+      <li>Withdraw</li>
+      <li>Withdraw more than the account balance</li>
+      <li>Transfer</li>
+      <li>Show statement</li>
+    </ol>
+
+    <div class="note note-trap">
+      <b>Two traps are deliberate.</b> “The ATM will not store any information except the money in the machine”
+      makes ATM–ATMCard a <b>dependency</b>, not an association. And “each transaction must be recorded in the
+      account” makes Account–Transaction a <b>composition</b>. Get those two right and the rest follows.
+    </div>
+    <p><a class="btn btn-s btn-primary" href="../studio/index.html#atm">Build and check this diagram →</a></p>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="lab4">Lab 4 — Inheritance (ATM 2)</h2>
+    <p><span class="chip">week 5</span> <span class="chip chip-accent">chapter 5</span></p>
+    <p class="prose">
+      Extend Lab 3's code rather than starting again. The bank has grown:
+    </p>
+    <ul class="prose">
+      <li><b>Two account types</b> with different interest rates: savings <b>0.5%</b>, fixed deposit <b>2.5%</b>.</li>
+      <li>A new product, the <b>debit card</b>. It does everything an ATM card does and can also buy goods;
+      purchases are recorded with code <code>P</code> (Paid).</li>
+      <li>A savings account may request one ATM card <b>or</b> one debit card.</li>
+      <li>Annual fees: ATM card <b>150฿</b>, debit card <b>300฿</b>.</li>
+      <li>ATMs now limit a single withdrawal to <b>20,000฿</b>, and a transfer to <b>100,000฿</b>.</li>
+      <li>A debit card can be used at an <b>EDC terminal</b> (machine number, merchant name) or electronically.
+      Create a <code>Merchant</code> class that can accept electronic payment, and give each merchant its own EDC.</li>
+      <li>There are now <b>three channels</b>: the ATM (deposit, withdraw, transfer), the EDC or electronic payment
+      (money moves from the payer's account to the merchant's), and the <b>counter</b> (deposit and withdraw).</li>
+      <li>Each transaction records the type, the amount, the <b>resulting balance</b>, and for a transfer the
+      destination account.</li>
+    </ul>
+
+    <h3 id="lab4-rules">Additional requirements</h3>
+    <ul class="breaks fixes prose-wide">
+      <li>Use inheritance wherever the diagram shows an is-a relationship</li>
+      <li>Deposit uses the <code>+</code> operator — implement <code>__add__</code></li>
+      <li>Withdraw uses the <code>-</code> operator — implement <code>__sub__</code></li>
+      <li>Transfer uses a method called <code>transfer</code></li>
+      <li>All payment uses a method called <code>paid</code>, in every case</li>
+      <li>Statements are displayed with a <code>for</code> loop over the account's transactions</li>
+    </ul>
+
+    <h3 id="lab4-tests">Test cases</h3>
+    <ol class="prose">
+      <li>Deposit using <code>+</code></li>
+      <li>Withdraw using <code>-</code></li>
+      <li>Transfer using <code>transfer</code></li>
+      <li>Pay at an EDC terminal using <code>paid</code></li>
+      <li>Pay electronically using <code>paid</code></li>
+      <li>Display a statement using <code>for</code></li>
+    </ol>
+
+    <div class="note note-exam">
+      <b>Where inheritance belongs here.</b> <code>SavingsAccount</code> and <code>FixedDeposit</code> are kinds of
+      <code>Account</code> — different interest rules, one <code>calculate_interest()</code> overridden.
+      <code>DebitCard</code> is a kind of <code>ATMCard</code> — everything the parent does, plus <code>paid()</code>.
+      <code>Merchant</code> is <b>not</b> a kind of <code>User</code> unless it really opens accounts the same way;
+      check the is-a sentence before you draw the triangle.
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="lab5">Lab 5 — Polymorphism (appointment system)</h2>
+    <p><span class="chip">week 6</span> <span class="chip chip-accent">chapter 6</span></p>
+    <p class="prose">Three kinds of entry go in the diary:</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Type</th><th>Data</th><th>Participants</th></tr></thead>
+        <tbody>
+          <tr><td><b>One-time appointment</b></td><td>name, date, place, details</td><td>always has participants</td></tr>
+          <tr><td><b>Weekly appointment</b></td><td>name, <b>weekday</b>, place, details</td><td>always has participants</td></tr>
+          <tr><td><b>Event</b></td><td>name, date, place, details</td><td><b>none named</b> — it is for everybody, and everybody is notified</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="prose">
+      An event differs from an appointment precisely in that it does not list participants, because the
+      participants are everyone. That difference is what shapes the hierarchy.
+    </p>
+
+    <h3 id="lab5-req">What the program must do</h3>
+    <ul class="prose">
+      <li>Edit and delete appointments and events</li>
+      <li>Add participants to one-time and weekly appointments. <b>Overlapping appointments are allowed</b> —
+      do not check for clashes</li>
+      <li>Give every appointment a notification. Each member chooses <b>one</b> channel: e-mail <b>or</b> SMS</li>
+      <li>Search all appointments and events in the system</li>
+      <li>Search by person — every appointment that person is in, <b>plus all events</b></li>
+      <li>Send the notification for an appointment, using each recipient's chosen channel</li>
+    </ul>
+
+    <h3 id="lab5-members">The five members</h3>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Name</th><th>Channel</th><th>Address</th></tr></thead>
+        <tbody>
+          <tr><td>John Doe</td><td>E-mail</td><td>john.doe@example.com</td></tr>
+          <tr><td>Jane Smith</td><td>E-mail</td><td>jane.smith@example.com</td></tr>
+          <tr><td>Robert Johnson</td><td>SMS</td><td>08-1234-5678</td></tr>
+          <tr><td>Michael Brown</td><td>E-mail</td><td>michael.brown@example.com</td></tr>
+          <tr><td>Emily Davis</td><td>SMS</td><td>08-3456-7890</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 id="lab5-tests">Test cases</h3>
+    <ol class="steps prose-wide">
+      <li><b>Add</b> — one-time #1 “Team Meeting #1”, 2024-03-15, Room A, with Jane Smith, Robert Johnson, Emily Davis ·
+      one-time #2 “Team Meeting #2”, 2024-03-17, Room B, same three · weekly “Weekly Meeting”, Wednesday, Room C,
+      with John Doe, Robert Johnson, Emily Davis · event #1 “Company Party”, 2024-03-17, Conference Room ·
+      event #2 “Company Visit”, 2024-03-19, Conference Room. Then display everything.</li>
+      <li><b>Edit</b> — rename one-time #1 to “Team B Meeting #1”; move one-time #2 from Room B to Room C.
+      Display everything.</li>
+      <li><b>Delete</b> — remove one-time #2. Display everything.</li>
+      <li><b>Add participants</b> — John Doe to “Team B Meeting #1”; Jane Smith to “Weekly Meeting”.
+      Display everything.</li>
+      <li><b>Search by person</b> — “Robert Johnson”. The result must include the events as well.</li>
+      <li><b>Notify</b> — send the notification for “Team B Meeting #1”. Each recipient gets it by their own channel.</li>
+    </ol>
+
+    <div class="note note-why">
+      <b>Two places polymorphism does the work.</b> First, displaying a mixed list of appointments and events
+      with one loop calling the same method. Second, notification: <code>EmailNotifier</code> and
+      <code>SMSNotifier</code> both implement <code>send()</code>, and the sender never asks which one it has.
+      If your code contains <code>if member.channel == 'email'</code>, you have written the
+      <a href="../chapters/06-polymorphism.html">chapter 6</a> anti-pattern.
+    </div>
+  </section>
+
+  <section>
+    <h2 id="next">After Lab 5</h2>
+    <p class="prose">
+      Week 7 is a use case diagram lab, week 8 a sequence diagram lab, week 9 multiple inheritance in code,
+      and week 10 applies SOLID to your own group project. Weeks 11–15 are the mini-project.
+    </p>
+    <div class="grid grid-3">
+      <a class="card card-link" href="../studio/index.html"><h4 class="mt-0">UML Studio</h4><p class="muted mb-0">Draw and check the diagrams for Labs 3, 4 and the week 7 lab.</p></a>
+      <a class="card card-link" href="../chapters/08-sequence-diagram.html#build"><h4 class="mt-0">Sequence builder</h4><p class="muted mb-0">Build and check the week 8 sequence diagrams.</p></a>
+      <a class="card card-link" href="../sandbox/index.html"><h4 class="mt-0">Playground</h4><p class="muted mb-0">Run the lab skeletons without installing anything.</p></a>
+    </div>
+  </section>
+
+  <div class="chapnav">
+    <a class="prev" href="../index.html"><span class="dir">← Back</span><span class="nm">Home</span></a>
+    <a class="next" href="../studio/index.html"><span class="dir">Next →</span><span class="nm">UML Studio</span></a>
+  </div>
+
+  </div>
+  <aside class="toc" data-toc="main" aria-label="On this page"><h2>On this page</h2></aside>
+  </div>
+</div>
+</main>
+
+<footer class="footer">
+  <div class="wrap"><p class="mb-0">01276131 Object-Oriented Programming · Department of Computer Engineering, KMITL.</p></div>
+</footer>
+
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

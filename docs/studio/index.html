@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UML Studio — OOP 01276131</title>
+<meta name="description" content="Draw UML class and use case diagrams in the browser and have them marked automatically, with explanations for every mistake.">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23ff7a2f'/%3E%3Ctext x='16' y='23' font-family='sans-serif' font-size='18' font-weight='bold' fill='white' text-anchor='middle'%3EO%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<a class="skiplink" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">OO</span>
+      <span class="brand-txt">Object-Oriented Programming<small>01276131 · KMITL</small></span>
+    </a>
+    <button class="iconbtn navtoggle" data-nav-toggle aria-expanded="false" aria-label="Menu">☰</button>
+    <nav class="navlinks" aria-label="Main">
+      <a href="../index.html">Home</a>
+      <a href="../syllabus.html">Syllabus</a>
+      <a href="index.html">UML Studio</a>
+      <a href="../labs/index.html">Labs</a>
+      <a href="../sandbox/index.html">Playground</a>
+      <button class="iconbtn" data-theme-toggle aria-label="Toggle theme">☀</button>
+    </nav>
+  </div>
+  <div class="progressbar"></div>
+</header>
+
+<main id="main">
+<div class="wrap">
+  <div class="chaphead">
+    <span class="chapnum">TOOL</span>
+    <h1>UML Studio</h1>
+    <p class="lede">
+      Draw a diagram, press <b>Check</b>, and get it marked — not just right or wrong, but <i>why</i>.
+      Your work is saved in this browser, so you can come back to it.
+    </p>
+  </div>
+
+  <div class="grid grid-3" style="margin-bottom:1.6rem">
+    <div class="card">
+      <h4 class="mt-0">Place a node</h4>
+      <p class="muted mb-0">Click a tool under <b>Nodes</b>, then click the canvas. Type its name,
+      attributes and methods in the inspector on the right. Drag nodes to move them.</p>
+    </div>
+    <div class="card">
+      <h4 class="mt-0">Draw a relationship</h4>
+      <p class="muted mb-0">Click a tool under <b>Relationships</b>, then click the <b>two nodes in order</b>.
+      Direction matters: child → parent for inheritance, owner → part for the diamonds.</p>
+    </div>
+    <div class="card">
+      <h4 class="mt-0">Get it marked</h4>
+      <p class="muted mb-0">Press <b>Check my diagram</b>. Mistakes are listed first with the reasoning.
+      <kbd>Delete</kbd> removes the selected item; <kbd>Esc</kbd> cancels a tool.</p>
+    </div>
+  </div>
+
+  <h2 id="pick" style="margin-top:1rem">Pick an exercise</h2>
+  <div class="grid grid-3" id="exlist" style="margin-bottom:1.6rem"></div>
+
+  <div class="lab" id="studio-host" data-uml="registration">
+    <div class="lab-head">
+      <h4 id="ex-title">Student registration</h4>
+      <span class="chip chip-vio" id="ex-kind">class diagram</span>
+    </div>
+    <div class="studio">
+      <div class="studio-pal" data-uml-palette></div>
+      <div class="studio-main"><svg class="canvas" data-uml-canvas aria-label="Diagram canvas"></svg></div>
+      <div class="studio-side">
+        <button class="btn btn-s btn-primary" data-uml-run style="width:100%">✓ Check my diagram</button>
+        <div data-uml-check></div>
+        <hr>
+        <div data-uml-side></div>
+      </div>
+    </div>
+    <div class="lab-foot" id="ex-brief"></div>
+  </div>
+
+  <section>
+    <h2 id="notation">Notation reference</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Line</th><th>Name</th><th>Means</th><th>In Python</th><th>Draw it from…</th></tr></thead>
+        <tbody>
+          <tr><td>── ▸</td><td>Association</td><td>A stores a reference to B</td><td><code>self.__b = b</code></td><td>the one that stores → the one stored</td></tr>
+          <tr><td>──</td><td>Association (two-way)</td><td>each stores the other</td><td>attributes on both sides</td><td>either direction</td></tr>
+          <tr><td>- - ▸</td><td>Dependency</td><td>A uses B as a parameter and does not keep it</td><td><code>def f(self, b):</code></td><td>the user → the used</td></tr>
+          <tr><td>◇──</td><td>Aggregation</td><td>A has B; B survives without A</td><td><code>self.__items = []</code></td><td><b>container</b> → part</td></tr>
+          <tr><td>◆──</td><td>Composition</td><td>A owns B; B dies with A</td><td>A creates B in <code>__init__</code></td><td><b>owner</b> → part</td></tr>
+          <tr><td>──△</td><td>Generalization</td><td>B is a kind of A</td><td><code>class B(A):</code></td><td><b>child</b> → parent</td></tr>
+          <tr><td>- -▸ «include»</td><td>Include</td><td>the base always performs this one</td><td>—</td><td>base → included</td></tr>
+          <tr><td>- -▸ «extend»</td><td>Extend</td><td>optional behaviour added to a base</td><td>—</td><td>optional → base</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note note-tip">
+      <b>Multiplicity cheat sheet.</b> <code>1</code> → a single attribute · <code>0..1</code> → an attribute that
+      may be <code>None</code> · <code>0..*</code> or <code>*</code> → a list · <code>1..*</code> → a list that may
+      never be emptied · <code>n..m</code> → a list with a length check.
+    </div>
+  </section>
+</div>
+</main>
+
+<footer class="footer">
+  <div class="wrap"><p class="mb-0">01276131 Object-Oriented Programming · Department of Computer Engineering, KMITL.</p></div>
+</footer>
+
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/uml-exercises.js"></script>
+<script src="../assets/js/uml.js"></script>
+<script>
+/* Exercise picker: swap which exercise the single studio is running. */
+(function () {
+  var host = document.getElementById("studio-host");
+  var list = document.getElementById("exlist");
+  var titleEl = document.getElementById("ex-title");
+  var kindEl = document.getElementById("ex-kind");
+  var briefEl = document.getElementById("ex-brief");
+  var current = null;
+
+  var ORDER = [
+    ["registration",    "Week 4", "The grade has to live somewhere"],
+    ["has-a",           "Week 4", "Hollow or filled diamond?"],
+    ["school-container","Week 4", "Every object needs a container"],
+    ["atm",             "Week 4", "Lab 3 — bank and ATM"],
+    ["library",         "Week 4", "The worked library system"],
+    ["restaurant",      "Week 5", "Inheritance: menu price formulas"],
+    ["media",           "Week 6", "Polymorphism: the media player"],
+    ["cinema-uc",       "Week 7", "Use case: cinema ticketing"],
+    ["include-extend",  "Week 7", "«include» or «extend»?"],
+    ["solid-split",     "Week 10","Split the god class"]
+  ];
+
+  function load(id) {
+    var ex = window.UML_EXERCISES[id];
+    if (!ex) return;
+    ex.id = id;
+    current = id;
+
+    host.setAttribute("data-uml", id);
+    host.querySelector("[data-uml-canvas]").innerHTML = "";
+    host.querySelector("[data-uml-palette]").innerHTML = "";
+    host.querySelector("[data-uml-side]").innerHTML = "";
+    host.querySelector("[data-uml-check]").innerHTML = "";
+
+    titleEl.textContent = ex.title || id;
+    kindEl.textContent = ex.mode === "usecase" ? "use case diagram" : "class diagram";
+    briefEl.innerHTML = ex.brief || "";
+
+    OOP.studios[id] = new OOP.Studio(host, ex);
+
+    Array.prototype.forEach.call(list.children, function (c) {
+      c.classList.toggle("sel", c.getAttribute("data-ex") === id);
+      c.style.borderColor = c.getAttribute("data-ex") === id ? "var(--accent)" : "";
+    });
+    try { history.replaceState(null, "", "#" + id); } catch (e) {}
+  }
+
+  ORDER.forEach(function (row) {
+    var ex = window.UML_EXERCISES[row[0]];
+    if (!ex) return;
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "card card-link";
+    b.setAttribute("data-ex", row[0]);
+    b.style.textAlign = "left";
+    b.style.cursor = "pointer";
+    b.innerHTML = '<span class="chip" style="margin-bottom:.5rem">' + row[1] + "</span>" +
+      '<h4 style="margin:.2rem 0 .3rem">' + (ex.title || row[0]) + "</h4>" +
+      '<p class="muted mb-0" style="font-size:.85rem">' + row[2] + "</p>";
+    b.addEventListener("click", function () {
+      load(row[0]);
+      host.scrollIntoView({ block: "start" });
+    });
+    list.appendChild(b);
+  });
+
+  document.addEventListener("oop:ready", function () {
+    var want = location.hash.slice(1);
+    load(window.UML_EXERCISES[want] ? want : "registration");
+  });
+})();
+</script>
+</body>
+</html>

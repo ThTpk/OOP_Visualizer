@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>6 · Abstraction &amp; polymorphism — OOP 01276131</title>
+<meta name="description" content="Abstraction as interface-hiding and as generalisation, polymorphism, abstract base classes, magic methods, duck typing and composition.">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23ff7a2f'/%3E%3Ctext x='16' y='23' font-family='sans-serif' font-size='18' font-weight='bold' fill='white' text-anchor='middle'%3EO%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<a class="skiplink" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">OO</span>
+      <span class="brand-txt">Object-Oriented Programming<small>01276131 · KMITL</small></span>
+    </a>
+    <button class="iconbtn navtoggle" data-nav-toggle aria-expanded="false" aria-label="Menu">☰</button>
+    <nav class="navlinks" aria-label="Main">
+      <a href="../index.html">Home</a>
+      <a href="../syllabus.html">Syllabus</a>
+      <a href="../studio/index.html">UML Studio</a>
+      <a href="../labs/index.html">Labs</a>
+      <a href="../sandbox/index.html">Playground</a>
+      <button class="iconbtn" data-theme-toggle aria-label="Toggle theme">☀</button>
+    </nav>
+  </div>
+  <div class="progressbar"></div>
+</header>
+
+<main id="main">
+<div class="wrap">
+  <div class="chaphead">
+    <span class="chapnum">CHAPTER 6 · WEEK 6</span>
+    <h1>Abstraction &amp; polymorphism</h1>
+    <p class="lede">
+      <i>Poly</i> + <i>morph</i> — many forms. One method name, many bodies, and the object decides which one runs.
+      This is the pillar that deletes the <code>if/elif</code> chains.
+    </p>
+    <ul class="objectives">
+      <li>Explain both meanings of abstraction and give an example of each</li>
+      <li>Replace a type-switch with polymorphic dispatch, and say what that buys</li>
+      <li>Use <code>ABC</code> and <code>@abstractmethod</code> to force a subclass to keep its promise</li>
+      <li>Implement <code>__str__</code>, <code>__add__</code> and <code>__radd__</code> correctly</li>
+      <li>Choose between inheritance and composition for a given requirement</li>
+    </ul>
+  </div>
+
+  <div class="chapter-layout">
+  <div>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="abstraction">6.1 — Abstraction has two meanings</h2>
+    <p class="prose">
+      From Latin <i>abs</i> (away from) and <i>trahere</i> (to draw): to remove detail until only what matters is left.
+      In OOP the word carries two distinct ideas, and you need both.
+    </p>
+
+    <div class="grid grid-2">
+      <div class="card">
+        <h4 class="mt-0">1 · Interface, not implementation</h4>
+        <p class="muted">Treat a class as a black box: you put a message in and get a result out, without knowing how
+        it works inside. This is the same idea as encapsulation, viewed from outside.</p>
+        <p class="muted mb-0"><b>Payoff:</b> you can change the inside of a module freely, and nothing else breaks —
+        as long as the interface stays the same.</p>
+      </div>
+      <div class="card">
+        <h4 class="mt-0">2 · Draw the common part out</h4>
+        <p class="muted">Several classes share behaviour, so lift it into one place. This is the idea that produces
+        inheritance, and it is where abstract base classes come from.</p>
+        <p class="muted mb-0"><b>Payoff:</b> the shared rule has one home, and the specific parts stay with the
+        classes that are specific.</p>
+      </div>
+    </div>
+
+    <figure class="figframe">
+      <svg viewBox="0 0 680 180" role="img" aria-label="A caller sends a message to a black box and receives a result, without seeing inside">
+        <g font-size="12">
+          <rect x="24" y="62" width="120" height="50" rx="6" class="svg-surf"/>
+          <text x="84" y="92" text-anchor="middle" class="svg-ink">caller</text>
+
+          <rect x="246" y="30" width="190" height="114" rx="8" fill="var(--bg-code)" stroke="var(--accent)" stroke-width="1.6"/>
+          <text x="341" y="56" text-anchor="middle" class="svg-acc" font-size="10.5" font-weight="700" letter-spacing="1.2">INTERFACE</text>
+          <text x="341" y="80" text-anchor="middle" class="svg-ink svg-mono" font-size="11.5">play()</text>
+          <line x1="262" y1="94" x2="420" y2="94" class="svg-line" stroke-dasharray="4 3"/>
+          <text x="341" y="116" text-anchor="middle" class="svg-ink3" font-size="10.5">implementation — hidden</text>
+          <text x="341" y="132" text-anchor="middle" class="svg-ink3" font-size="10.5">(decode, buffer, stream…)</text>
+
+          <path d="M144 80 H238" class="svg-accs"/><path d="M238 80 l-9 -4.5 M238 80 l-9 4.5" class="svg-accs"/>
+          <text x="191" y="72" text-anchor="middle" class="svg-ink3" font-size="10">message</text>
+          <path d="M238 104 H144" class="svg-line" stroke-dasharray="4 3"/><path d="M144 104 l9 -4.5 M144 104 l9 4.5" class="svg-line"/>
+          <text x="191" y="120" text-anchor="middle" class="svg-ink3" font-size="10">result</text>
+
+          <text x="470" y="78" class="svg-ink3" font-size="11">Change what is below the dashed line</text>
+          <text x="470" y="96" class="svg-ink3" font-size="11">as often as you like. The caller never</text>
+          <text x="470" y="114" class="svg-ink3" font-size="11">notices, and never has to be retested.</text>
+        </g>
+      </svg>
+      <figcaption>A program becomes <b>messages sent between objects</b> rather than one tangle of logic.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="poly">6.2 — Polymorphism</h2>
+    <p class="prose">
+      You have used it since your first week of Python without noticing. The <code>*</code> operator does something
+      different to numbers, strings and lists; <code>len()</code> works on anything that knows its own length.
+      Same name, different behaviour per type.
+    </p>
+
+    <div class="codeblock">
+      <div class="codehead">polymorphism you already use</div>
+<pre data-raw="1"><code>3 * 4          -> 12            # multiply
+'ab' * 3       -> 'ababab'      # repeat
+[0] * 3        -> [0, 0, 0]     # repeat the list
+
+len('hello')   -> 5
+len([1, 2, 3]) -> 3
+len({'a': 1})  -> 1</code></pre>
+    </div>
+
+    <p class="prose">
+      In your own code it looks like this. Press <b>Run the game loop</b>, then add a new character class
+      and watch which side has to change.
+    </p>
+
+    <div data-viz="dispatch"></div>
+
+    <div class="note note-why">
+      <b>Polymorphism requires inheritance.</b> The loop can safely write <code>c.attack()</code> only because
+      every element <i>is a</i> <code>GameCharacter</code> and therefore promises that method.
+      Shared interface first; different bodies second. Without the shared parent you are back to
+      <code>hasattr()</code> checks and hope.
+    </div>
+
+    <div class="codeblock">
+      <div class="codehead">the classic example: one play() per file type</div>
+<pre><code>class AudioFile:
+    def __init__(self, filename):
+        if not filename.endswith(self.ext):
+            raise ValueError('Invalid file format')
+        self.filename = filename
+
+class MP3File(AudioFile):
+    ext = 'mp3'
+    def play(self):
+        print(f'playing {self.filename} as mp3')
+
+class WavFile(AudioFile):
+    ext = 'wav'
+    def play(self):
+        print(f'playing {self.filename} as wav')
+
+class OggFile(AudioFile):
+    ext = 'ogg'
+    def play(self):
+        print(f'playing {self.filename} as ogg')
+
+for f in [MP3File('a.mp3'), WavFile('b.wav'), OggFile('c.ogg')]:
+    f.play()        # one call site, three different decoders</code></pre>
+    </div>
+    <p class="prose">
+      Note that the subclasses have no constructor — they use the parent's, which validates the extension against
+      each subclass's own <code>ext</code> class attribute. One constructor, three behaviours: polymorphism again.
+    </p>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="abc">6.3 — Abstract base classes</h2>
+    <p class="prose">
+      In the code above, nothing forces a new subclass to define <code>play()</code>. Forget it, and the program
+      crashes at the moment somebody tries to play that file — possibly in front of a user. An
+      <b>abstract base class</b> moves that failure to the moment the object is created.
+    </p>
+
+    <div data-viz="abc"></div>
+
+    <div class="codeblock">
+      <div class="codehead">abstract methods and abstract properties</div>
+<pre><code>from abc import ABC, abstractmethod
+
+class MediaLoader(ABC):
+
+    @property
+    @abstractmethod
+    def ext(self):                 # subclasses must define this attribute
+        ...
+
+    @abstractmethod
+    def play(self):                # and this method
+        ...
+
+class Ogg(MediaLoader):
+    ext = '.ogg'                   # required
+    def play(self):                # required
+        print('playing ogg')
+
+o = Ogg()        # fine — both promises kept</code></pre>
+    </div>
+
+    <p class="prose">
+      Two rules follow from inheriting <code>ABC</code>:
+    </p>
+    <ul class="prose">
+      <li>The abstract class itself can never be instantiated. <code>MediaLoader()</code> raises
+      <code>TypeError</code> — and that is correct, because “a media loader” is not a thing, it is a category.</li>
+      <li>Any subclass that leaves an <code>@abstractmethod</code> unimplemented cannot be instantiated either.</li>
+    </ul>
+
+    <div class="note note-good">
+      <b>What it is really for:</b> a <b>uniform interface</b>. Once <code>Gold</code> and <code>Silver</code> both
+      inherit from an abstract <code>Member</code> that declares <code>discount()</code>, the billing code can hold
+      any member and call <code>discount()</code> without checking anything.
+    </div>
+
+    <h3 id="duck">Duck typing — and why we still use ABC</h3>
+    <p class="prose">
+      Python does not require the inheritance. If an object has a <code>play()</code> method, the loop will call it —
+      “if it walks like a duck and quacks like a duck”. That flexibility is real, and it is why Python code often
+      works with classes that share no ancestor.
+    </p>
+    <p class="prose">
+      Prefer the abstract base class anyway when the shared interface is <b>part of the design</b>. It documents the
+      contract, it fails early, and it tells the next reader that these classes are meant to be interchangeable.
+      In the labs, where the staff check the design, make the contract explicit.
+    </p>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="magic">6.4 — Magic (dunder) methods</h2>
+    <p class="prose">
+      Your classes can take part in Python's own syntax: <code>+</code>, <code>len()</code>, <code>in</code>,
+      indexing, printing. These are implemented by <b>dunder</b> methods, and they are polymorphism applied to
+      operators.
+    </p>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>You write</th><th>Python calls</th><th>Typical use</th></tr></thead>
+        <tbody>
+          <tr><td><code>print(obj)</code>, <code>str(obj)</code></td><td><code>__str__</code></td><td>a readable description for users</td></tr>
+          <tr><td><code>repr(obj)</code>, the REPL</td><td><code>__repr__</code></td><td>an unambiguous description for developers</td></tr>
+          <tr><td><code>a + b</code></td><td><code>a.__add__(b)</code></td><td>combining two of your objects</td></tr>
+          <tr><td><code>5 + b</code></td><td><code>b.__radd__(5)</code></td><td>when the <i>left</i> operand does not know your class</td></tr>
+          <tr><td><code>len(obj)</code></td><td><code>__len__</code></td><td>size of a collection class</td></tr>
+          <tr><td><code>obj[i]</code></td><td><code>__getitem__</code></td><td>indexing and slicing</td></tr>
+          <tr><td><code>x in obj</code></td><td><code>__contains__</code></td><td>membership tests</td></tr>
+          <tr><td><code>a == b</code></td><td><code>__eq__</code></td><td>value equality instead of identity</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="codeblock">
+      <div class="codehead">a Length class that adds across units</div>
+<pre data-hl="21,22,23,24,25"><code>class Length:
+    __metric = {'mm': 0.001, 'cm': 0.01, 'm': 1.0, 'km': 1000.0,
+                'in': 0.0254, 'ft': 0.3048, 'yd': 0.9144}
+
+    def __init__(self, value, unit='m'):
+        self.value = value
+        self.unit = unit
+
+    def converse2metres(self):
+        return self.value * Length.__metric[self.unit]
+
+    def __str__(self):                       # print() -> metres
+        return f'{self.converse2metres()} m'
+
+    def __repr__(self):                      # the REPL -> as entered
+        return f"Length({self.value}, '{self.unit}')"
+
+    def __add__(self, other):
+        if isinstance(other, Length):
+            result = self.converse2metres() + other.converse2metres()
+        else:                                # plain number = metres
+            result = self.converse2metres() + other
+        return Length(result)
+
+    def __radd__(self, other):               # makes sum() and 5 + L work
+        return self.__add__(other)
+
+print(Length(3, 'ft') + Length(4, 'in'))     # 1.0160 m
+print(Length(3, 'ft') + 2)                   # 2.9144 m
+print(sum([Length(1), Length(2), Length(3)]))  # 6.0 m</code></pre>
+    </div>
+
+    <div class="note note-trap">
+      <b>Why <code>__radd__</code> is needed.</b> For <code>a + b</code>, Python first asks <code>a.__add__(b)</code>.
+      With <code>5 + Length(1)</code>, <code>a</code> is an <code>int</code>, which has never heard of
+      <code>Length</code> and returns <code>NotImplemented</code>. Python then asks the right-hand operand
+      via <code>__radd__</code>. Without it, <code>sum()</code> fails — because <code>sum()</code> starts at
+      <code>0 + first_item</code>.
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="composition">6.5 — Composition: the alternative to inheritance</h2>
+    <p class="prose">
+      Inheritance is not the only way to reuse code, and it is usually not the best. <b>Composition</b> means
+      holding another object and delegating to it. The guideline, in this course and in industry, is
+      <i>favour composition over inheritance</i>.
+    </p>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th></th><th>Inheritance</th><th>Composition</th></tr></thead>
+        <tbody>
+          <tr><td>Relationship</td><td><b>is-a</b></td><td><b>has-a</b></td></tr>
+          <tr><td>Fixed when?</td><td>at the time the class is written</td><td>at run time — you can swap the part</td></tr>
+          <tr><td>Coupling</td><td>tight: the child sees the parent's internals</td><td>loose: only the part's public interface</td></tr>
+          <tr><td>Testing</td><td>needs the whole hierarchy</td><td>pass in a fake and test alone</td></tr>
+          <tr><td>Multiple behaviours</td><td>combinatorial explosion of subclasses</td><td>hold several parts</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="vs">
+      <div class="vs-side vs-bad">
+        <div class="vs-head">✗ a subclass per combination</div>
+<pre><code>class Payment: ...
+class PaymentWithSMS(Payment): ...
+class PaymentWithEmail(Payment): ...
+class PaymentWithSMSAndEmail(Payment): ...
+class PaymentWithFingerprint(Payment): ...
+class PaymentWithSMSAndFingerprint(Payment): ...
+# every new factor doubles the tree</code></pre>
+      </div>
+      <div class="vs-side vs-good">
+        <div class="vs-head">✓ hold the collaborator</div>
+<pre><code>class SMSAuthorizer:
+    def is_authorized(self): ...
+
+class DebitPayment(Payment):
+    def __init__(self, code, authorizer):
+        self.__code = code
+        self.__authorizer = authorizer    # handed in
+
+    def pay(self, order):
+        if not self.__authorizer.is_authorized():
+            raise Exception('Not authorized')
+        ...</code></pre>
+      </div>
+    </div>
+
+    <p class="prose">
+      You met composition already as a diagram relationship in
+      <a href="04-class-diagram.html#hasa">chapter 4</a> and as the <code>Buff</code> class in
+      <a href="05-inheritance.html#buff">chapter 5</a>. In <a href="10-solid.html#dip">chapter 10</a>
+      it becomes the <b>D</b> of SOLID.
+    </p>
+
+    <h3 id="choose">Choosing correctly</h3>
+    <div data-viz="chooser"></div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="example">6.6 — Worked example: the media player</h2>
+    <p class="prose">
+      <b>The brief.</b> Songs have a title, artist, album and file type (<code>.mp3</code>, <code>.flac</code>,
+      <code>.aac</code>), each played by its own decoder. Podcast episodes have an episode number, title, channel,
+      channel owner and file type. Listeners build playlists that may mix songs and podcasts. The player must play
+      one item, walk a playlist, walk an album, search by song or album title, and add items to any of several
+      playlists.
+    </p>
+
+    <ol class="steps prose-wide">
+      <li><b>One interface for anything playable.</b> <code>Media</code> declares <code>play()</code> as abstract;
+      <code>Song</code> and <code>Podcast</code> inherit it. Format-specific decoding overrides <code>play()</code>.</li>
+      <li><b>Albums, playlists and podcasts all hold media.</b> All three had an <code>add_song</code> method,
+      which is the signal to lift a common parent — call it <code>Collection</code>.</li>
+      <li><b>Album differs by one thing:</b> it has an artist. So <code>Album</code> and <code>Playlist</code> both
+      inherit <code>Collection</code>, and only <code>Album</code> adds the artist.</li>
+      <li><b>Collection holds Media by aggregation</b> — removing a playlist must not delete the songs.</li>
+    </ol>
+
+    <div class="lab" data-uml="media">
+      <div class="lab-head">
+        <h4>Exercise — the media player hierarchy</h4>
+        <span class="chip chip-vio">auto-marked</span>
+      </div>
+      <div class="studio">
+        <div class="studio-pal" data-uml-palette></div>
+        <div class="studio-main"><svg class="canvas" data-uml-canvas aria-label="Diagram canvas"></svg></div>
+        <div class="studio-side">
+          <button class="btn btn-s btn-primary" data-uml-run style="width:100%">✓ Check my diagram</button>
+          <div data-uml-check></div>
+          <hr>
+          <div data-uml-side></div>
+        </div>
+      </div>
+      <div class="lab-foot">Six classes. Remember the diamond: a playlist <i>has</i> media, it does not <i>own</i> it.</div>
+    </div>
+
+    <div class="codeblock">
+      <div class="codehead">the shape of the answer</div>
+<pre><code>from abc import ABC, abstractmethod
+
+class Media(ABC):
+    def __init__(self, title, file_type):
+        self._title = title
+        self._file_type = file_type
+
+    @abstractmethod
+    def play(self): ...
+
+    def get_title(self):
+        return self._title
+
+
+class Song(Media):
+    def __init__(self, title, artist, file_type):
+        super().__init__(title, file_type)
+        self.__artist = artist
+
+    def play(self):
+        return f'♪ {self._title} — {self.__artist} [{self._file_type}]'
+
+
+class Podcast(Media):
+    def __init__(self, title, episode, channel, file_type):
+        super().__init__(title, file_type)
+        self.__episode = episode
+        self.__channel = channel
+
+    def play(self):
+        return f'🎙 EP{self.__episode} {self._title} — {self.__channel}'
+
+
+class Collection:
+    def __init__(self, name):
+        self._name = name
+        self._items = []            # aggregation: media live elsewhere too
+
+    def add_media(self, media):
+        if not isinstance(media, Media):
+            return 'Error'
+        self._items.append(media)
+        return 'Done'
+
+    def play_all(self):
+        return [m.play() for m in self._items]   # polymorphism
+
+
+class Album(Collection):
+    def __init__(self, name, artist):
+        super().__init__(name)
+        self.__artist = artist
+
+
+class Playlist(Collection):
+    pass
+
+
+mix = Playlist('Study mix')
+mix.add_media(Song('Clair de Lune', 'Debussy', '.flac'))
+mix.add_media(Podcast('OOP in practice', 12, 'DevCast', '.mp3'))
+for line in mix.play_all():
+    print(line)</code></pre>
+    </div>
+    <p class="prose">
+      Look at <code>play_all()</code>: one list comprehension plays a song and a podcast, in two different file
+      formats, with no type check anywhere. That is the whole point of the chapter.
+    </p>
+
+    <h3 id="check">Check yourself</h3>
+
+    <div class="quiz" data-quiz>
+      <p class="quiz-q">Why can't you write <code>Media('x.mp3')</code> when <code>Media(ABC)</code> has an abstract <code>play()</code>?</p>
+      <ul class="quiz-opts">
+        <li><button data-why="There is no privacy rule involved — abstractness is the reason.">Because <code>Media</code> is private</button></li>
+        <li><button data-correct data-why="A class with unimplemented abstract methods cannot be instantiated. That is the intent: 'a media' is a category, not a thing, and the error arrives at creation time rather than at play time.">Because an abstract class with unimplemented methods cannot be instantiated</button></li>
+        <li><button data-why="It is a TypeError at run time, not a syntax error — the code parses fine.">Because it is a syntax error</button></li>
+      </ul>
+    </div>
+
+    <div class="quiz" data-quiz>
+      <p class="quiz-q"><code>sum([Length(1), Length(2)])</code> raises <code>TypeError</code> even though <code>__add__</code> is defined. Why?</p>
+      <ul class="quiz-opts">
+        <li><button data-why="__add__ is defined and correct — the problem is which operand Python asks first.">Because <code>__add__</code> is wrong</button></li>
+        <li><button data-correct data-why="<code>sum()</code> starts from <code>0 + first_item</code>. The left operand is an int, which returns NotImplemented, so Python looks for <code>__radd__</code> on the right operand. Define it and sum() works.">Because <code>sum()</code> starts at <code>0 + item</code>, which needs <code>__radd__</code></button></li>
+        <li><button data-why="Lists of custom objects are fine; the issue is the arithmetic, not the container.">Because a list cannot hold custom objects</button></li>
+      </ul>
+    </div>
+
+    <div class="quiz" data-quiz>
+      <p class="quiz-q">You must support payments that may need SMS auth, email auth, both, or neither. Design?</p>
+      <ul class="quiz-opts">
+        <li><button data-why="Four combinations today, eight when a third factor arrives. This is the combinatorial explosion that composition exists to prevent.">A subclass for each combination</button></li>
+        <li><button data-correct data-why="Hold the authorisers as parts and delegate. Adding a third factor adds one small class, and the existing payment classes do not change.">One payment class that holds authoriser objects passed in</button></li>
+        <li><button data-why="That is the if/elif chain again, inside the payment class, growing with every new factor.">A flag parameter and an if/elif inside <code>pay()</code></button></li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="chapnav">
+    <a class="prev" href="05-inheritance.html"><span class="dir">← Previous</span><span class="nm">Inheritance</span></a>
+    <a class="next" href="07-use-case-diagram.html"><span class="dir">Chapter 7 →</span><span class="nm">Use case diagrams</span></a>
+  </div>
+
+  </div>
+  <aside class="toc" data-toc="main" aria-label="On this page"><h2>On this page</h2></aside>
+  </div>
+</div>
+</main>
+
+<footer class="footer">
+  <div class="wrap"><p class="mb-0">01276131 Object-Oriented Programming · Department of Computer Engineering, KMITL.</p></div>
+</footer>
+
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/viz.js"></script>
+<script src="../assets/js/uml-exercises.js"></script>
+<script src="../assets/js/uml.js"></script>
+</body>
+</html>

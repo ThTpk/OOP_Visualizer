@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quick reference — OOP 01276131</title>
+<meta name="description" content="One-page revision sheet: Python OOP syntax, UML notation, multiplicity, SOLID, and a table for choosing the right relationship.">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23ff7a2f'/%3E%3Ctext x='16' y='23' font-family='sans-serif' font-size='18' font-weight='bold' fill='white' text-anchor='middle'%3EO%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<a class="skiplink" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">OO</span>
+      <span class="brand-txt">Object-Oriented Programming<small>01276131 · KMITL</small></span>
+    </a>
+    <button class="iconbtn navtoggle" data-nav-toggle aria-expanded="false" aria-label="Menu">☰</button>
+    <nav class="navlinks" aria-label="Main">
+      <a href="index.html">Home</a>
+      <a href="syllabus.html">Syllabus</a>
+      <a href="studio/index.html">UML Studio</a>
+      <a href="labs/index.html">Labs</a>
+      <a href="sandbox/index.html">Playground</a>
+      <button class="iconbtn" data-theme-toggle aria-label="Toggle theme">☀</button>
+    </nav>
+  </div>
+  <div class="progressbar"></div>
+</header>
+
+<main id="main">
+<div class="wrap">
+  <div class="chaphead">
+    <span class="chapnum">REVISION</span>
+    <h1>Quick reference</h1>
+    <p class="lede">Everything the exam expects you to recall, on one page. Print it if that helps.</p>
+  </div>
+
+  <div class="chapter-layout">
+  <div>
+
+  <section>
+    <h2 id="decide">The decision table</h2>
+    <p class="prose">If you learn one thing on this page, make it this one.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>The sentence that is true</th><th>Relationship</th><th>UML</th><th>Python</th></tr></thead>
+        <tbody>
+          <tr><td>B <b>is a kind of</b> A</td><td>Generalization</td><td>──△ at A</td><td><code>class B(A):</code></td></tr>
+          <tr><td>A <b>has a</b> B, and B dies with A</td><td>Composition</td><td>◆── at A</td><td>A builds B inside <code>__init__</code></td></tr>
+          <tr><td>A <b>has a</b> B, and B lives on</td><td>Aggregation</td><td>◇── at A</td><td>B is handed to A and stored</td></tr>
+          <tr><td>A <b>keeps a reference to</b> B</td><td>Association</td><td>──▸ at B</td><td><code>self.__b = b</code></td></tr>
+          <tr><td>A <b>uses</b> B and forgets it</td><td>Dependency</td><td>- -▸ at B</td><td><code>def f(self, b):</code></td></tr>
+          <tr><td>Several types must answer the same call differently</td><td>Polymorphism</td><td>abstract method on the parent</td><td><code>@abstractmethod</code> + override</td></tr>
+          <tr><td>They only share fields, with no is-a</td><td><b>Neither</b></td><td>separate classes, or a mixin</td><td>composition or a <code>…Mixin</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2 id="syntax">Python syntax</h2>
+
+    <h3 id="s-class">Class and constructor</h3>
+    <div class="codeblock"><div class="codehead">the shape of every class in this course</div>
+<pre><code>class BankAccount:                       # PascalCase noun
+    interest_rate = 0.005                # class attribute: one copy, shared
+
+    def __init__(self, number, owner):   # self is always first
+        self.__number = number           # private: name-mangled
+        self.__owner = owner             # stores the INSTANCE, not a copy
+        self.__balance = 0.0
+        self.__transactions = []         # composition: born here, dies here
+
+    @property                            # read-only
+    def number(self):
+        return self.__number
+
+    @property
+    def balance(self):
+        return self.__balance
+
+    def deposit(self, amount: float) -> bool:    # verb, snake_case, type hints
+        if not isinstance(amount, (int, float)) or amount <= 0:
+            raise ValueError('amount must be a positive number')
+        self.__balance += amount
+        self.__transactions.append(Transaction('D', amount, self.__balance))
+        return True
+
+    @staticmethod                        # no self: a helper that needs no state
+    def baht_to_usd(baht: float) -> float:
+        return baht / 36.0
+
+    @classmethod                         # an alternative constructor
+    def open_with_deposit(cls, number, owner, amount):
+        acct = cls(number, owner)
+        acct.deposit(amount)
+        return acct
+
+    def __str__(self):                   # what print() shows
+        return f'{self.__number} ({self.__owner.name}): {self.__balance:.2f}'</code></pre>
+    </div>
+
+    <h3 id="s-access">Access levels</h3>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Written</th><th>Means</th><th>Outside the class</th><th>In a subclass</th><th>UML</th></tr></thead>
+        <tbody>
+          <tr><td><code>name</code></td><td>public</td><td>✓ works</td><td>✓</td><td><code>+</code></td></tr>
+          <tr><td><code>_name</code></td><td>protected, by convention only</td><td>⚠ still works</td><td>✓</td><td><code>#</code></td></tr>
+          <tr><td><code>__name</code></td><td>private, name-mangled to <code>_Class__name</code></td><td>✗ AttributeError</td><td>✗</td><td><code>-</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 id="s-inherit">Inheritance</h3>
+    <div class="codeblock"><div class="codehead">single and multiple</div>
+<pre><code>class SavingsAccount(BankAccount):
+    def __init__(self, number, owner, rate=0.005):
+        super().__init__(number, owner)   # ALWAYS call up
+        self.__rate = rate
+
+    def calculate_interest(self):         # overriding
+        return self.balance * self.__rate
+
+
+# multiple inheritance: every class takes **kwargs and forwards it once
+class Contact:
+    def __init__(self, name='', email='', **kwargs):
+        super().__init__(**kwargs)
+        self.name, self.email = name, email
+
+class AddressHolder:
+    def __init__(self, street='', city='', **kwargs):
+        super().__init__(**kwargs)
+        self.street, self.city = street, city
+
+class Friend(Contact, AddressHolder):
+    def __init__(self, phone='', **kwargs):
+        super().__init__(**kwargs)
+        self.phone = phone
+
+print(Friend.__mro__)    # when in doubt, read the MRO</code></pre>
+    </div>
+
+    <h3 id="s-abc">Abstract base class</h3>
+    <div class="codeblock"><div class="codehead">forcing a promise</div>
+<pre><code>from abc import ABC, abstractmethod
+
+class PaymentProcessor(ABC):
+    @abstractmethod
+    def pay(self, order): ...        # subclasses MUST implement this
+
+class CreditProcessor(PaymentProcessor):
+    def pay(self, order):
+        order.status = 'paid'
+
+PaymentProcessor()   # TypeError — abstract classes are not things</code></pre>
+    </div>
+
+    <h3 id="s-magic">Magic methods worth knowing</h3>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Method</th><th>Triggered by</th></tr></thead>
+        <tbody>
+          <tr><td><code>__init__</code></td><td><code>Class(…)</code></td></tr>
+          <tr><td><code>__str__</code></td><td><code>print(obj)</code>, <code>str(obj)</code></td></tr>
+          <tr><td><code>__repr__</code></td><td><code>repr(obj)</code>, the REPL</td></tr>
+          <tr><td><code>__add__</code> / <code>__sub__</code></td><td><code>a + b</code> / <code>a - b</code></td></tr>
+          <tr><td><code>__radd__</code></td><td><code>5 + obj</code>, and <code>sum()</code></td></tr>
+          <tr><td><code>__eq__</code></td><td><code>a == b</code></td></tr>
+          <tr><td><code>__len__</code></td><td><code>len(obj)</code></td></tr>
+          <tr><td><code>__getitem__</code></td><td><code>obj[i]</code>, slicing</td></tr>
+          <tr><td><code>__contains__</code></td><td><code>x in obj</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 id="s-exc">Exceptions</h3>
+    <div class="codeblock"><div class="codehead">raise, never print</div>
+<pre><code>class InsufficientFunds(Exception):
+    def __init__(self, balance, requested):
+        self.balance = balance
+        self.requested = requested
+        super().__init__(f'balance {balance} &lt; requested {requested}')
+
+try:
+    account.withdraw(5000)
+except InsufficientFunds as e:
+    screen.show(f'Short by {e.requested - e.balance}')</code></pre>
+    </div>
+  </section>
+
+  <section>
+    <h2 id="uml">UML notation</h2>
+
+    <h3 id="u-mult">Multiplicity → data structure</h3>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Notation</th><th>Meaning</th><th>Python</th></tr></thead>
+        <tbody>
+          <tr><td><code>1</code></td><td>exactly one</td><td>a single attribute</td></tr>
+          <tr><td><code>0..1</code></td><td>zero or one</td><td>an attribute that may be <code>None</code></td></tr>
+          <tr><td><code>0..*</code> / <code>*</code></td><td>any number</td><td>a list</td></tr>
+          <tr><td><code>1..*</code></td><td>at least one</td><td>a list that may never be emptied</td></tr>
+          <tr><td><code>n..m</code></td><td>between n and m</td><td>a list with a length check</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 id="u-uc">Use case relationships</h3>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Relationship</th><th>Question</th><th>Arrow runs</th></tr></thead>
+        <tbody>
+          <tr><td><b>«include»</b></td><td>Does the base <i>always</i> need it?</td><td>base → included</td></tr>
+          <tr><td><b>«extend»</b></td><td>Does it <i>only sometimes</i> happen?</td><td>optional → base</td></tr>
+          <tr><td><b>Generalization</b></td><td>Is one a <i>kind of</i> the other?</td><td>specific → general</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 id="u-seq">Sequence diagram</h3>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Element</th><th>Drawn as</th></tr></thead>
+        <tbody>
+          <tr><td>Synchronous message</td><td>solid line, <b>filled</b> arrowhead — the caller waits</td></tr>
+          <tr><td>Asynchronous message</td><td>solid line, <b>open</b> arrowhead — the caller carries on</td></tr>
+          <tr><td>Return</td><td>dashed line, open arrowhead — optional for synchronous calls</td></tr>
+          <tr><td>Reflexive</td><td>arrow starting and ending on the same lifeline</td></tr>
+          <tr><td>Activation bar</td><td>thin rectangle: how long that object is busy</td></tr>
+          <tr><td><code>alt</code></td><td>if / else — operands split by dashed lines, one guard each</td></tr>
+          <tr><td><code>opt</code></td><td>if with no else — one block, one guard</td></tr>
+          <tr><td><code>loop</code></td><td>repetition, with a guard</td></tr>
+          <tr><td><code>par</code></td><td>operands run in parallel</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2 id="solid">SOLID in one line each</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th></th><th>Principle</th><th>Symptom of a violation</th><th>The fix</th></tr></thead>
+        <tbody>
+          <tr><td><b>S</b></td><td>Single Responsibility</td><td>you can name two unrelated reasons to edit this class</td><td>split it along those reasons</td></tr>
+          <tr><td><b>O</b></td><td>Open–Closed</td><td>an <code>if/elif</code> on a type that grows with each feature</td><td>abstract base class + one subclass per case</td></tr>
+          <tr><td><b>L</b></td><td>Liskov Substitution</td><td>a subclass raises, ignores or redefines an inherited method</td><td>fix the contract, or do not inherit</td></tr>
+          <tr><td><b>I</b></td><td>Interface Segregation</td><td>a method whose body is <code>pass</code> or <code>raise</code></td><td>split the interface, or compose</td></tr>
+          <tr><td><b>D</b></td><td>Dependency Inversion</td><td>a class constructs the collaborator it depends on</td><td>pass it in — dependency injection</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2 id="smells">Design review checklist</h2>
+    <p class="prose">Run your mini-project past this before you present it.</p>
+    <ul class="breaks prose-wide">
+      <li>Any attribute without <code>__</code>?</li>
+      <li>Any getter or setter nobody calls?</li>
+      <li>Any <code>print()</code> or <code>input()</code> inside a class?</li>
+      <li>Any fact stored in two places?</li>
+      <li>Any object with no container holding it?</li>
+      <li>Any <code>if</code> on a type string where a subclass would do?</li>
+      <li>Any class you cannot describe in one sentence?</li>
+      <li>Any inheritance whose is-a sentence sounds wrong out loud?</li>
+      <li>Any method over about 15 lines, or with more than about three parameters?</li>
+      <li>Any class that builds a collaborator it could be handed?</li>
+    </ul>
+  </section>
+
+  <div class="chapnav">
+    <a class="prev" href="index.html"><span class="dir">← Back</span><span class="nm">Home</span></a>
+    <a class="next" href="studio/index.html"><span class="dir">Next →</span><span class="nm">UML Studio</span></a>
+  </div>
+
+  </div>
+  <aside class="toc" data-toc="main" aria-label="On this page"><h2>On this page</h2></aside>
+  </div>
+</div>
+</main>
+
+<footer class="footer">
+  <div class="wrap"><p class="mb-0">01276131 Object-Oriented Programming · Department of Computer Engineering, KMITL.</p></div>
+</footer>
+
+<script src="assets/js/site.js"></script>
+</body>
+</html>

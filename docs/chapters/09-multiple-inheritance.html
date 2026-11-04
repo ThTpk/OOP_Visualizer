@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>9 · Multiple inheritance, MRO &amp; mixins — OOP 01276131</title>
+<meta name="description" content="Multiple inheritance in Python, method resolution order, the diamond problem, super() versus class-name calls, **kwargs across a hierarchy, mixins, and custom exceptions.">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23ff7a2f'/%3E%3Ctext x='16' y='23' font-family='sans-serif' font-size='18' font-weight='bold' fill='white' text-anchor='middle'%3EO%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<a class="skiplink" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">OO</span>
+      <span class="brand-txt">Object-Oriented Programming<small>01276131 · KMITL</small></span>
+    </a>
+    <button class="iconbtn navtoggle" data-nav-toggle aria-expanded="false" aria-label="Menu">☰</button>
+    <nav class="navlinks" aria-label="Main">
+      <a href="../index.html">Home</a>
+      <a href="../syllabus.html">Syllabus</a>
+      <a href="../studio/index.html">UML Studio</a>
+      <a href="../labs/index.html">Labs</a>
+      <a href="../sandbox/index.html">Playground</a>
+      <button class="iconbtn" data-theme-toggle aria-label="Toggle theme">☀</button>
+    </nav>
+  </div>
+  <div class="progressbar"></div>
+</header>
+
+<main id="main">
+<div class="wrap">
+  <div class="chaphead">
+    <span class="chapnum">CHAPTER 9 · WEEK 9</span>
+    <h1>Multiple inheritance, MRO &amp; mixins</h1>
+    <p class="lede">
+      Python lets a class have more than one parent. That is powerful and it is a trap: the diamond problem,
+      constructors that run twice, and arguments that go missing. Here is how to use it without being bitten.
+    </p>
+    <ul class="objectives">
+      <li>Predict which method Python runs, using the method resolution order</li>
+      <li>Explain the diamond problem and why <code>super()</code> solves it</li>
+      <li>Pass differing argument sets up a hierarchy with <code>**kwargs</code></li>
+      <li>Use a mixin to add behaviour without claiming an is-a relationship</li>
+      <li>Raise and catch your own exception classes instead of printing errors</li>
+    </ul>
+  </div>
+
+  <div class="chapter-layout">
+  <div>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="what">9.1 — Inheriting from more than one class</h2>
+    <p class="prose">
+      Many languages forbid this. Python allows it: list the parents, separated by commas, and the subclass gets
+      the abilities of all of them.
+    </p>
+
+    <div class="codeblock">
+      <div class="codehead">two parents</div>
+<pre data-hl="7"><code>class Clickable:
+    def on_click(self):
+        print('clicked')
+
+class Drawable:
+    def draw(self):
+        print('drawing')
+
+class Button(Clickable, Drawable):      # both
+    pass
+
+b = Button()
+b.on_click()
+b.draw()</code></pre>
+    </div>
+
+    <p class="prose">
+      You can also inherit from Python's own built-in types — useful for adding one method to a list:
+    </p>
+    <div class="codeblock">
+      <div class="codehead">extending a built-in</div>
+<pre><code>class SearchableList(list):
+    def search(self, value):
+        for i, item in enumerate(self):
+            if item == value:
+                return i
+        return -1
+
+names = SearchableList(['ann', 'ben', 'cate'])
+names.append('dan')          # everything list can do
+print(names.search('cate'))  # 2 — plus our own</code></pre>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="mro">9.2 — Method resolution order</h2>
+    <p class="prose">
+      If two parents both define <code>find_area()</code>, which one runs? Python answers with the
+      <b>method resolution order</b> (MRO): a flat list of classes to search, in order, stopping at the first match.
+    </p>
+    <p class="prose">
+      The basic rule is <b>depth-first, left to right</b>: look at the class itself, then its first parent and
+      that parent's ancestors, then the second parent, and so on. With a simple tree there is nothing to think about.
+    </p>
+
+    <div class="codeblock">
+      <div class="codehead">inspecting the MRO</div>
+<pre><code>class A: pass
+class B(A): pass
+class C(A): pass
+class D(B, C): pass
+
+print(D.__mro__)
+# (D, B, C, A, object)
+
+for cls in D.__mro__:
+    print(cls.__name__)</code></pre>
+    </div>
+
+    <div class="note note-tip">
+      <b>Use it when you are stuck.</b> If a call is reaching a method you did not expect, print
+      <code>YourClass.__mro__</code>. The answer is always in that list, read left to right.
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="diamond">9.3 — The diamond problem</h2>
+    <p class="prose">
+      Trouble starts when both parents inherit from the <b>same</b> grandparent. The class graph is diamond-shaped,
+      and a naive depth-first walk would reach the grandparent twice. Python's MRO linearises it so each class
+      appears exactly once — but <i>only if you call up with <code>super()</code></i>.
+    </p>
+    <p class="prose">
+      Switch between the two styles below and compare the call order and the counter.
+    </p>
+
+    <div data-viz="mro"></div>
+
+    <div class="note note-trap">
+      <b>What “the base ran twice” costs you in practice.</b> A counter is doubled. A list receives two copies of
+      the same item. A database connection is opened twice and one is never closed. A file is written twice.
+      None of these raise an error — they just produce wrong results, later.
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="super">9.4 — <code>super()</code> is not “my parent”</h2>
+    <p class="prose">
+      This is the single most misunderstood thing in the chapter. <code>super()</code> does <b>not</b> mean
+      “the class in my parentheses”. It means <b>the next class in the MRO of the object that is actually running</b>.
+    </p>
+    <p class="prose">
+      In the diamond above, <code>LeftSubclass.call_me()</code> calls <code>super().call_me()</code> —
+      and control goes to <code>RightSubclass</code>, which is not its parent at all. It went there because, in
+      <code>Subclass</code>'s MRO, <code>RightSubclass</code> comes after <code>LeftSubclass</code>.
+      That is exactly what makes each class run once.
+    </p>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th></th><th><code>super().method()</code></th><th><code>Parent.method(self)</code></th></tr></thead>
+        <tbody>
+          <tr><td>Target</td><td>the next class in the MRO</td><td>that exact class, always</td></tr>
+          <tr><td>With one parent</td><td>works</td><td>works</td></tr>
+          <tr><td>With a diamond</td><td>each class runs once</td><td><b>shared ancestors run twice</b></td></tr>
+          <tr><td>If the hierarchy is reordered later</td><td>follows automatically</td><td>silently wrong</td></tr>
+          <tr><td>Use it</td><td><b>always</b></td><td>only to deliberately skip the MRO</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="kwargs">9.5 — When the parents want different arguments</h2>
+    <p class="prose">
+      The second classic problem. <code>Contact</code> wants a name and an email, <code>AddressHolder</code> wants
+      a street, city, state and postcode, and <code>Friend</code> inherits both and adds a phone number.
+      Calling the parents by name works. Switch to <code>super()</code> and it breaks — because
+      <code>super().__init__()</code> runs <i>one</i> chain, and each class must pass along what it does not use.
+    </p>
+
+    <div class="vs">
+      <div class="vs-side vs-bad">
+        <div class="vs-head">✗ fixed parameter lists</div>
+<pre><code>class Contact:
+    def __init__(self, name, email):
+        self.name = name
+        self.email = email
+
+class AddressHolder:
+    def __init__(self, street, city, state, code):
+        self.street = street
+        ...
+
+class Friend(Contact, AddressHolder):
+    def __init__(self, name, email, street,
+                 city, state, code, phone):
+        super().__init__(name, email)
+        self.phone = phone
+
+# TypeError: __init__() missing 4 required
+#            positional arguments</code></pre>
+        <div class="vs-note">Only one chain runs, and <code>AddressHolder</code> never gets its arguments.</div>
+      </div>
+      <div class="vs-side vs-good">
+        <div class="vs-head">✓ every class takes <code>**kwargs</code></div>
+<pre data-hl="2,8,15"><code>class Contact:
+    def __init__(self, name='', email='', **kwargs):
+        super().__init__(**kwargs)      # pass the rest along
+        self.name = name
+        self.email = email
+
+class AddressHolder:
+    def __init__(self, street='', city='',
+                 state='', code='', **kwargs):
+        super().__init__(**kwargs)
+        self.street = street
+        ...
+
+class Friend(Contact, AddressHolder):
+    def __init__(self, phone='', **kwargs):
+        super().__init__(**kwargs)
+        self.phone = phone
+
+f = Friend(name='Terry', email='terry@abc.co',
+           phone='081-234-5678', street='Sukhumvit',
+           city='BKK', state='BKK', code=10520)</code></pre>
+        <div class="vs-note">One <code>super().__init__(**kwargs)</code> per class. Each takes the arguments it
+        understands and forwards the rest. Both parents are initialised.</div>
+      </div>
+    </div>
+
+    <p class="prose"><b>The rules that make this work:</b></p>
+    <ul class="breaks fixes prose-wide">
+      <li>Every class in the hierarchy declares only the arguments <b>it</b> uses, then <code>**kwargs</code></li>
+      <li>Every class calls <code>super().__init__(**kwargs)</code> exactly once</li>
+      <li>Give defaults, so a class can be built without every argument</li>
+      <li>Call with <b>keyword</b> arguments at the top, never positional</li>
+    </ul>
+
+    <div class="note note-exam">
+      <b>The subtlety the slides raise.</b> In <code>Friend.__init__(self, phone='', **kwargs)</code>,
+      <code>phone</code> has been pulled <i>out</i> of <code>kwargs</code>. If a class further up also needs
+      <code>phone</code>, it will never see it. Fixes: leave it in <code>kwargs</code> and read
+      <code>kwargs['phone']</code>; put it back with <code>kwargs['phone'] = phone</code> or
+      <code>kwargs.update(...)</code>; or forward it explicitly with
+      <code>super().__init__(phone=phone, **kwargs)</code>.
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="mixins">9.6 — Mixins</h2>
+    <p class="prose">
+      A <b>mixin</b> is a small class that exists only to lend behaviour to others. It is not a parent in the
+      is-a sense, and you would never instantiate one. It is the honest way to use multiple inheritance.
+    </p>
+
+    <p class="prose">
+      Suppose <code>Vehicle</code> has subclasses <code>Car</code> and <code>Boat</code>, and you want a radio in
+      the car but not in the boat. Putting the radio in <code>Vehicle</code> gives it to the boat as well.
+      Putting it only in <code>Car</code> means duplicating it when a <code>Bus</code> arrives.
+    </p>
+
+    <div class="codeblock">
+      <div class="codehead">a mixin adds a capability to exactly the classes that want it</div>
+<pre data-hl="14"><code>class Vehicle:
+    def __init__(self, position):
+        self.position = position
+    def travel(self, destination):
+        ...
+
+class RadioUserMixin:
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.radio = Radio()
+    def play_song_on_station(self, station):
+        self.radio.set_station(station)
+        self.radio.play_song()
+
+class Car(Vehicle, RadioUserMixin):   # a car IS a vehicle, and HAS a radio
+    pass
+
+class Boat(Vehicle):                  # no radio
+    pass</code></pre>
+    </div>
+
+    <div class="codeblock">
+      <div class="codehead">the <code>DictMixin</code> from the slides</div>
+<pre><code>class Person:
+    def __init__(self, name):
+        self.name = name
+
+class DictMixin:
+    def to_dict(self):
+        return self._traverse_dict(self.__dict__)
+
+    def _traverse_dict(self, attributes):
+        return {k: self._traverse(k, v) for k, v in attributes.items()}
+
+    def _traverse(self, key, value):
+        if isinstance(value, DictMixin):
+            return value.to_dict()
+        elif isinstance(value, dict):
+            return self._traverse_dict(value)
+        elif isinstance(value, list):
+            return [self._traverse(key, v) for v in value]
+        elif hasattr(value, '__dict__'):
+            return self._traverse_dict(value.__dict__)
+        return value
+
+class Employee(DictMixin, Person):
+    def __init__(self, name, skills, dependents):
+        super().__init__(name)
+        self.skills = skills
+        self.dependents = dependents
+
+e = Employee(name='John',
+             skills=['Python', 'Project Management'],
+             dependents={'wife': 'Jane', 'children': ['Alice', 'Bob']})
+print(e.to_dict())</code></pre>
+    </div>
+
+    <ul class="prose">
+      <li>Name it <code>SomethingMixin</code> so readers know it is not a real parent.</li>
+      <li>Put the mixin <b>first</b> in the base list when its methods should win.</li>
+      <li>Keep it small — one capability per mixin.</li>
+      <li>A mixin should not require state the host class does not have.</li>
+    </ul>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="exceptions">9.7 — Exceptions instead of printing</h2>
+    <p class="prose">
+      Up to now a validation failure in a setter might have printed a message. That is not good enough: a class must
+      not print (<a href="03-encapsulation.html#methods">chapter 3</a>), and the caller cannot act on a
+      <code>print</code>. Raise an exception instead — and define your own class for it, so callers can catch
+      exactly the thing they know how to handle.
+    </p>
+
+    <div class="vs">
+      <div class="vs-side vs-bad">
+        <div class="vs-head">✗ printing</div>
+<pre><code>class Account:
+    def withdraw(self, amount):
+        if amount > self.__balance:
+            print('Not enough money')
+            return
+        self.__balance -= amount
+
+acct.withdraw(5000)
+# printed somewhere; the caller has no idea
+# whether the withdrawal happened</code></pre>
+      </div>
+      <div class="vs-side vs-good">
+        <div class="vs-head">✓ your own exception class</div>
+<pre><code>class InsufficientFunds(Exception):
+    def __init__(self, balance, requested):
+        self.balance = balance
+        self.requested = requested
+        super().__init__(
+            f'balance {balance} &lt; requested {requested}')
+
+class Account:
+    def withdraw(self, amount):
+        if amount &gt; self.__balance:
+            raise InsufficientFunds(self.__balance, amount)
+        self.__balance -= amount
+
+try:
+    atm.withdraw(card, pin, 5000)
+except InsufficientFunds as e:
+    screen.show(f'Short by {e.requested - e.balance}฿')</code></pre>
+      </div>
+    </div>
+
+    <p class="prose">
+      Notice the exception carries <b>data</b>, not just a message. The ATM can tell the customer how much short
+      they are without re-reading the balance — and a test can assert on the numbers.
+    </p>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="choose">9.8 — Choosing correctly</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Situation</th><th>Do this</th><th>Not this</th></tr></thead>
+        <tbody>
+          <tr><td>Two genuine is-a parents, no shared ancestor state</td><td>multiple inheritance with <code>super()</code> and <code>**kwargs</code></td><td>copy-pasting one parent's methods</td></tr>
+          <tr><td>You want to lend one capability to several unrelated classes</td><td>a mixin</td><td>a fat shared base class everybody inherits</td></tr>
+          <tr><td>The second “parent” is really a collaborator</td><td>composition — hold it as an attribute</td><td>inheriting from it</td></tr>
+          <tr><td>A diamond you cannot avoid</td><td><code>super()</code> everywhere, every class takes <code>**kwargs</code></td><td>mixing <code>super()</code> and class-name calls</td></tr>
+          <tr><td>Something went wrong inside a class</td><td><code>raise</code> a specific exception</td><td><code>print()</code> and <code>return None</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note note-why">
+      <b>The honest summary.</b> Most of the time you do not need multiple inheritance, and reaching for it is a
+      sign that composition would be cleaner. Keep it for mixins, where the intent is explicit and the surface is small.
+    </div>
+
+    <h3 id="check">Check yourself</h3>
+
+    <div class="quiz" data-quiz>
+      <p class="quiz-q">In a diamond, <code>LeftSubclass</code> calls <code>super().call_me()</code>. Where does control go?</p>
+      <ul class="quiz-opts">
+        <li><button data-why="That is what super() would mean if it meant 'my parent'. It does not.">Always to <code>BaseClass</code>, its parent</button></li>
+        <li><button data-correct data-why="super() follows the MRO of the object actually running. If that object is a Subclass whose MRO is Subclass → Left → Right → Base, then Left's super() is Right — which is how each class runs exactly once.">To whatever comes next in the running object's MRO — here, <code>RightSubclass</code></button></li>
+        <li><button data-why="super() never calls the method on the same class; that would recurse forever.">Back to <code>LeftSubclass</code></button></li>
+      </ul>
+    </div>
+
+    <div class="quiz" data-quiz>
+      <p class="quiz-q"><code>Friend(Contact, AddressHolder)</code> uses <code>super().__init__(**kwargs)</code>, but <code>AddressHolder</code> never initialises. Why?</p>
+      <ul class="quiz-opts">
+        <li><button data-why="The order of bases affects the MRO, not whether a class is reached at all.">Because <code>AddressHolder</code> is listed second</button></li>
+        <li><button data-correct data-why="A class is only reached if the previous one in the MRO forwards to it. If <code>Contact.__init__</code> does not call <code>super().__init__(**kwargs)</code>, the chain stops there and everything after it is skipped.">Because <code>Contact.__init__</code> does not itself call <code>super().__init__(**kwargs)</code></button></li>
+        <li><button data-why="Python allows multiple inheritance from ordinary classes without any special marking.">Because Python allows only one real parent</button></li>
+      </ul>
+    </div>
+
+    <div class="quiz" data-quiz>
+      <p class="quiz-q">You want <code>Car</code> to have a radio and <code>Boat</code> not to. Best design?</p>
+      <ul class="quiz-opts">
+        <li><button data-why="Then every boat gets a radio it never uses — and Interface Segregation says do not force a class to carry what it does not need.">Put the radio methods in <code>Vehicle</code></button></li>
+        <li><button data-correct data-why="The mixin lends the capability to exactly the classes that list it, with no false claim that a car 'is a' radio user in the taxonomy sense. A bus can pick it up later for free.">A <code>RadioUserMixin</code> that <code>Car</code> inherits alongside <code>Vehicle</code></button></li>
+        <li><button data-why="That works for one class, but you will copy it the day a Bus arrives — the duplication problem from chapter 5.">Write the radio methods directly inside <code>Car</code></button></li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="chapnav">
+    <a class="prev" href="08-sequence-diagram.html"><span class="dir">← Previous</span><span class="nm">Sequence diagrams</span></a>
+    <a class="next" href="10-solid.html"><span class="dir">Chapter 10 →</span><span class="nm">The SOLID principles</span></a>
+  </div>
+
+  </div>
+  <aside class="toc" data-toc="main" aria-label="On this page"><h2>On this page</h2></aside>
+  </div>
+</div>
+</main>
+
+<footer class="footer">
+  <div class="wrap"><p class="mb-0">01276131 Object-Oriented Programming · Department of Computer Engineering, KMITL.</p></div>
+</footer>
+
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/viz.js"></script>
+</body>
+</html>

@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3 · Encapsulation &amp; methods — OOP 01276131</title>
+<meta name="description" content="Information hiding, public/protected/private in Python, validating setters, methods, method chaining, __str__, closures, decorators and @property.">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23ff7a2f'/%3E%3Ctext x='16' y='23' font-family='sans-serif' font-size='18' font-weight='bold' fill='white' text-anchor='middle'%3EO%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<a class="skiplink" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">OO</span>
+      <span class="brand-txt">Object-Oriented Programming<small>01276131 · KMITL</small></span>
+    </a>
+    <button class="iconbtn navtoggle" data-nav-toggle aria-expanded="false" aria-label="Menu">☰</button>
+    <nav class="navlinks" aria-label="Main">
+      <a href="../index.html">Home</a>
+      <a href="../syllabus.html">Syllabus</a>
+      <a href="../studio/index.html">UML Studio</a>
+      <a href="../labs/index.html">Labs</a>
+      <a href="../sandbox/index.html">Playground</a>
+      <button class="iconbtn" data-theme-toggle aria-label="Toggle theme">☀</button>
+    </nav>
+  </div>
+  <div class="progressbar"></div>
+</header>
+
+<main id="main">
+<div class="wrap">
+  <div class="chaphead">
+    <span class="chapnum">CHAPTER 3 · WEEK 3</span>
+    <h1>Encapsulation, access levels and methods</h1>
+    <p class="lede">
+      <i>Capsule</i> + <i>en</i> — to put in one piece. Bind the data to the code that guards it, and stop everything
+      else from reaching in. This is the pillar that makes the other three safe.
+    </p>
+    <ul class="objectives">
+      <li>Describe what goes wrong when an attribute is public, with a concrete failure</li>
+      <li>Use Python's naming conventions for public, protected and private, and explain what Python really enforces</li>
+      <li>Write setters that validate, and decide which attributes need a getter or setter at all</li>
+      <li>Use <code>@property</code> to get attribute syntax with method safety</li>
+    </ul>
+  </div>
+
+  <div class="chapter-layout">
+  <div>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="why">3.1 — The failure encapsulation prevents</h2>
+    <p class="prose">
+      In chapter 2 we wrote <code>stu1.name = 'Johnny'</code> and nothing objected. That is the problem.
+      If a <code>Student</code>'s data can be edited from anywhere, then <i>everywhere</i> is responsible for
+      keeping it valid — which means nowhere is.
+    </p>
+
+    <div data-viz="encapsulation"></div>
+
+    <div class="note note-why">
+      <b>The real argument, stated precisely.</b> Encapsulation does not stop bugs from being written.
+      It moves the moment of failure to the line that is wrong, instead of somewhere far away and much later.
+      A <code>ValueError</code> at <code>s.gpa = -5</code> takes a minute to fix. A wrong scholarship list
+      discovered in week 14 takes a day to trace.
+    </div>
+
+    <p class="prose">
+      Encapsulation has a consequence with its own name: <b>information hiding</b> — limiting access to data that
+      was never meant to be touched from outside. Accessing instance attributes with dot notation from outside
+      the class violates it, so we take that ability away.
+    </p>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="access">3.2 — Three levels of access</h2>
+    <p class="prose">
+      Most object-oriented languages divide attributes into two or three levels. Java enforces them with keywords
+      and the compiler refuses to break the rules:
+    </p>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Level</th><th>Meaning</th><th>Java</th><th>Python convention</th><th>UML</th></tr></thead>
+        <tbody>
+          <tr><td><b>Public</b></td><td>anyone, anywhere</td><td><code>public</code></td><td><code>name</code></td><td><code>+</code></td></tr>
+          <tr><td><b>Protected</b></td><td>own class and subclasses only</td><td><code>protected</code></td><td><code>_name</code></td><td><code>#</code></td></tr>
+          <tr><td><b>Private</b></td><td>own class only</td><td><code>private</code></td><td><code>__name</code></td><td><code>-</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="prose">
+      <b>Python does not have access modifiers.</b> It uses naming conventions instead — and then enforces exactly
+      one of them. Try each:
+    </p>
+
+    <div data-viz="access"></div>
+
+    <div class="note note-tip">
+      <b>Some textbooks say “public and non-public”</b> and then split non-public into the two underscore forms.
+      Same idea, different vocabulary. Either way: do not reach for a variable beginning with <code>_</code>
+      from outside its class, even though Python will let you.
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="getset">3.3 — Getters and setters</h2>
+    <p class="prose">
+      If attributes are private, outside code needs a door. Those doors are methods:
+      a <b>getter</b> reads, a <b>setter</b> writes. The naming convention is
+      <code>get_</code> / <code>set_</code> followed by the attribute name.
+    </p>
+    <p class="prose">
+      A getter is nearly trivial. <b>The setter is where the value is.</b> It is the one place that can refuse a
+      bad value — and because it is the only way in, that refusal is total.
+    </p>
+
+    <div class="codeblock">
+      <div class="codehead">Student, properly encapsulated <span class="tag tag-good">good</span></div>
+<pre data-hl="11,12,13,14,15"><code>class Student:
+    def __init__(self, student_id, student_name):
+        self.__student_id = student_id        # private
+        self.set_student_name(student_name)   # validated even here
+
+    def get_student_name(self):
+        return self.__student_name
+
+    def set_student_name(self, student_name):
+        if not isinstance(student_name, str):
+            raise ValueError('name must be text')
+        if not student_name.replace(' ', '').isalpha():
+            raise ValueError('name must be letters only')
+        self.__student_name = student_name.strip()
+
+    def get_student_id(self):
+        return self.__student_id
+        # note: no set_student_id — an id must never change</code></pre>
+    </div>
+
+    <h3 id="which">Which attributes get a getter or setter?</h3>
+    <p class="prose">
+      This is marked in the labs, and marks are deducted for the <i>extra</i> ones:
+      <q>if unnecessary setters or getters are found, points will be deducted.</q>
+    </p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Situation</th><th>Getter?</th><th>Setter?</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td>Read from outside, never changed</td><td>✓</td><td>✗</td><td><code>student_id</code>, <code>account_number</code></td></tr>
+          <tr><td>Read and changed from outside</td><td>✓</td><td>✓ with validation</td><td><code>student_name</code>, <code>grade</code></td></tr>
+          <tr><td>Changed only by the class's own methods</td><td>maybe</td><td>✗</td><td><code>balance</code> — changed by <code>deposit()</code>, never assigned</td></tr>
+          <tr><td>Internal bookkeeping</td><td>✗</td><td>✗</td><td><code>__transaction_list</code>, <code>__cache</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note note-trap">
+      <b>The anti-pattern to avoid.</b> Writing <code>get_x()</code> and <code>set_x()</code> for every single
+      attribute recreates public attributes with extra typing, and gains nothing. If a setter has no validation
+      and no side effect, ask whether the attribute should be settable at all. A <code>balance</code> with a
+      plain setter is not an encapsulated balance — it is a public one in disguise.
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="methods">3.4 — Methods</h2>
+    <p class="prose">
+      Beyond getters and setters, a class needs the methods that are actually its <b>job</b>. A method differs from a
+      function in one way that matters: it can reach the state of the specific instance that called it.
+      That is what <code>self</code> is for, and it is required even when there are no other parameters.
+    </p>
+
+    <div class="codeblock">
+      <div class="codehead">a method that does the class's real work</div>
+<pre><code>class Subject:
+    def __init__(self, subject_id, subject_name, credit):
+        self.__subject_id = subject_id
+        self.__subject_name = subject_name
+        self.__credit = credit
+        self.__student_list = []
+
+    def add_student(self, student):          # verb, snake_case
+        if not isinstance(student, Student):
+            return 'Error'
+        if student in self.__student_list:
+            return 'Already Enrolled'
+        self.__student_list.append(student)
+        return 'Done'
+
+    def get_no_of_student(self):
+        return len(self.__student_list)
+
+    def _recalculate_section(self):          # protected helper
+        ...</code></pre>
+    </div>
+
+    <ul class="prose">
+      <li>Name methods with a <b>verb</b> — they <i>do</i> something.</li>
+      <li>Use <code>snake_case</code>.</li>
+      <li>Prefix with a single <code>_</code> if the method is only for internal use.</li>
+      <li>Methods may call one another through <code>self</code>: <code>self._recalculate_section()</code>.</li>
+    </ul>
+
+    <div class="note note-exam">
+      <b>A lab rule with a reason.</b> <q>In a class, do not input values or print values directly — send parameter
+      data in and get data back.</q> A class that prints cannot be used by a GUI, a web request or a test.
+      Treat every class as a <b>service</b>: it answers questions and performs actions; the caller decides how to
+      display the result.
+    </div>
+
+    <h3 id="chaining">Method chaining</h3>
+    <p class="prose">
+      A method that ends with <code>return self</code> hands the instance back, so the next call can be written
+      straight after it.
+    </p>
+    <div class="vs">
+      <div class="vs-side vs-bad">
+        <div class="vs-head">without chaining</div>
+<pre><code>class Pizza:
+    def __init__(self, size):
+        self.__size = size
+        self.__toppings = []
+
+    def add_topping(self, t):
+        self.__toppings.append(t)
+
+p = Pizza('L')
+p.add_topping('cheese')
+p.add_topping('ham')
+p.add_topping('basil')</code></pre>
+      </div>
+      <div class="vs-side vs-good">
+        <div class="vs-head">with <code>return self</code></div>
+<pre data-hl="7"><code>class Pizza:
+    def __init__(self, size):
+        self.__size = size
+        self.__toppings = []
+
+    def add_topping(self, t):
+        self.__toppings.append(t)
+        return self              # hand the instance back
+
+p = Pizza('L').add_topping('cheese') \
+              .add_topping('ham') \
+              .add_topping('basil')</code></pre>
+      </div>
+    </div>
+
+    <h3 id="str">__str__ — what <code>print()</code> shows</h3>
+    <p class="prose">
+      Python has a family of special methods whose names begin and end with double underscores, called
+      <b>dunder</b> methods. <code>__str__</code> is called when an object is printed. Without it you get
+      the default, which is useless in a debugging session.
+    </p>
+    <div class="codeblock">
+      <div class="codehead">before and after</div>
+<pre><code>print(stu1)
+# &lt;__main__.Student object at 0x000001F3A2C4&gt;        ← useless
+
+class Student:
+    ...
+    def __str__(self):
+        return f'{self.__student_id} {self.__student_name}'
+
+print(stu1)
+# 001 John                                             ← readable</code></pre>
+    </div>
+    <p class="prose">
+      You will meet more dunder methods in <a href="06-polymorphism.html#magic">chapter 6</a>, where they
+      become a form of polymorphism.
+    </p>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="closures">3.5 — Two ideas you need first: closures and decorators</h2>
+    <p class="prose">
+      <code>@property</code> is built from these two. You will not be examined on writing your own decorators,
+      but you must be able to read one.
+    </p>
+
+    <h3 id="closure">Closures</h3>
+    <p class="prose">
+      A <b>closure</b> is an inner function that is returned from an outer function and still remembers the
+      outer function's variables. Those remembered variables are called <i>free variables</i>.
+    </p>
+    <div class="codeblock">
+      <div class="codehead">one source, two different behaviours</div>
+<pre data-hl="2,3,4"><code>def multiplier(factor):          # outer
+    def inner(x):                # inner, nested
+        return x * factor        # 'factor' is a free variable
+    return inner                 # returned, not called
+
+double = multiplier(2)
+triple = multiplier(3)
+print(double(10), triple(10))    # 20 30</code></pre>
+    </div>
+    <p class="prose"><b>Three conditions, all required:</b> the functions are nested; the inner one references a
+    variable of the outer one; the inner one is returned from the outer one.</p>
+
+    <h3 id="decorator">Decorators</h3>
+    <p class="prose">
+      A <b>decorator</b> is a function that takes a function, wraps extra behaviour around it, and returns the
+      replacement. The <code>@</code> symbol is a shortcut for exactly that.
+    </p>
+    <div class="vs">
+      <div class="vs-side vs-bad">
+        <div class="vs-head">the long way</div>
+<pre><code>def make_pretty(func):
+    def wrapper():
+        print('***')
+        func()
+        print('***')
+    return wrapper
+
+def ordinary():
+    print('I am ordinary')
+
+ordinary = make_pretty(ordinary)
+ordinary()</code></pre>
+      </div>
+      <div class="vs-side vs-good">
+        <div class="vs-head">the @ shortcut — identical</div>
+<pre data-hl="8"><code>def make_pretty(func):
+    def wrapper():
+        print('***')
+        func()
+        print('***')
+    return wrapper
+
+@make_pretty
+def ordinary():
+    print('I am ordinary')
+
+ordinary()</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="property">3.6 — @property: attribute syntax, method safety</h2>
+    <p class="prose">
+      Getters and setters give you safety but cost you readability: <code>s.set_gpa(s.get_gpa() + 1)</code>
+      is noise. Python's <code>property</code> gives back the natural syntax while keeping the method underneath.
+      When you read <code>d.age</code> Python runs the getter; when you assign to it, Python runs the setter.
+    </p>
+
+    <div data-viz="property"></div>
+
+    <div class="note note-good">
+      <b>Why the decorator form is the one to use.</b> Building a property the old way —
+      <code>age = property(get_age, set_age)</code> — leaves <code>get_age</code> and <code>set_age</code>
+      still callable, so there are <i>two</i> ways to change the same attribute. With <code>@property</code> and
+      <code>@age.setter</code> there is exactly one. Fewer doors, fewer bugs.
+    </div>
+
+    <div class="codeblock">
+      <div class="codehead">the shape to memorise</div>
+<pre><code>class Dog:
+    def __init__(self, age):
+        self.age = age          # runs the setter
+
+    @property                   # ← the getter
+    def age(self):
+        return self.__age
+
+    @age.setter                 # ← the setter, same name
+    def age(self, value):
+        if not isinstance(value, int) or not 0 &lt; value &lt; 30:
+            raise ValueError('invalid age')
+        self.__age = value</code></pre>
+    </div>
+
+    <p class="prose">
+      A property with only a getter and <b>no setter</b> is a read-only attribute — the right shape for
+      <code>student_id</code>, <code>account_number</code>, <code>isbn</code>. Assigning to it raises
+      <code>AttributeError</code>, which is exactly what you want.
+    </p>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="choose">3.7 — Choosing correctly</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>You want…</th><th>Use</th><th>Not</th></tr></thead>
+        <tbody>
+          <tr><td>An attribute nobody outside may read or write</td><td><code>self.__x</code>, no accessor</td><td>a getter “just in case”</td></tr>
+          <tr><td>A value that is read but never changed</td><td><code>@property</code> getter only</td><td>a public attribute</td></tr>
+          <tr><td>A value with rules about what is valid</td><td><code>@property</code> + <code>@x.setter</code></td><td>a public attribute and hope</td></tr>
+          <tr><td>A change that is more than an assignment</td><td>a named method — <code>deposit(amount)</code></td><td><code>set_balance()</code></td></tr>
+          <tr><td>A subclass to reach it, but not outsiders</td><td><code>self._x</code></td><td><code>self.__x</code>, which the subclass cannot see either</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note note-why">
+      <b>The last row catches people out.</b> Name mangling is per-class. If <code>Account</code> stores
+      <code>self.__balance</code>, then <code>SavingsAccount(Account)</code> cannot read
+      <code>self.__balance</code> either — it would look for <code>_SavingsAccount__balance</code>.
+      Use a single underscore for anything a subclass legitimately needs, or go through the parent's getter.
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="activity">3.8 — Activity &amp; check yourself</h2>
+
+    <div class="panel">
+      <p class="panel-title"><span class="ic">◆</span> Activity — re-encapsulate last week's code</p>
+      <p>Take your Activity 2 classes (<code>Student</code>, <code>Subject</code>, <code>Teacher</code>) and make
+      <b>every</b> attribute private. Add getters and setters only where they are genuinely needed, and validate in
+      the setters — for example, names must be letters only.</p>
+      <p class="mb-0">This is also <a href="../labs/index.html#lab2">Lab 2</a>, where it is graded, so do it properly now.</p>
+    </div>
+
+    <div class="quiz" data-quiz>
+      <p class="quiz-q">An <code>Account</code> has a private <code>__balance</code>. Which design is correct?</p>
+      <ul class="quiz-opts">
+        <li><button data-why="A plain setter lets any caller write any number — including a negative balance from nowhere. The privacy is cosmetic.">A getter and a setter for <code>balance</code></button></li>
+        <li><button data-correct data-why="Money changes only through the operations the bank actually offers, and each one can enforce its own rule. The getter lets you read it; nothing lets you simply assign it.">A read-only getter, plus <code>deposit()</code> and <code>withdraw()</code> methods</button></li>
+        <li><button data-why="With no way to read it, the ATM cannot show a statement. The problem is the setter, not the getter.">No getter and no setter at all</button></li>
+      </ul>
+    </div>
+
+    <div class="quiz" data-quiz>
+      <p class="quiz-q">What does <code>print(s._Student__gpa)</code> do, if <code>Student</code> stores <code>self.__gpa</code>?</p>
+      <ul class="quiz-opts">
+        <li><button data-why="It is not a syntax error — this is a perfectly ordinary attribute name.">Raises a SyntaxError</button></li>
+        <li><button data-correct data-why="Name mangling rewrites <code>__gpa</code> to <code>_Student__gpa</code>, and that attribute really exists. Python's privacy stops accidents, not determined people — which is why the convention still matters.">Prints the value — mangling is a convention, not a lock</button></li>
+        <li><button data-why="Python has no runtime permission system for attributes. Nothing is checked.">Raises PermissionError</button></li>
+      </ul>
+    </div>
+
+    <div class="quiz" data-quiz>
+      <p class="quiz-q">Why does <code>@property</code> beat <code>get_age()</code> / <code>set_age()</code>?</p>
+      <ul class="quiz-opts">
+        <li><button data-why="It is not faster — there is an extra function call either way.">It is faster at run time</button></li>
+        <li><button data-correct data-why="<code>d.age += 1</code> reads naturally and still runs validation. And because the getter and setter share the attribute's name, there is only one way in.">Callers write <code>d.age</code>, yet validation still runs — and there is only one way to set the value</button></li>
+        <li><button data-why="It is the opposite — the attribute becomes private storage behind the property.">It makes the attribute public</button></li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="chapnav">
+    <a class="prev" href="02-object-and-class.html"><span class="dir">← Previous</span><span class="nm">Objects &amp; classes</span></a>
+    <a class="next" href="04-class-diagram.html"><span class="dir">Chapter 4 →</span><span class="nm">Class diagrams</span></a>
+  </div>
+
+  </div>
+  <aside class="toc" data-toc="main" aria-label="On this page"><h2>On this page</h2></aside>
+  </div>
+</div>
+</main>
+
+<footer class="footer">
+  <div class="wrap"><p class="mb-0">01276131 Object-Oriented Programming · Department of Computer Engineering, KMITL.</p></div>
+</footer>
+
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/viz.js"></script>
+</body>
+</html>

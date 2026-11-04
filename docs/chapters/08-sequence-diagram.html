@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>8 · Sequence diagrams — OOP 01276131</title>
+<meta name="description" content="Lifelines, activation bars, synchronous and asynchronous messages, return and reflexive messages, constructor messages, and alt, opt, par and loop fragments.">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23ff7a2f'/%3E%3Ctext x='16' y='23' font-family='sans-serif' font-size='18' font-weight='bold' fill='white' text-anchor='middle'%3EO%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<a class="skiplink" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">OO</span>
+      <span class="brand-txt">Object-Oriented Programming<small>01276131 · KMITL</small></span>
+    </a>
+    <button class="iconbtn navtoggle" data-nav-toggle aria-expanded="false" aria-label="Menu">☰</button>
+    <nav class="navlinks" aria-label="Main">
+      <a href="../index.html">Home</a>
+      <a href="../syllabus.html">Syllabus</a>
+      <a href="../studio/index.html">UML Studio</a>
+      <a href="../labs/index.html">Labs</a>
+      <a href="../sandbox/index.html">Playground</a>
+      <button class="iconbtn" data-theme-toggle aria-label="Toggle theme">☀</button>
+    </nav>
+  </div>
+  <div class="progressbar"></div>
+</header>
+
+<main id="main">
+<div class="wrap">
+  <div class="chaphead">
+    <span class="chapnum">CHAPTER 8 · WEEK 8</span>
+    <h1>Sequence diagrams</h1>
+    <p class="lede">
+      A class diagram shows which classes exist. A sequence diagram shows them <i>talking</i> — which method calls
+      which, in what order, for one activity. It is where the methods on your class diagram actually come from.
+    </p>
+    <ul class="objectives">
+      <li>Read a sequence diagram: lifelines, activation bars, message types</li>
+      <li>Tell a synchronous call from an asynchronous one, and know when each is right</li>
+      <li>Use <code>alt</code>, <code>opt</code>, <code>par</code> and <code>loop</code> fragments</li>
+      <li>Derive the methods of your class diagram from a sequence diagram</li>
+    </ul>
+  </div>
+
+  <div class="chapter-layout">
+  <div>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="what">8.1 — What it shows, and what it does not</h2>
+    <p class="prose">
+      A sequence diagram works at the <b>method level</b>: it shows calls between methods of different objects,
+      in the order they happen. For logic <i>inside</i> a single method, use a flowchart — a sequence diagram
+      is not the tool for that.
+    </p>
+    <p class="prose">
+      Read one top to bottom and you can write the program from it. That is the test of a good one.
+    </p>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Element</th><th>Drawn as</th><th>Means</th></tr></thead>
+        <tbody>
+          <tr><td><b>Actor</b></td><td>stick figure at the top</td><td>the user who starts the activity</td></tr>
+          <tr><td><b>Object / lifeline</b></td><td>a box, named <code>instance:Class</code></td><td>a participant. <b>It must be a class from your class diagram.</b></td></tr>
+          <tr><td><b>Lifeline</b></td><td>dashed vertical line</td><td>time passing, running downward</td></tr>
+          <tr><td><b>Activation bar</b></td><td>thin rectangle on the lifeline</td><td>how long that object is busy with this call</td></tr>
+          <tr><td><b>Message</b></td><td>horizontal arrow</td><td>a method call, labelled with its name</td></tr>
+          <tr><td><b>Return</b></td><td>dashed arrow back</td><td>the result handed back, and control released</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note note-why">
+      <b>Why bother, when you could just write the code?</b> Because a sequence diagram shows the
+      <b>interface between objects</b>. Once the class diagram and the sequence diagrams are detailed enough,
+      a team can split up: whoever writes <code>Account</code> knows exactly which methods it owes
+      and what they return, without reading anybody else's code.
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="player">8.2 — Walk through one</h2>
+    <p class="prose">
+      Calculating a student's GPA, over the registration classes from
+      <a href="04-class-diagram.html">chapter 4</a>. Step through it and read each note — the design reasoning
+      matters more than the notation.
+    </p>
+
+    <div class="lab seqplayer" data-seq-player="gpa">
+      <div class="lab-head"><h4>Calculate a student's GPA</h4><span class="chip chip-accent">step through</span></div>
+      <div class="lab-body">
+        <svg role="img" aria-label="Sequence diagram for calculating a student GPA"></svg>
+        <div class="stepbar" style="margin-top:1rem">
+          <button class="btn btn-s" data-step-prev>‹ Back</button>
+          <button class="btn btn-s btn-primary" data-step-next>Step ›</button>
+          <button class="btn btn-s btn-ghost" data-step-play>▶ Play</button>
+          <span class="stepcount" data-step-count></span>
+          <span class="sp" style="flex:1"></span>
+          <input type="range" data-step-range style="max-width:170px" aria-label="Step">
+        </div>
+        <div class="narrate" data-seq-narrate></div>
+      </div>
+    </div>
+
+    <h3 id="bars">Activation bars and who is busy</h3>
+    <p class="prose">
+      The object that sends a message is the <b>message caller</b>; the one that receives it is the
+      <b>message receiver</b>. A bar appears on the receiver's lifeline for as long as it is working.
+      Nested bars mean a call made during another call.
+    </p>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="messages">8.3 — Message types</h2>
+
+    <div class="grid grid-2">
+      <div class="card">
+        <h4 class="mt-0">Synchronous — filled arrowhead</h4>
+        <p class="muted mb-0">The sender <b>waits</b> for the receiver to finish and return before doing anything else.
+        Most calls are synchronous: this is an ordinary method call.</p>
+      </div>
+      <div class="card">
+        <h4 class="mt-0">Asynchronous — open arrowhead</h4>
+        <p class="muted mb-0">The sender does not wait. Used for long-running work: fire the request, carry on,
+        and be told later by a callback or a message queue — e-commerce payment confirmation, for example.</p>
+      </div>
+      <div class="card">
+        <h4 class="mt-0">Return — dashed arrow</h4>
+        <p class="muted mb-0">Control and the result going back. For a synchronous call the return is implied,
+        so drawing it is <b>optional</b> — leave it out when the diagram is getting crowded.</p>
+      </div>
+      <div class="card">
+        <h4 class="mt-0">Reflexive — arrow to itself</h4>
+        <p class="muted mb-0">An object calling its own method. Starts and ends on the same lifeline.</p>
+      </div>
+      <div class="card">
+        <h4 class="mt-0">Constructor message</h4>
+        <p class="muted mb-0">A call that <i>creates</i> an instance. The new lifeline starts at that point.
+        Marked «create».</p>
+      </div>
+      <div class="card">
+        <h4 class="mt-0">Destructor message</h4>
+        <p class="muted mb-0">Destroys an instance. Rare in Python, where garbage collection handles it —
+        you will see it in C++ or Java diagrams.</p>
+      </div>
+    </div>
+
+    <div class="lab seqplayer" data-seq-player="async" style="margin-top:1.6rem">
+      <div class="lab-head"><h4>Synchronous vs asynchronous</h4></div>
+      <div class="lab-body">
+        <svg role="img" aria-label="Sequence diagram comparing a synchronous payment call with an asynchronous email call"></svg>
+        <div class="stepbar" style="margin-top:1rem">
+          <button class="btn btn-s" data-step-prev>‹ Back</button>
+          <button class="btn btn-s btn-primary" data-step-next>Step ›</button>
+          <span class="stepcount" data-step-count></span>
+        </div>
+        <div class="narrate" data-seq-narrate></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="fragments">8.4 — Sequence fragments</h2>
+    <p class="prose">
+      A fragment is a labelled box around part of the diagram. The label in the top-left corner is the
+      <b>operator</b>, and a condition in square brackets is a <b>guard</b>.
+    </p>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Operator</th><th>Logic</th><th>Shape</th></tr></thead>
+        <tbody>
+          <tr><td><code>alt</code></td><td>if / else — two or more choices</td><td>split by dashed lines into <b>operands</b>, each with its own guard. Exactly one runs.</td></tr>
+          <tr><td><code>opt</code></td><td>if, with no else</td><td>one block, one guard at the top left. Runs or does not.</td></tr>
+          <tr><td><code>loop</code></td><td>repetition</td><td>one block with a guard; repeats until the guard is false. May carry <code>minint</code> / <code>maxint</code>.</td></tr>
+          <tr><td><code>par</code></td><td>both paths run in parallel</td><td>split into operands that execute concurrently.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="lab seqplayer" data-seq-player="login-alt">
+      <div class="lab-head"><h4>An <code>alt</code> fragment: login validation</h4></div>
+      <div class="lab-body">
+        <svg role="img" aria-label="Sequence diagram of a login with an alternative fragment for incomplete fields"></svg>
+        <div class="stepbar" style="margin-top:1rem">
+          <button class="btn btn-s" data-step-prev>‹ Back</button>
+          <button class="btn btn-s btn-primary" data-step-next>Step ›</button>
+          <button class="btn btn-s btn-ghost" data-step-play>▶ Play</button>
+          <span class="stepcount" data-step-count></span>
+        </div>
+        <div class="narrate" data-seq-narrate></div>
+      </div>
+    </div>
+
+    <div class="note note-tip">
+      <b>You do not have to use fragments.</b> There is no single fixed format. A repetition can be written as a
+      message labelled “for each enrolment” instead of a <code>loop</code> box, and steps can be numbered.
+      <b>A good sequence diagram is one that creates understanding</b> — if a fragment makes it harder to read,
+      drop it.
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="atm">8.5 — A full example: withdrawing cash</h2>
+    <p class="prose">
+      This is Lab 3 and Lab 4 as a sequence. Watch where the responsibility sits at each step — the diagram makes
+      a design mistake visible immediately.
+    </p>
+
+    <div class="lab seqplayer" data-seq-player="atm-withdraw">
+      <div class="lab-head"><h4>ATM withdrawal</h4><span class="chip chip-accent">step through</span></div>
+      <div class="lab-body">
+        <svg role="img" aria-label="Sequence diagram of an ATM cash withdrawal"></svg>
+        <div class="stepbar" style="margin-top:1rem">
+          <button class="btn btn-s" data-step-prev>‹ Back</button>
+          <button class="btn btn-s btn-primary" data-step-next>Step ›</button>
+          <button class="btn btn-s btn-ghost" data-step-play>▶ Play</button>
+          <span class="stepcount" data-step-count></span>
+          <span class="sp" style="flex:1"></span>
+          <input type="range" data-step-range style="max-width:170px" aria-label="Step">
+        </div>
+        <div class="narrate" data-seq-narrate></div>
+      </div>
+    </div>
+
+    <div class="note note-exam">
+      <b>The diagram catches the design error.</b> If your sequence has the ATM reading or writing a balance,
+      you have put banking logic in a cash dispenser. The arrow should go on to <code>Account</code>.
+      This is <i>Information Expert</i> from <a href="04-class-diagram.html#principles">chapter 4</a>,
+      visible as a shape on a page.
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="build">8.6 — Build your own</h2>
+    <p class="prose">
+      Add the messages in order. Pick the sender, the receiver and the message type, type the method name,
+      and press <b>Add</b>. Reorder with the arrows. Then press <b>Check</b>.
+    </p>
+
+    <div class="lab" data-seq-build="seq-gpa">
+      <div class="lab-head"><h4>Build it — calculate a student's GPA</h4><span class="chip chip-vio">auto-marked</span></div>
+      <div class="lab-body">
+        <svg role="img" aria-label="Your sequence diagram"></svg>
+        <div data-seq-form style="margin-top:1rem"></div>
+        <div class="grid" style="grid-template-columns:minmax(0,1fr) minmax(0,260px);margin-top:1rem">
+          <div data-seq-list></div>
+          <div data-seq-check></div>
+        </div>
+      </div>
+      <div class="lab-foot">
+        <div class="controls">
+          <button class="btn btn-s btn-primary" data-seq-run>✓ Check my diagram</button>
+          <button class="btn btn-s btn-ghost" data-seq-clear>↺ Clear</button>
+          <span class="sp" style="flex:1"></span>
+          <span class="lab-hint">The actor talks only to the controller. Everything else is internal.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="lab" data-seq-build="seq-withdraw">
+      <div class="lab-head"><h4>Build it — withdraw cash from an ATM</h4><span class="chip chip-vio">auto-marked</span></div>
+      <div class="lab-body">
+        <svg role="img" aria-label="Your sequence diagram"></svg>
+        <div data-seq-form style="margin-top:1rem"></div>
+        <div class="grid" style="grid-template-columns:minmax(0,1fr) minmax(0,260px);margin-top:1rem">
+          <div data-seq-list></div>
+          <div data-seq-check></div>
+        </div>
+      </div>
+      <div class="lab-foot">
+        <div class="controls">
+          <button class="btn btn-s btn-primary" data-seq-run>✓ Check my diagram</button>
+          <button class="btn btn-s btn-ghost" data-seq-clear>↺ Clear</button>
+          <span class="sp" style="flex:1"></span>
+          <span class="lab-hint">Lab 3: “activities with the bank must be done through ATM machines only.”</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="method">8.7 — How to write one</h2>
+    <ol class="steps prose-wide">
+      <li><b>One activity, one diagram.</b> Take a single use case from <a href="07-use-case-diagram.html">chapter 7</a>.</li>
+      <li><b>List the actors</b> involved in that activity.</li>
+      <li><b>List the classes</b> involved — every lifeline must already exist on your class diagram.</li>
+      <li><b>Walk the steps in order.</b> At each one ask: <i>which class must be told to do what?</i>
+      That question defines a method.</li>
+      <li><b>Write those methods back into the class diagram.</b> This is the whole point of the exercise —
+      sequence diagrams are how the methods column gets filled in.</li>
+      <li><b>Mark where objects are created.</b> A <code>Transaction</code> comes into existence at a particular
+      step; show it with a «create» message.</li>
+    </ol>
+
+    <div class="note note-good">
+      <b>The two diagrams feed each other.</b> The class diagram tells you which lifelines are legal;
+      the sequence diagram tells you which methods those classes need. Draw both, alternate between them, and the
+      design converges. Draw only one and you will be guessing.
+    </div>
+
+    <h3 id="check">Check yourself</h3>
+
+    <div class="quiz" data-quiz>
+      <p class="quiz-q">Your sequence diagram has a lifeline labelled <code>:EmailSender</code>, but there is no such class on your class diagram. What now?</p>
+      <ul class="quiz-opts">
+        <li><button data-why="A lifeline is an instance of a class. If the class does not exist, the diagram is describing a program you have not designed.">Nothing — sequence diagrams may use any name</button></li>
+        <li><button data-correct data-why="Every lifeline must be an instance of a class in the class diagram. Finding a missing class this way is one of the things sequence diagrams are for — add it, with its relationships.">Add <code>EmailSender</code> to the class diagram, with its relationships</button></li>
+        <li><button data-why="Deleting it hides a real participant. If something sends email, some class is responsible for it.">Delete the lifeline</button></li>
+      </ul>
+    </div>
+
+    <div class="quiz" data-quiz>
+      <p class="quiz-q">Checkout charges a payment gateway, then queues a receipt email. Which message types?</p>
+      <ul class="quiz-opts">
+        <li><button data-why="If the email were synchronous, the customer would stare at a spinner while a mail server is contacted — and a mail outage would block checkout entirely.">Both synchronous</button></li>
+        <li><button data-correct data-why="The charge must complete before you can confirm the order, so it blocks: synchronous, filled arrowhead. The email can happen whenever: asynchronous, open arrowhead.">Charge synchronous, email asynchronous</button></li>
+        <li><button data-why="Reversed. You cannot confirm an order before knowing whether the card was charged.">Charge asynchronous, email synchronous</button></li>
+      </ul>
+    </div>
+
+    <div class="quiz" data-quiz>
+      <p class="quiz-q">You need “if the balance is enough, withdraw; otherwise show an error”. Which fragment?</p>
+      <ul class="quiz-opts">
+        <li><button data-why="opt is if with no else. You have two branches, so one block is not enough.">opt</button></li>
+        <li><button data-correct data-why="alt is if/else: the box is divided into operands by dashed lines, each with its own guard, and exactly one runs.">alt, with two operands and a guard on each</button></li>
+        <li><button data-why="loop is for repetition. Nothing repeats here.">loop</button></li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="chapnav">
+    <a class="prev" href="07-use-case-diagram.html"><span class="dir">← Previous</span><span class="nm">Use case diagrams</span></a>
+    <a class="next" href="09-multiple-inheritance.html"><span class="dir">Chapter 9 →</span><span class="nm">Multiple inheritance</span></a>
+  </div>
+
+  </div>
+  <aside class="toc" data-toc="main" aria-label="On this page"><h2>On this page</h2></aside>
+  </div>
+</div>
+</main>
+
+<footer class="footer">
+  <div class="wrap"><p class="mb-0">01276131 Object-Oriented Programming · Department of Computer Engineering, KMITL.</p></div>
+</footer>
+
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/viz.js"></script>
+<script src="../assets/js/seq-data.js"></script>
+<script src="../assets/js/seq.js"></script>
+</body>
+</html>

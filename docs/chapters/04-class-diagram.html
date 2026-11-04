@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>4 · Class diagrams — OOP 01276131</title>
+<meta name="description" content="Class notation, association, dependency, aggregation, composition, multiplicities, class attributes, static and class methods, and a five-step method for designing from a written specification.">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23ff7a2f'/%3E%3Ctext x='16' y='23' font-family='sans-serif' font-size='18' font-weight='bold' fill='white' text-anchor='middle'%3EO%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<a class="skiplink" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">OO</span>
+      <span class="brand-txt">Object-Oriented Programming<small>01276131 · KMITL</small></span>
+    </a>
+    <button class="iconbtn navtoggle" data-nav-toggle aria-expanded="false" aria-label="Menu">☰</button>
+    <nav class="navlinks" aria-label="Main">
+      <a href="../index.html">Home</a>
+      <a href="../syllabus.html">Syllabus</a>
+      <a href="../studio/index.html">UML Studio</a>
+      <a href="../labs/index.html">Labs</a>
+      <a href="../sandbox/index.html">Playground</a>
+      <button class="iconbtn" data-theme-toggle aria-label="Toggle theme">☀</button>
+    </nav>
+  </div>
+  <div class="progressbar"></div>
+</header>
+
+<main id="main">
+<div class="wrap">
+  <div class="chaphead">
+    <span class="chapnum">CHAPTER 4 · WEEK 4</span>
+    <h1>Class diagrams</h1>
+    <p class="lede">
+      A class diagram is not documentation you write after the fact. It is the thing you write the program <i>from</i>.
+      Two parts only: the classes, and the relationships between them — but the relationships are where all the marks are.
+    </p>
+    <ul class="objectives">
+      <li>Read and draw class notation with correct access markers</li>
+      <li>Tell association, dependency, aggregation and composition apart, and justify the choice</li>
+      <li>Attach multiplicities and translate them into Python data structures</li>
+      <li>Design a class diagram from a written specification using a repeatable five-step method</li>
+    </ul>
+  </div>
+
+  <div class="chapter-layout">
+  <div>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="notation">4.1 — Class notation</h2>
+    <p class="prose">
+      A class box has three compartments: the <b>name</b>, the <b>attributes</b> (what it stores) and the
+      <b>methods</b> (what it can do). Each member carries an access marker.
+    </p>
+
+    <figure class="figframe">
+      <svg viewBox="0 0 700 250" role="img" aria-label="A UML class box for Student with name, attribute and method compartments, and the access markers plus, hash and minus">
+        <g font-size="12">
+          <rect x="40" y="30" width="250" height="188" rx="4" class="svg-surf" stroke-width="1.6"/>
+          <text x="165" y="54" text-anchor="middle" class="svg-ink" font-weight="700" font-size="14">Student</text>
+          <line x1="40" y1="66" x2="290" y2="66" class="svg-line"/>
+          <text x="54" y="88"  class="svg-ink2 svg-mono" font-size="11">- student_id : str</text>
+          <text x="54" y="108" class="svg-ink2 svg-mono" font-size="11">- student_name : str</text>
+          <text x="54" y="128" class="svg-ink2 svg-mono" font-size="11"># year : int</text>
+          <line x1="40" y1="142" x2="290" y2="142" class="svg-line"/>
+          <text x="54" y="164" class="svg-ink2 svg-mono" font-size="11">+ get_student_name() : str</text>
+          <text x="54" y="184" class="svg-ink2 svg-mono" font-size="11">+ set_student_name(n : str)</text>
+          <text x="54" y="204" class="svg-ink2 svg-mono" font-size="11">- _validate(n : str) : bool</text>
+
+          <path d="M300 48 h40" class="svg-line" stroke-dasharray="3 3"/>
+          <text x="348" y="52"  class="svg-ink3" font-size="11">name — a noun, PascalCase</text>
+          <path d="M300 108 h40" class="svg-line" stroke-dasharray="3 3"/>
+          <text x="348" y="100" class="svg-ink3" font-size="11">attributes — the data the class owns</text>
+          <text x="348" y="118" class="svg-ink3" font-size="11">(keep them private)</text>
+          <path d="M300 178 h40" class="svg-line" stroke-dasharray="3 3"/>
+          <text x="348" y="172" class="svg-ink3" font-size="11">methods — what the class can do</text>
+          <text x="348" y="190" class="svg-ink3" font-size="11">(verbs, snake_case)</text>
+
+          <text x="40"  y="240" class="svg-acc svg-mono" font-size="12">+ public</text>
+          <text x="140" y="240" class="svg-acc svg-mono" font-size="12"># protected</text>
+          <text x="260" y="240" class="svg-acc svg-mono" font-size="12">- private</text>
+        </g>
+      </svg>
+      <figcaption>The same three access levels as <a href="03-encapsulation.html#access">chapter 3</a>, drawn as
+      <code>+</code>, <code>#</code> and <code>-</code>.</figcaption>
+    </figure>
+
+    <div class="note note-why">
+      <b>Draw it before you code it.</b> On a diagram you can see that <code>ATM</code> has drifted into storing a
+      balance in about four seconds. In 300 lines of Python you will not notice for a week.
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="relations">4.2 — The four relationships</h2>
+    <p class="prose">
+      Every pair of related classes gets exactly one line, and the <b>kind</b> of line states how tightly they are
+      bound. Pick the weakest line that is still true — weaker coupling is always better.
+    </p>
+
+    <figure class="figframe">
+      <svg viewBox="0 0 740 320" role="img" aria-label="The five UML relationship notations: association, bidirectional association, dependency, aggregation, composition and generalization">
+        <g font-size="11.5">
+          <!-- association -->
+          <text x="20" y="28" class="svg-ink" font-weight="700" font-size="12">Association (unary)</text>
+          <rect x="20"  y="38" width="96" height="30" rx="3" class="svg-surf"/><text x="68"  y="58" text-anchor="middle" class="svg-ink">Student</text>
+          <rect x="250" y="38" width="96" height="30" rx="3" class="svg-surf"/><text x="298" y="58" text-anchor="middle" class="svg-ink">Subject</text>
+          <path d="M116 53 H244" class="svg-line"/><path d="M244 53 l-9 -4.5 M244 53 l-9 4.5" class="svg-line"/>
+          <text x="180" y="46" text-anchor="middle" class="svg-ink3" font-style="italic">enrols in</text>
+          <text x="370" y="50" class="svg-ink3">Student stores a reference to Subject.</text>
+          <text x="370" y="66" class="svg-ink3">Solid line, open arrow toward the one being used.</text>
+
+          <!-- dependency -->
+          <text x="20" y="110" class="svg-ink" font-weight="700" font-size="12">Dependency</text>
+          <rect x="20"  y="120" width="96" height="30" rx="3" class="svg-surf"/><text x="68"  y="140" text-anchor="middle" class="svg-ink">ATM</text>
+          <rect x="250" y="120" width="96" height="30" rx="3" class="svg-surf"/><text x="298" y="140" text-anchor="middle" class="svg-ink">ATMCard</text>
+          <path d="M116 135 H244" class="svg-line" stroke-dasharray="6 4"/><path d="M244 135 l-9 -4.5 M244 135 l-9 4.5" class="svg-line"/>
+          <text x="370" y="132" class="svg-ink3">Used as a parameter and forgotten. Nothing is stored.</text>
+          <text x="370" y="148" class="svg-ink3">Dashed line — the weakest relationship.</text>
+
+          <!-- aggregation -->
+          <text x="20" y="192" class="svg-ink" font-weight="700" font-size="12">Aggregation — “has-a”, loosely</text>
+          <rect x="20"  y="202" width="96" height="30" rx="3" class="svg-surf"/><text x="68"  y="222" text-anchor="middle" class="svg-ink">Playlist</text>
+          <rect x="250" y="202" width="96" height="30" rx="3" class="svg-surf"/><text x="298" y="222" text-anchor="middle" class="svg-ink">Song</text>
+          <path d="M132 217 H250" class="svg-line"/>
+          <path d="M116 217 l16 -7 l16 7 l-16 7 z" fill="var(--bg-code)" stroke="var(--line-2)" stroke-width="1.5"/>
+          <text x="370" y="214" class="svg-ink3">Hollow diamond at the container.</text>
+          <text x="370" y="230" class="svg-ink3">Delete the playlist — the songs survive.</text>
+
+          <!-- composition -->
+          <text x="20" y="274" class="svg-ink" font-weight="700" font-size="12">Composition — “has-a”, strictly</text>
+          <rect x="20"  y="284" width="96" height="30" rx="3" class="svg-surf"/><text x="68"  y="304" text-anchor="middle" class="svg-ink">Account</text>
+          <rect x="250" y="284" width="96" height="30" rx="3" class="svg-surf"/><text x="298" y="304" text-anchor="middle" class="svg-ink">Transaction</text>
+          <path d="M132 299 H250" class="svg-line"/>
+          <path d="M116 299 l16 -7 l16 7 l-16 7 z" fill="var(--ink-2)" stroke="var(--ink-2)" stroke-width="1.5"/>
+          <text x="370" y="296" class="svg-ink3">Filled diamond at the owner.</text>
+          <text x="370" y="312" class="svg-ink3">Delete the account — the history goes with it.</text>
+        </g>
+      </svg>
+      <figcaption>Generalization (inheritance) — a solid line with a hollow triangle at the parent — is
+      <a href="05-inheritance.html">chapter 5</a>.</figcaption>
+    </figure>
+
+    <h3 id="association">Association — “A keeps a reference to B”</h3>
+    <p class="prose">
+      The normal case. When you write the code, one class gains an attribute holding the other.
+      Associations come in three shapes:
+    </p>
+    <ul class="prose">
+      <li><b>Unary</b> (one-way) — only one side stores the other.
+      A <code>Subject</code> must know its <code>Teacher</code>; a teacher does not need a list of subjects.</li>
+      <li><b>Binary</b> (two-way) — both sides store each other. A student has one advisor; an advisor has a
+      list of advisees. Draw it only when you really need to navigate both ways — every extra reference is
+      another thing to keep in sync.</li>
+      <li><b>Self-association</b> — a class related to its own kind: a boss and subordinates, a mentor and mentee, friends.</li>
+    </ul>
+    <p class="prose">
+      Put a <b>verb</b> on the line. <i>Student — enrols in → Subject</i> lets the diagram tell a story a
+      non-programmer can check.
+    </p>
+
+    <h3 id="dependency">Dependency — “A uses B, briefly”</h3>
+    <p class="prose">
+      Weaker than association: B appears only as a <b>method parameter</b> and is never stored.
+      This is the relationship students miss most often, and it is directly worth marks in
+      <a href="../labs/index.html#lab3">Lab 3</a>, where the brief says the ATM stores nothing but its own cash.
+    </p>
+    <div class="vs">
+      <div class="vs-side vs-bad">
+        <div class="vs-head">✗ drawn as association</div>
+<pre><code>class ATM:
+    def __init__(self, atm_id, cash):
+        self.__atm_id = atm_id
+        self.__cash = cash
+        self.__card = None        # ← stored
+
+    def insert_card(self, card):
+        self.__card = card</code></pre>
+        <div class="vs-note">Now the ATM holds somebody's card after they walk away, and two ATMs can disagree
+        about which card is in which machine.</div>
+      </div>
+      <div class="vs-side vs-good">
+        <div class="vs-head">✓ drawn as dependency</div>
+<pre><code>class ATM:
+    def __init__(self, atm_id, cash):
+        self.__atm_id = atm_id
+        self.__cash = cash        # the only state it owns
+
+    def withdraw(self, card, pin, amount):
+        if not card.verify_pin(pin):
+            return 'Invalid PIN'
+        ...                        # card is never stored</code></pre>
+        <div class="vs-note">The card arrives, is used, and is gone. The relationship is a dashed arrow.</div>
+      </div>
+    </div>
+
+    <h3 id="hasa">Aggregation vs composition</h3>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th></th><th>Aggregation ◇</th><th>Composition ◆</th></tr></thead>
+        <tbody>
+          <tr><td>Strength</td><td>loose “has-a”</td><td>strict “has-a” / “is part of”</td></tr>
+          <tr><td>If the owner is destroyed…</td><td>the part survives independently</td><td>the part is destroyed too</td></tr>
+          <tr><td>Who creates the part?</td><td>somebody else; the owner is handed it</td><td>the owner, inside its own code</td></tr>
+          <tr><td>Symbol</td><td>hollow diamond at the container</td><td>filled diamond at the owner</td></tr>
+          <tr><td>Examples</td><td>Library–Book, Team–Player, Playlist–Song</td><td>Person–Arm, House–Room, Order–OrderLine, Account–Transaction</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="prose">
+      <b>The test that always works:</b> delete the owner in your head. Does the part still mean anything?
+      A song does, so Playlist–Song is aggregation. An order line without its order is nonsense, so that is composition.
+    </p>
+
+    <div class="lab" data-uml="has-a">
+      <div class="lab-head">
+        <h4>Exercise — hollow or filled?</h4>
+        <span class="chip chip-vio">auto-marked</span>
+      </div>
+      <div class="studio">
+        <div class="studio-pal" data-uml-palette></div>
+        <div class="studio-main"><svg class="canvas" data-uml-canvas aria-label="Diagram canvas"></svg></div>
+        <div class="studio-side">
+          <button class="btn btn-s btn-primary" data-uml-run style="width:100%">✓ Check my diagram</button>
+          <div data-uml-check></div>
+          <hr>
+          <div data-uml-side></div>
+        </div>
+      </div>
+      <div class="lab-foot">
+        Six pairs. Pick <b>Aggregation ◇</b> or <b>Composition ◆</b> in the palette, then click the owner first
+        and the part second — the diamond always sits on the owner.
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="multiplicity">4.3 — Multiplicities</h2>
+    <p class="prose">
+      A relationship also has a <b>number</b>. Multiplicity is written at each end and answers:
+      <i>how many of this class can be at this end of the line?</i>
+    </p>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Notation</th><th>Meaning</th><th>What you write in Python</th></tr></thead>
+        <tbody>
+          <tr><td><code>1</code></td><td>exactly one</td><td><code>self.__teacher = teacher</code></td></tr>
+          <tr><td><code>0..1</code></td><td>zero or one</td><td><code>self.__card = None</code> until one is issued</td></tr>
+          <tr><td><code>0..*</code> or <code>*</code></td><td>any number, including none</td><td><code>self.__students = []</code></td></tr>
+          <tr><td><code>1..*</code></td><td>at least one</td><td><code>[]</code> plus a rule that forbids emptying it</td></tr>
+          <tr><td><code>n..m</code></td><td>between n and m</td><td><code>[]</code> plus a length check in the setter</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note note-good">
+      <b>This is the most practical thing on the diagram.</b> Multiplicity tells you the data structure.
+      <code>1</code> means a single variable. <code>0..*</code> means a list. If you draw the multiplicities
+      properly, half of <code>__init__</code> writes itself.
+    </div>
+
+    <div class="codeblock">
+      <div class="codehead">reading multiplicities straight into code</div>
+<pre><code># Subject —— 0..* ———— 1 —— Teacher      (a subject has exactly one teacher)
+# Member  —— 1 ——— 0..10 —— BookLending  (a member may borrow up to 10 books)
+
+class Subject:
+    def __init__(self, subject_id, name, credit):
+        self.__teacher = None          # '1'  -> one slot
+
+class Member:
+    MAX_BOOKS = 10
+    def __init__(self, member_id):
+        self.__lendings = []           # '0..10' -> a list…
+
+    def borrow(self, lending):
+        if len(self.__lendings) >= Member.MAX_BOOKS:   # …plus the upper bound
+            return 'Limit reached'
+        self.__lendings.append(lending)</code></pre>
+    </div>
+
+    <div class="lab" data-uml="registration">
+      <div class="lab-head">
+        <h4>Exercise — the registration system</h4>
+        <span class="chip chip-vio">auto-marked</span>
+      </div>
+      <div class="studio">
+        <div class="studio-pal" data-uml-palette></div>
+        <div class="studio-main"><svg class="canvas" data-uml-canvas aria-label="Diagram canvas"></svg></div>
+        <div class="studio-side">
+          <button class="btn btn-s btn-primary" data-uml-run style="width:100%">✓ Check my diagram</button>
+          <div data-uml-check></div>
+          <hr>
+          <div data-uml-side></div>
+        </div>
+      </div>
+      <div class="lab-foot">
+        <b>Hardest decision:</b> a grade is not a property of a student (they have many) and not a property of a
+        subject (it has many students). Where does it live?
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="container">4.4 — Every object needs a container</h2>
+    <p class="prose">
+      An object with nothing pointing at it is unreachable, and Python's garbage collector will throw it away.
+      So before you finish a diagram, ask of every class: <b>who holds the list?</b>
+    </p>
+    <p class="prose">
+      Sometimes the answer is another domain class — <code>BookItem</code>s live inside their <code>Book</code>.
+      When nothing suitable exists, create a class to represent the system itself: <code>Library</code>,
+      <code>School</code>, <code>Bank</code>. It owns the master lists and the methods that span several classes.
+    </p>
+
+    <div class="lab" data-uml="school-container">
+      <div class="lab-head">
+        <h4>Exercise — add the container</h4>
+        <span class="chip chip-vio">auto-marked</span>
+      </div>
+      <div class="studio">
+        <div class="studio-pal" data-uml-palette></div>
+        <div class="studio-main"><svg class="canvas" data-uml-canvas aria-label="Diagram canvas"></svg></div>
+        <div class="studio-side">
+          <button class="btn btn-s btn-primary" data-uml-run style="width:100%">✓ Check my diagram</button>
+          <div data-uml-check></div>
+          <hr>
+          <div data-uml-side></div>
+        </div>
+      </div>
+      <div class="lab-foot">Place a <b>Class</b>, name it <code>School</code>, give it the four lists as attributes,
+      then join it to each of the four with <b>Aggregation ◇</b> — container first, part second.</div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="classattr">4.5 — Class attributes, static and class methods</h2>
+    <p class="prose">
+      Not every piece of data belongs to an instance. A <b>class attribute</b> is shared by the whole class —
+      a limit, a counter, a constant. It is written above <code>__init__</code> with no <code>self.</code>,
+      and read through the class name.
+    </p>
+
+    <div class="codeblock">
+      <div class="codehead">class attribute vs instance attribute</div>
+<pre data-hl="2,3,6"><code>class Backpack:
+    max_num_items = 5          # class attribute — one copy, shared
+    count = 0
+
+    def __init__(self, owner):
+        self.owner = owner      # instance attribute — one per object
+        Backpack.count += 1     # count every object ever made
+
+print(Backpack.max_num_items)   # 5  — no instance needed
+b = Backpack('John')
+print(b.max_num_items)          # 5  — instances can read it too
+print(Backpack.count)           # 1</code></pre>
+    </div>
+
+    <h3 id="methodtypes">Three kinds of method</h3>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Kind</th><th>First parameter</th><th>Can reach</th><th>Use it for</th></tr></thead>
+        <tbody>
+          <tr><td><b>instance method</b></td><td><code>self</code></td><td>this instance's data</td><td>almost everything</td></tr>
+          <tr><td><b>static method</b><br><code>@staticmethod</code></td><td>none</td><td>nothing of the class</td><td>a helper that belongs near this class but needs no state</td></tr>
+          <tr><td><b>class method</b><br><code>@classmethod</code></td><td><code>cls</code></td><td>class attributes; can construct</td><td>an alternative constructor</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="codeblock">
+      <div class="codehead">static and class methods in practice</div>
+<pre><code>class Student:
+    def __init__(self, first, last, weight_kg):
+        self.__first = first
+        self.__last = last
+        self.__weight_kg = weight_kg
+
+    @staticmethod
+    def kg_to_pound(kg):              # pure conversion, no self needed
+        return kg * 2.20462
+
+    @classmethod
+    def from_full_name(cls, full_name, weight_kg):   # second constructor
+        first, last = full_name.split(' ', 1)
+        return cls(first, last, weight_kg)
+
+print(Student.kg_to_pound(50))                   # 110.231 — no instance
+s = Student.from_full_name('John Smith', 68)     # a different way to build one</code></pre>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="method">4.6 — Designing from a specification: five steps</h2>
+    <p class="prose">
+      This is the method the slides use on the library system, and the one the staff expect to see you follow
+      in the labs. Work it in order; do not jump to relationships before you have attributes.
+    </p>
+
+    <ol class="steps prose-wide">
+      <li>
+        <b>Find the classes.</b> Underline the nouns in the specification. Some are obvious because they are
+        tangible — <code>Member</code>, <code>Librarian</code>, <code>Book</code>, <code>BookRack</code>.
+        Some hide in a sentence: “in the case where there are multiple copies of the same book, each copy is called a
+        <i>book item</i>” gives you <code>BookItem</code>. Events are classes too:
+        a borrowing becomes <code>BookLending</code>, a reservation becomes <code>BookReservation</code>.
+      </li>
+      <li>
+        <b>Give each class its attributes.</b> Only what that class is genuinely the expert on. A
+        <code>Book</code> owns the ISBN, title, author and subject; a <code>BookItem</code> owns the
+        item number, status and shelf location. Availability is per copy, so it goes on the item, not the book.
+      </li>
+      <li>
+        <b>Decide where every object is stored.</b> <code>BookItem</code>s can live inside their <code>Book</code>.
+        Everything else needs a home, so create <code>Library</code> with
+        <code>users</code>, <code>books</code>, <code>book_racks</code>, <code>lendings</code> and
+        <code>reservations</code>.
+      </li>
+      <li>
+        <b>Define the methods.</b> For each class ask: what processing does it owe, beyond getters and setters?
+        <code>Book.get_available_items()</code>; <code>BookItem.is_available()</code> and
+        <code>checkout()</code>; <code>Member.get_total_book_checkout()</code>,
+        <code>checkout_book_item()</code>, <code>reserve_book_item()</code>, <code>return_book_item()</code>;
+        <code>Librarian.add_book_items()</code>, <code>add_member()</code>.
+        The container class ends up with the most: searches, overdue checks, and the processes that span classes.
+      </li>
+      <li>
+        <b>Set the relationships, one pair at a time.</b> Take two classes, decide which of the four lines is true,
+        and write the multiplicity at each end. Then move to the next pair. Do not try to see the whole web at once.
+      </li>
+    </ol>
+
+    <div class="note note-exam">
+      <b>Where step 2 goes wrong.</b> “The system must warn the user if a book is overdue.” That sentence tempts
+      people into giving <code>Book</code> a <code>warn_user()</code> method. But a book knows nothing about who has
+      it — the <code>BookLending</code> knows the due date, and the <code>Library</code> knows all the lendings.
+      <b>Put the behaviour where the data already is.</b>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="principles">4.7 — Four design principles to judge a diagram by</h2>
+
+    <div class="grid grid-2">
+      <div class="card">
+        <h4 class="mt-0">Creator</h4>
+        <p class="muted mb-0">Whoever uses an object most should be the one that creates and stores it.
+        An <code>Account</code> creates its own <code>Transaction</code>s and keeps them — not the ATM,
+        which merely triggered one.</p>
+      </div>
+      <div class="card">
+        <h4 class="mt-0">Information Expert</h4>
+        <p class="muted mb-0">Give a responsibility to the class that already holds the data it needs.
+        Deposits and withdrawals belong on <code>Account</code>, because <code>Account</code> is the only
+        class that knows the balance.</p>
+      </div>
+      <div class="card">
+        <h4 class="mt-0">Low Coupling</h4>
+        <p class="muted mb-0">Minimise how much each class must know about others. Every reference you add
+        is a change that can propagate. Prefer dependency over association, and association over inheritance,
+        when all three would work.</p>
+      </div>
+      <div class="card">
+        <h4 class="mt-0">Controller</h4>
+        <p class="muted mb-0">Separate the classes that hold domain data (<code>Account</code>, <code>ATM</code>)
+        from the one that coordinates them (<code>Bank</code>). The controller receives requests from the UI and
+        distributes the work. Large systems have several — payment, delivery, and so on.</p>
+      </div>
+    </div>
+
+    <div class="note note-why">
+      <b>Low coupling, made concrete.</b> Suppose an ATM both deposits and withdraws, and you now add a rule about
+      deposit limits. If the rule lives in <code>ATM</code>, you must change it in the counter service and the mobile
+      app too. If it lives in <code>Account</code>, you change it once and every channel obeys it.
+      <i>Where you put a rule decides how far a change can spread.</i>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="lab">4.8 — Lab 3: the bank and ATM</h2>
+    <p class="prose">
+      This is the exercise you are graded on in the lab. Build it here first and get a green check — the staff
+      check the diagram before you are allowed to write code.
+    </p>
+
+    <div class="lab" data-uml="atm">
+      <div class="lab-head">
+        <h4>Lab 3 — bank and ATM class diagram</h4>
+        <span class="chip chip-vio">auto-marked</span>
+      </div>
+      <div class="studio">
+        <div class="studio-pal" data-uml-palette></div>
+        <div class="studio-main"><svg class="canvas" data-uml-canvas aria-label="Diagram canvas"></svg></div>
+        <div class="studio-side">
+          <button class="btn btn-s btn-primary" data-uml-run style="width:100%">✓ Check my diagram</button>
+          <div data-uml-check></div>
+          <hr>
+          <div data-uml-side></div>
+        </div>
+      </div>
+      <div class="lab-foot">
+        Read <a href="../labs/index.html#lab3">the full brief</a> first. Two traps are deliberate:
+        the ATM stores nothing but its own cash, and every transaction is recorded <b>in the account</b>.
+      </div>
+    </div>
+
+    <h3 id="check">Check yourself</h3>
+
+    <div class="quiz" data-quiz>
+      <p class="quiz-q">A <code>Printer</code> has <code>def print_book(self, book):</code> and never stores the book. Which line?</p>
+      <ul class="quiz-opts">
+        <li><button data-why="Association means a stored reference — an attribute. Nothing is stored here.">Association, solid line with an arrow</button></li>
+        <li><button data-correct data-why="The object appears only as a parameter and is not kept. That is the definition of a dependency: a dashed arrow pointing at the class being used.">Dependency, dashed line with an arrow</button></li>
+        <li><button data-why="Aggregation means the printer contains books. It does not — it is handed one, prints it, and forgets it.">Aggregation, hollow diamond</button></li>
+      </ul>
+    </div>
+
+    <div class="quiz" data-quiz>
+      <p class="quiz-q">An <code>Order</code> holds <code>OrderLine</code>s. Delete the order, and the lines are meaningless. Which, and where does the diamond go?</p>
+      <ul class="quiz-opts">
+        <li><button data-why="Right relationship, wrong end. The diamond always sits on the whole, never on the part.">Composition, filled diamond on OrderLine</button></li>
+        <li><button data-correct data-why="The part cannot exist without the whole, so composition; and the diamond is drawn at the owner, which is Order.">Composition, filled diamond on Order</button></li>
+        <li><button data-why="Aggregation would say an order line survives its order and could be moved to another one. It cannot.">Aggregation, hollow diamond on Order</button></li>
+      </ul>
+    </div>
+
+    <div class="quiz" data-quiz>
+      <p class="quiz-q">You read <code>Teacher "1" —— "0..*" Subject</code>. What goes in the code?</p>
+      <ul class="quiz-opts">
+        <li><button data-why="Reversed. The 0..* is at the Subject end, so it is the teacher who may have many subjects — a subject has exactly one teacher.">A list of teachers on <code>Subject</code></button></li>
+        <li><button data-correct data-why="One slot where the multiplicity is 1, a list where it is 0..*. Reading multiplicities is how you decide between a variable and a list.">A single <code>self.__teacher</code> on <code>Subject</code>, and optionally a list of subjects on <code>Teacher</code></button></li>
+        <li><button data-why="Multiplicity is exactly what tells you this. 1 means one slot; 0..* means a list.">You cannot tell from the diagram</button></li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="chapnav">
+    <a class="prev" href="03-encapsulation.html"><span class="dir">← Previous</span><span class="nm">Encapsulation</span></a>
+    <a class="next" href="05-inheritance.html"><span class="dir">Chapter 5 →</span><span class="nm">Inheritance</span></a>
+  </div>
+
+  </div>
+  <aside class="toc" data-toc="main" aria-label="On this page"><h2>On this page</h2></aside>
+  </div>
+</div>
+</main>
+
+<footer class="footer">
+  <div class="wrap"><p class="mb-0">01276131 Object-Oriented Programming · Department of Computer Engineering, KMITL.</p></div>
+</footer>
+
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/viz.js"></script>
+<script src="../assets/js/uml-exercises.js"></script>
+<script src="../assets/js/uml.js"></script>
+</body>
+</html>

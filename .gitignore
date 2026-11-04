@@ -1,0 +1,12 @@
+# Lecture slides and lab briefs — course material of record, not published here.
+# Remove this line to include them.
+reference/
+
+# Python
+__pycache__/
+*.py[cod]
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp

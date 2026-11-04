@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1 · Introduction — Object-Oriented Programming 01276131</title>
+<meta name="description" content="Why object-oriented programming exists, what it costs, where each UML diagram fits in the development process, and when not to use OOP at all.">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23ff7a2f'/%3E%3Ctext x='16' y='23' font-family='sans-serif' font-size='18' font-weight='bold' fill='white' text-anchor='middle'%3EO%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<a class="skiplink" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">OO</span>
+      <span class="brand-txt">Object-Oriented Programming<small>01276131 · KMITL</small></span>
+    </a>
+    <button class="iconbtn navtoggle" data-nav-toggle aria-expanded="false" aria-label="Menu">☰</button>
+    <nav class="navlinks" aria-label="Main">
+      <a href="../index.html">Home</a>
+      <a href="../syllabus.html">Syllabus</a>
+      <a href="../studio/index.html">UML Studio</a>
+      <a href="../labs/index.html">Labs</a>
+      <a href="../sandbox/index.html">Playground</a>
+      <button class="iconbtn" data-theme-toggle aria-label="Toggle theme">☀</button>
+    </nav>
+  </div>
+  <div class="progressbar"></div>
+</header>
+
+<main id="main">
+<div class="wrap">
+  <div class="chaphead">
+    <span class="chapnum">CHAPTER 1 · WEEK 1</span>
+    <h1>Why object-oriented programming exists</h1>
+    <p class="lede">
+      Before any syntax: the specific kind of pain OOP was invented to remove, what you pay for it,
+      and where every diagram in this course fits into building real software.
+    </p>
+    <ul class="objectives">
+      <li>Explain, with an example, the failure mode that procedural code hits as a program grows</li>
+      <li>Name the four pillars and the problem each one solves</li>
+      <li>Place use case, sequence and class diagrams in the development process</li>
+      <li>Recognise the cases where OOP is the <i>wrong</i> tool</li>
+    </ul>
+  </div>
+
+  <div class="chapter-layout">
+  <div>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="why">1.1 — The problem, before the solution</h2>
+    <p class="prose">
+      Imagine an online game with 5,000 characters. Each one has a name, job, level, exp, str, agi, vit, int,
+      hp, sp, atk, def — and an outfit, and an inventory, and a guild.
+      Now write that procedurally. You get one list per field, and every list must stay exactly the same length,
+      in exactly the same order, forever.
+    </p>
+    <p class="prose">
+      It works. For a while. Then somebody deletes a character from one list and forgets the other eleven.
+    </p>
+
+    <div data-viz="parallel-lists"></div>
+
+    <div class="note note-why">
+      <b>This is the whole argument.</b> Objects do not make your program faster, shorter, or cleverer.
+      They make <i>one fact live in exactly one place</i>. Every principle in the next nine chapters is a
+      different application of that same idea.
+    </div>
+
+    <h3 id="definition">So what is an object?</h3>
+    <p class="prose">
+      Something with both <b>attributes</b> (what it knows) and <b>behaviour</b> (what it can do). That test is
+      surprisingly reliable:
+    </p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Object</th><th>Attributes — what it knows</th><th>Behaviour — what it does</th></tr></thead>
+        <tbody>
+          <tr><td><b>Car</b></td><td>colour, brand, model, top speed</td><td>start engine, accelerate, brake</td></tr>
+          <tr><td><b>Smartphone</b></td><td>model, screen size, battery capacity</td><td>make a call, take a photo, power on/off</td></tr>
+          <tr><td><b>Smart TV</b></td><td>brand, model, screen size, current channel, volume, input source</td><td>turn on/off, change channel, change volume, change source</td></tr>
+          <tr><td><b>Bank account</b></td><td>account number, owner, balance</td><td>deposit, withdraw, transfer</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="prose">
+      Systems are made of several of these working together. A registration system has <code>Student</code>,
+      <code>Teacher</code>, <code>Subject</code>, <code>Classroom</code>. A banking app has <code>Account</code>,
+      <code>Customer</code>, <code>Transaction</code>. Facebook has <code>User</code>, <code>Page</code>,
+      <code>Group</code>, <code>Post</code>, <code>Comment</code>.
+    </p>
+    <div class="note note-tip">
+      <b>A rule of thumb you will use all term.</b> If it has both attributes <i>and</i> behaviour, it is an object.
+      If it only has data, it may be a value, not a class. If it only has behaviour, it may be a function.
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="pillars">1.2 — The four pillars, and the problem each one solves</h2>
+    <p class="prose">
+      Learn these as <b>answers</b>, not definitions. In the exam and in the mini-project you will be asked
+      <i>which</i> one applies, which is a different skill from reciting what they mean.
+    </p>
+
+    <div class="four-pillars">
+      <div class="pillar" style="--c:#38bdf8">
+        <span class="gk">week 3</span>
+        <h4>Encapsulation</h4>
+        <p>Bundle data with the code that guards it, and block direct outside access.</p>
+        <p style="margin-top:.5rem;font-size:.84rem"><b>Without it:</b> any line in the program can put the object into
+        an impossible state, and you will never find out which one did.</p>
+      </div>
+      <div class="pillar" style="--c:#a78bfa">
+        <span class="gk">week 6</span>
+        <h4>Abstraction</h4>
+        <p>Expose the interface, hide the implementation. Also: lift what is common into one place.</p>
+        <p style="margin-top:.5rem;font-size:.84rem"><b>Without it:</b> changing how one module works breaks five others
+        that were reaching inside it.</p>
+      </div>
+      <div class="pillar" style="--c:#2fbf71">
+        <span class="gk">week 5</span>
+        <h4>Inheritance</h4>
+        <p>A specific class takes everything a general class has, and adds its own specifics.</p>
+        <p style="margin-top:.5rem;font-size:.84rem"><b>Without it:</b> the same rule is copy-pasted into eight files
+        and updated in seven.</p>
+      </div>
+      <div class="pillar" style="--c:#ff7a2f">
+        <span class="gk">week 6</span>
+        <h4>Polymorphism</h4>
+        <p>One method name, many bodies, chosen by the object itself.</p>
+        <p style="margin-top:.5rem;font-size:.84rem"><b>Without it:</b> an <code>if/elif</code> chain that grows every
+        time the business adds a product — in every function that touches it.</p>
+      </div>
+    </div>
+
+    <h3 id="benefits">What you actually get</h3>
+    <ul class="breaks fixes prose-wide">
+      <li><b>Code reuse</b> — extending and modifying a program becomes addition rather than surgery.</li>
+      <li><b>Easier development, testing and maintenance</b> — you can test one class without booting the whole system.</li>
+      <li><b>Explainable to non-programmers</b> — “an Account has a balance and can be debited” is a sentence a bank
+      manager can check. <code>arr[3][7]</code> is not.</li>
+    </ul>
+
+    <h3 id="cost">And what you pay</h3>
+    <p class="prose">
+      Be honest about this, because the exam will ask you to justify a design, not to praise OOP.
+    </p>
+    <ul class="breaks prose-wide">
+      <li><b>More files, more indirection.</b> A three-line script becomes three classes. For a three-line script, that is a loss.</li>
+      <li><b>Design decisions up front.</b> Getting the class split wrong is far more expensive than getting a function wrong.</li>
+      <li><b>Over-engineering is a real failure mode.</b> An abstract base class with exactly one subclass is a liability,
+      not a credential.</li>
+    </ul>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="process">1.3 — Where each diagram belongs</h2>
+    <p class="prose">
+      This course teaches three UML diagrams. They are not three ways of drawing the same thing — each answers
+      a different question, at a different stage.
+    </p>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Stage</th><th>Question it answers</th><th>Output</th><th>Week</th></tr></thead>
+        <tbody>
+          <tr><td><b>Requirements</b></td><td><b>What</b> is this software for?</td><td>Software specification (prose)</td><td>7</td></tr>
+          <tr><td><b>Analysis</b></td><td><b>Who</b> uses it and <b>what</b> can they do?</td><td><a href="07-use-case-diagram.html">Use case diagram</a> + descriptions</td><td>7</td></tr>
+          <tr><td><b>Design — behaviour</b></td><td><b>In what order</b> do objects talk to each other?</td><td><a href="08-sequence-diagram.html">Sequence diagram</a></td><td>8</td></tr>
+          <tr><td><b>Design — structure</b></td><td><b>Which classes</b> exist and how do they relate?</td><td><a href="04-class-diagram.html">Class diagram</a></td><td>4</td></tr>
+          <tr><td><b>Coding</b></td><td>—</td><td>Python that mirrors the class diagram</td><td>2–10</td></tr>
+          <tr><td><b>Testing</b></td><td>Does it do what was specified?</td><td>Unit → integration → UAT</td><td>labs</td></tr>
+          <tr><td><b>Deployment</b></td><td>How does it reach users, often?</td><td>DevOps pipeline</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note note-exam">
+      <b>A question that comes up every year.</b> “Which diagram would you draw first, and why?”
+      The use case diagram — it defines the <i>scope</i>. You cannot know which classes you need until you know
+      what the system is supposed to do. Sequence diagrams then reveal the <b>methods</b>, which you write back
+      into the class diagram.
+    </div>
+
+    <h3 id="testing">Three levels of testing</h3>
+    <ul class="prose">
+      <li><b>Unit testing</b> — one function or one class in isolation. Encapsulation is what makes this possible at all.</li>
+      <li><b>Integration testing</b> — the classes put together.</li>
+      <li><b>User acceptance testing (UAT)</b> — simulating real use, with the people who asked for the system.</li>
+    </ul>
+    <p class="prose">
+      Modern teams automate all three as test scripts, and deploy constantly — Netflix can deploy in under a minute.
+      That frequency is only survivable if a change to one class cannot silently break another, which is, again,
+      what the next nine chapters are about.
+    </p>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="whennot">1.4 — When <i>not</i> to use OOP</h2>
+    <p class="prose">
+      Choosing correctly includes choosing not to. Marks are lost every year by students who wrap a
+      30-line script in four classes because they thought that was the assignment.
+    </p>
+
+    <div class="vs">
+      <div class="vs-side vs-bad">
+        <div class="vs-head">✗ Classes for the sake of classes</div>
+<pre><code>class Calculator:
+    def __init__(self):
+        self.result = 0
+
+    def add(self, a, b):
+        self.result = a + b
+        return self.result
+
+c = Calculator()
+print(c.add(2, 3))</code></pre>
+        <div class="vs-note">The object holds no meaningful state — <code>self.result</code> is never read again.
+        It is a function wearing a costume.</div>
+      </div>
+      <div class="vs-side vs-good">
+        <div class="vs-head">✓ Just a function</div>
+<pre><code>def add(a, b):
+    return a + b
+
+print(add(2, 3))</code></pre>
+        <div class="vs-note">No state to protect, no behaviour to vary by type, nothing to inherit.
+        A function is the correct answer.</div>
+      </div>
+    </div>
+
+    <p class="prose"><b>Reach for a class when at least one of these is true:</b></p>
+    <ul class="breaks fixes prose-wide">
+      <li>There is <b>state that must stay valid</b> between calls (a balance, a status, an enrolment list)</li>
+      <li>There will be <b>many instances</b> of the same shape (5,000 characters, 10,000 accounts)</li>
+      <li>Several types must <b>answer the same call differently</b> (every payment method has <code>pay()</code>)</li>
+      <li>You need a <b>boundary</b> so that outside code cannot corrupt what is inside</li>
+    </ul>
+    <p class="prose"><b>Do not reach for a class when</b> you have a pure calculation, a one-off script, a simple data
+    record with no rules (a <code>dict</code> or a <code>dataclass</code> will do), or when you are inventing an
+    abstraction for a second case that does not exist yet.</p>
+
+    <div data-viz="chooser"></div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="check">1.5 — Check yourself</h2>
+
+    <div class="quiz" data-quiz>
+      <p class="quiz-q">A teammate says: “OOP is better because it is more organised.” What is the sharper answer?</p>
+      <ul class="quiz-opts">
+        <li><button data-why="Shorter is not the claim — OOP usually adds lines. It reduces the number of <i>places</i> you must change, which is different.">It produces shorter code</button></li>
+        <li><button data-correct data-why="It keeps one fact in one place, so a change to a rule has one edit site instead of many. Everything else follows from that.">It reduces the number of places a single fact is stored</button></li>
+        <li><button data-why="Objects add a layer of indirection; they are rarely faster. Performance is not the argument.">It runs faster</button></li>
+        <li><button data-why="Python supports both styles fully. The choice is about the shape of the problem, not language fashion.">Python only supports OOP</button></li>
+      </ul>
+    </div>
+
+    <div class="quiz" data-quiz>
+      <p class="quiz-q">You must write a script that reads one CSV and prints the column averages. Nothing else. What is the right design?</p>
+      <ul class="quiz-opts">
+        <li><button data-why="There is no state to protect and only one instance would ever exist. This is over-engineering, and it loses marks in the mini-project review.">A <code>CsvReader</code> class with an <code>Averager</code> subclass</button></li>
+        <li><button data-correct data-why="No persistent state, no varying behaviour by type, no need for a boundary. Two functions are the honest design — and saying so is itself an OOP skill.">Two functions, no classes</button></li>
+        <li><button data-why="An abstract base class with one implementation is pure cost: more indirection, no flexibility gained.">An abstract base class so you can add formats later</button></li>
+      </ul>
+    </div>
+
+    <div class="quiz" data-quiz>
+      <p class="quiz-q">Which diagram tells you how many <i>groups of users</i> the system has, and what each can do?</p>
+      <ul class="quiz-opts">
+        <li><button data-why="A class diagram shows structure — which classes exist and how they relate. It says nothing about user groups.">Class diagram</button></li>
+        <li><button data-correct data-why="Actors are the user groups; use cases are what each can do. It defines the scope of the system before any class exists.">Use case diagram</button></li>
+        <li><button data-why="A sequence diagram shows the order of calls within one activity, after you already know what the activities are.">Sequence diagram</button></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2 id="next">What is next</h2>
+    <p class="prose">
+      Chapter 2 builds the thing itself: how a class becomes an instance, what <code>self</code> really refers to,
+      and why two objects made from the same class are never the same object.
+    </p>
+    <div class="panel">
+      <p class="panel-title"><span class="ic">◆</span> Before week 2</p>
+      <ul style="margin-bottom:0">
+        <li>Form your mini-project group (4–5 students) and submit it — see the <a href="../syllabus.html#hw1">syllabus</a>.</li>
+        <li>Pick the website or application your group will model.</li>
+        <li>Activity: with 2–3 classmates, choose a business and list its objects, with attributes and behaviours for each.</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="chapnav">
+    <a class="prev" href="../syllabus.html"><span class="dir">← Previous</span><span class="nm">Syllabus</span></a>
+    <a class="next" href="02-object-and-class.html"><span class="dir">Chapter 2 →</span><span class="nm">Objects, classes and instances</span></a>
+  </div>
+
+  </div>
+  <aside class="toc" data-toc="main" aria-label="On this page"><h2>On this page</h2></aside>
+  </div>
+</div>
+</main>
+
+<footer class="footer">
+  <div class="wrap"><p class="mb-0">01276131 Object-Oriented Programming · Department of Computer Engineering, KMITL.</p></div>
+</footer>
+
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/viz.js"></script>
+</body>
+</html>

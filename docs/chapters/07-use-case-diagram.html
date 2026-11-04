@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>7 · Finding requirements &amp; use case diagrams — OOP 01276131</title>
+<meta name="description" content="Personas, user stories, definition of done, domain storytelling, actors and use cases, include versus extend, use case descriptions, and turning a domain story into a class diagram.">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23ff7a2f'/%3E%3Ctext x='16' y='23' font-family='sans-serif' font-size='18' font-weight='bold' fill='white' text-anchor='middle'%3EO%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<a class="skiplink" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">OO</span>
+      <span class="brand-txt">Object-Oriented Programming<small>01276131 · KMITL</small></span>
+    </a>
+    <button class="iconbtn navtoggle" data-nav-toggle aria-expanded="false" aria-label="Menu">☰</button>
+    <nav class="navlinks" aria-label="Main">
+      <a href="../index.html">Home</a>
+      <a href="../syllabus.html">Syllabus</a>
+      <a href="../studio/index.html">UML Studio</a>
+      <a href="../labs/index.html">Labs</a>
+      <a href="../sandbox/index.html">Playground</a>
+      <button class="iconbtn" data-theme-toggle aria-label="Toggle theme">☀</button>
+    </nav>
+  </div>
+  <div class="progressbar"></div>
+</header>
+
+<main id="main">
+<div class="wrap">
+  <div class="chaphead">
+    <span class="chapnum">CHAPTER 7 · WEEK 7</span>
+    <h1>Finding requirements &amp; use case diagrams</h1>
+    <p class="lede">
+      Requirements are the precursor of software: get them wrong and everything downstream is wrong,
+      no matter how good the code is. This chapter is about discovering what to build, and drawing the scope.
+    </p>
+    <ul class="objectives">
+      <li>Use personas, user stories and a definition of done to capture a requirement</li>
+      <li>Run a domain storytelling session and read the resulting picture</li>
+      <li>Draw a use case diagram with actors, a system boundary and relationships</li>
+      <li>Choose correctly between «include», «extend» and generalization</li>
+      <li>Turn a domain story into a first class diagram</li>
+    </ul>
+  </div>
+
+  <div class="chapter-layout">
+  <div>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="why">7.1 — Why this is the hardest job in the project</h2>
+    <p class="prose">
+      Finding requirements decides what the software <i>is</i>. If they are incomplete or wrong, the system is
+      faulty however well it is built — and the fault is discovered at the end, when it is most expensive.
+    </p>
+    <p class="prose">
+      It is also the skill that is hardest to hire and hardest to train, because it is not technical. It is
+      listening to someone describe their own job, noticing what they left out because it is obvious to them,
+      and writing it down in a form a developer can act on.
+    </p>
+
+    <div class="note note-why">
+      <b>Why your mini-project needs this.</b> You will be marked on whether the application does what the
+      specification said. Teams that skip requirements discover in week 14 that they built a feature nobody asked
+      for, and omitted one everybody assumed.
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="tools">7.2 — Three tools for finding requirements</h2>
+
+    <h3 id="persona">Persona</h3>
+    <p class="prose">
+      A fictional profile standing for one group of users. Worth the effort for software with a broad audience —
+      Shopee, banking, social, e-commerce — where different groups want different things. A persona has:
+    </p>
+    <div class="grid grid-3">
+      <div class="card"><b>Demographics &amp; behaviour</b><p class="muted mb-0" style="font-size:.85rem">age, job, interests, how they use technology</p></div>
+      <div class="card"><b>Goal</b><p class="muted mb-0" style="font-size:.85rem">specific, and about <i>this</i> software. For a travel app, a travel goal.</p></div>
+      <div class="card"><b>Frustration</b><p class="muted mb-0" style="font-size:.85rem">the pain point — what they want but cannot get today</p></div>
+    </div>
+    <p class="prose" style="margin-top:1rem">
+      The frustration is the most useful field: it is where features come from. “I want a trip plan that suits me
+      without spending hours researching” is a feature request in disguise.
+    </p>
+
+    <h3 id="story">User stories</h3>
+    <p class="prose">A one-sentence format that forces you to name the role, the want and the reason.</p>
+    <div class="codeblock">
+      <div class="codehead">the template, and an example</div>
+<pre data-raw="1"><code>As a   &lt;role&gt;
+I want &lt;capability&gt;
+So that &lt;benefit&gt;
+
+As a    buyer at a clothing store
+I want  to compare two shirts side by side
+So that I can choose without opening two tabs</code></pre>
+    </div>
+
+    <p class="prose">
+      A story alone is too vague to build from, so each one gets a <b>Definition of Done</b> — the checklist that
+      says when it is finished:
+    </p>
+    <ul class="breaks fixes prose-wide">
+      <li>The system has a checkbox for selecting products to compare, and no more than 2 can be selected</li>
+      <li>There is a “Compare” button which opens a new window showing the 2 products side by side</li>
+      <li>The comparison shows price, size, colour and material in aligned rows</li>
+    </ul>
+    <p class="prose">
+      Without the DoD, “so that I can choose” is an opinion. With it, it is testable — and the marker can check it.
+    </p>
+
+    <h3 id="dst">Domain storytelling</h3>
+    <p class="prose">
+      A technique by Stefan Hofer and Henning Schwentner for building shared understanding between the owner of a
+      business and the people writing its software. You draw the story of how the work happens today, together,
+      in the room, using three symbols only:
+    </p>
+    <div class="grid grid-3">
+      <div class="card"><b>Actor</b><p class="muted mb-0" style="font-size:.85rem">a person or system that does something — <i>moviegoer</i>, <i>cashier</i></p></div>
+      <div class="card"><b>Work object</b><p class="muted mb-0" style="font-size:.85rem">a thing that is not a person — <i>seating plan</i>, <i>ticket</i>, <i>showtime</i></p></div>
+      <div class="card"><b>Activity</b><p class="muted mb-0" style="font-size:.85rem">a numbered arrow joining them — <i>tells</i>, <i>looks at</i>, <i>gives</i></p></div>
+    </div>
+
+    <figure class="figframe">
+      <svg viewBox="0 0 740 250" role="img" aria-label="Domain story: a moviegoer tells the cashier a film and showtime, the cashier looks at the seating plan and tells the moviegoer which seats are free">
+        <g font-size="11.5">
+          <!-- moviegoer -->
+          <circle cx="60" cy="56" r="10" class="svg-surf" stroke-width="1.5"/>
+          <path d="M60 66v20M48 72h24M60 86l-9 14M60 86l9 14" class="svg-line"/>
+          <text x="60" y="118" text-anchor="middle" class="svg-ink">moviegoer</text>
+
+          <!-- cashier -->
+          <circle cx="390" cy="56" r="10" class="svg-surf" stroke-width="1.5"/>
+          <path d="M390 66v20M378 72h24M390 86l-9 14M390 86l9 14" class="svg-line"/>
+          <text x="390" y="118" text-anchor="middle" class="svg-ink">cashier</text>
+
+          <!-- work objects -->
+          <rect x="176" y="34" width="110" height="40" rx="4" class="svg-surf"/>
+          <text x="231" y="52" text-anchor="middle" class="svg-ink" font-size="10.5">film +</text>
+          <text x="231" y="66" text-anchor="middle" class="svg-ink" font-size="10.5">showtime</text>
+
+          <rect x="500" y="34" width="110" height="40" rx="4" class="svg-surf"/>
+          <text x="555" y="59" text-anchor="middle" class="svg-ink" font-size="10.5">seating plan</text>
+
+          <rect x="500" y="156" width="110" height="40" rx="4" class="svg-surf"/>
+          <text x="555" y="181" text-anchor="middle" class="svg-ink" font-size="10.5">free seats</text>
+
+          <!-- arrows -->
+          <path d="M86 54 H170" class="svg-accs"/><path d="M170 54 l-8 -4 M170 54 l-8 4" class="svg-accs"/>
+          <text x="128" y="44" text-anchor="middle" class="svg-ink3">① tells</text>
+          <path d="M292 54 H364" class="svg-accs"/><path d="M364 54 l-8 -4 M364 54 l-8 4" class="svg-accs"/>
+          <path d="M416 54 H494" class="svg-accs"/><path d="M494 54 l-8 -4 M494 54 l-8 4" class="svg-accs"/>
+          <text x="455" y="44" text-anchor="middle" class="svg-ink3">② looks at</text>
+          <path d="M555 74 V150" class="svg-accs"/><path d="M555 150 l-4 -8 M555 150 l4 -8" class="svg-accs"/>
+          <text x="600" y="116" class="svg-ink3">③ sees</text>
+          <path d="M496 176 H110 V124" class="svg-accs"/><path d="M110 124 l-4 8 M110 124 l4 8" class="svg-accs"/>
+          <text x="300" y="192" text-anchor="middle" class="svg-ink3">④ tells the moviegoer which seats are free</text>
+
+          <text x="40" y="232" class="svg-ink3" font-size="10.5">Read each numbered arrow aloud as a sentence. If it does not make sense in English, the step is wrong.</text>
+        </g>
+      </svg>
+      <figcaption>Actors appear once; work objects may appear many times. Activities join them into sentences.</figcaption>
+    </figure>
+
+    <ul class="prose">
+      <li>Domain stories revolve around the <b>actor</b> — who does what, with what, and with which other actors.</li>
+      <li><b>Read every arrow aloud.</b> Each should form a complete sentence. That is the quality check.</li>
+      <li>Cover <b>special cases</b> too: what happens when the show is sold out? The cashier suggests another film
+      or time — and that is a feature you would otherwise have missed.</li>
+      <li>Include the <b>back-office actors</b>, not only the customer: somebody loads films and showtimes into
+      the system.</li>
+      <li>When the picture gets crowded, draw a second diagram of the sub-stories —
+      <i>buy/sell tickets</i>, <i>buy/sell food</i>, <i>admission</i>, <i>screening</i> — and group them.</li>
+    </ul>
+    <p class="prose">
+      <b>Tools:</b> paper works. So does <a href="https://app.diagrams.net/">diagrams.net</a> or Miro. There is also
+      <a href="https://egon.io">egon.io</a>, built specifically for domain storytelling, and
+      <a href="https://domainstorytelling.org/">domainstorytelling.org</a> for the method itself.
+    </p>
+
+    <div class="note note-tip">
+      <b>It looks slow. It is not.</b> Drawing the story once, with the customer in the room, is faster than four
+      rounds of “actually, it also has to…” discovered during development.
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="ucd">7.3 — The use case diagram</h2>
+    <p class="prose">
+      The standard diagram for saying <b>what the system can do and who can do it</b>. It is deliberately
+      high-level: no screens, no data, no order of events. Two basic components:
+    </p>
+    <ul class="prose">
+      <li><b>Actor</b> — one group of users, drawn as a stick figure. An actor does not have to be a person:
+      a payment gateway or a scheduled job is an actor. Draw each actor once.</li>
+      <li><b>Use case</b> — something an actor can do, drawn as an ellipse and named with a <b>verb</b>.</li>
+    </ul>
+    <p class="prose">
+      A rectangle around the use cases marks the <b>system boundary</b> — what you are building, and by omission,
+      what you are not.
+    </p>
+
+    <figure class="figframe">
+      <svg viewBox="0 0 760 330" role="img" aria-label="Use case diagram for a cinema: customer and staff actors, a system boundary, and include and extend relationships">
+        <g font-size="11.5">
+          <rect x="190" y="14" width="400" height="300" rx="8" fill="none" stroke="var(--line-2)" stroke-width="1.5"/>
+          <text x="390" y="34" text-anchor="middle" class="svg-ink3" font-size="10.5" letter-spacing="1.2">CINEMA TICKETING SYSTEM</text>
+
+          <!-- customer -->
+          <circle cx="70" cy="110" r="10" class="svg-surf" stroke-width="1.5"/>
+          <path d="M70 120v20M58 126h24M70 140l-9 14M70 140l9 14" class="svg-line"/>
+          <text x="70" y="174" text-anchor="middle" class="svg-ink">Customer</text>
+
+          <!-- staff -->
+          <circle cx="690" cy="238" r="10" class="svg-surf" stroke-width="1.5"/>
+          <path d="M690 248v20M678 254h24M690 268l-9 14M690 268l9 14" class="svg-line"/>
+          <text x="690" y="302" text-anchor="middle" class="svg-ink">Staff</text>
+
+          <ellipse cx="290" cy="70"  rx="72" ry="24" class="svg-surf"/><text x="290" y="74" text-anchor="middle" class="svg-ink">Search Movie</text>
+          <ellipse cx="290" cy="140" rx="72" ry="24" class="svg-surf"/><text x="290" y="144" text-anchor="middle" class="svg-ink">Book Ticket</text>
+          <ellipse cx="490" cy="104" rx="72" ry="24" class="svg-surf"/><text x="490" y="108" text-anchor="middle" class="svg-ink">Select Seat</text>
+          <ellipse cx="490" cy="176" rx="72" ry="24" class="svg-surf"/><text x="490" y="180" text-anchor="middle" class="svg-ink">Pay</text>
+          <ellipse cx="290" cy="238" rx="72" ry="24" class="svg-surf"/><text x="290" y="242" text-anchor="middle" class="svg-ink">Apply Coupon</text>
+          <ellipse cx="490" cy="256" rx="78" ry="24" class="svg-surf"/><text x="490" y="260" text-anchor="middle" class="svg-ink">Manage Showtime</text>
+
+          <path d="M96 118 L219 76"  class="svg-line"/>
+          <path d="M96 124 L220 138" class="svg-line"/>
+          <path d="M664 246 L568 254" class="svg-line"/>
+
+          <path d="M358 130 L420 110" class="svg-line" stroke-dasharray="6 4"/>
+          <path d="M420 110 l-9 -2 l2 -8" class="svg-line"/>
+          <text x="384" y="108" text-anchor="middle" class="svg-ink3" font-size="9.5">«include»</text>
+
+          <path d="M356 152 L420 172" class="svg-line" stroke-dasharray="6 4"/>
+          <path d="M420 172 l-9 1 l2 -8" class="svg-line"/>
+          <text x="386" y="176" text-anchor="middle" class="svg-ink3" font-size="9.5">«include»</text>
+
+          <path d="M350 226 L424 190" class="svg-line" stroke-dasharray="6 4"/>
+          <path d="M424 190 l-9 -1 l1 -8" class="svg-line"/>
+          <text x="372" y="222" text-anchor="middle" class="svg-ink3" font-size="9.5">«extend»</text>
+        </g>
+      </svg>
+      <figcaption>The arrow for «include» points at the use case being <b>included</b>; the arrow for «extend»
+      points <b>from</b> the optional use case <b>to</b> the one it extends.</figcaption>
+    </figure>
+
+    <h3 id="relationships">The three relationships</h3>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Relationship</th><th>Meaning</th><th>Test</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><b>«include»</b></td>
+            <td>The base use case <b>always</b> performs the included one. Without it the base cannot complete.</td>
+            <td>“Can the first finish without the second?” → <b>No</b></td>
+            <td>Book Ticket <i>includes</i> Select Seat; Checkout <i>includes</i> Calculate Total</td>
+          </tr>
+          <tr>
+            <td><b>«extend»</b></td>
+            <td>Optional extra behaviour added on top of a base use case, under some condition.</td>
+            <td>“Does it only sometimes happen?” → <b>Yes</b></td>
+            <td>Apply Coupon <i>extends</i> Pay; Add to Wishlist <i>extends</i> View Product</td>
+          </tr>
+          <tr>
+            <td><b>Generalization</b></td>
+            <td>One job can be done in more than one way; or one actor is a special kind of another.</td>
+            <td>“Is this a <i>kind of</i> that?” → <b>Yes</b></td>
+            <td>Pay by Card / Pay by Cash generalise to Pay; Librarian is a kind of Member</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note note-trap">
+      <b>The direction of «extend» catches almost everyone.</b> The optional use case is the <i>source</i>;
+      the base is the <i>target</i>. Write it as a sentence — “Apply Coupon extends Pay” — and the arrow runs the
+      way the sentence reads. For «include», “Book Ticket includes Select Seat” runs the same way, so the arrow
+      points at the included use case. Both arrows follow the sentence.
+    </div>
+
+    <div class="lab" data-uml="include-extend">
+      <div class="lab-head">
+        <h4>Exercise — «include» or «extend»?</h4>
+        <span class="chip chip-vio">auto-marked</span>
+      </div>
+      <div class="studio">
+        <div class="studio-pal" data-uml-palette></div>
+        <div class="studio-main"><svg class="canvas" data-uml-canvas aria-label="Diagram canvas"></svg></div>
+        <div class="studio-side">
+          <button class="btn btn-s btn-primary" data-uml-run style="width:100%">✓ Check my diagram</button>
+          <div data-uml-check></div>
+          <hr>
+          <div data-uml-side></div>
+        </div>
+      </div>
+      <div class="lab-foot">Five relationships, all between use cases. Say each one aloud as a sentence first,
+      then draw it in that direction.</div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="from-story">7.4 — From a domain story to a use case diagram</h2>
+    <p class="prose">
+      The activities in your domain story become candidate use cases. Group the ones that belong to a single
+      self-contained task:
+    </p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Domain story activity</th><th>System response</th><th>Use case</th></tr></thead>
+        <tbody>
+          <tr><td>Customer selects a film</td><td>show showtimes</td><td rowspan="2">View Movie Detail / Select Show</td></tr>
+          <tr><td>Customer selects a showtime</td><td>show the seating plan</td></tr>
+          <tr><td>Customer selects a seat</td><td>confirm the reservation</td><td>Select Seats</td></tr>
+          <tr><td>Customer pays</td><td>issue the ticket</td><td>Pay for Tickets</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="prose">
+      Then add what the story implied but did not show: <b>Search Movie</b>, <b>Apply Coupon</b> during payment,
+      <b>View / Cancel Booking</b> — and the back-office cases: adding and editing films, adding, editing and
+      cancelling showtimes.
+    </p>
+
+    <h3 id="guidelines">Guidelines for writing use cases</h3>
+    <ol class="steps prose-wide">
+      <li><b>One use case = one self-contained activity.</b> Roughly the work of one page in an application.</li>
+      <li><b>Watch the buttons.</b> Every button on a screen is a candidate use case — even one that does not open
+      a new page, such as <i>Add to cart</i>, because it changes something behind the scenes.</li>
+      <li><b>Cover the whole system.</b> Every part of it should appear somewhere on the diagram.</li>
+      <li><b>Then add «include»</b> — does this use case always require another?</li>
+      <li><b>Then add «extend»</b> — can this use case continue from another, sometimes?</li>
+      <li><b>Name every use case with a verb.</b> <i>Book Ticket</i>, not <i>Booking</i>.</li>
+    </ol>
+
+    <div class="lab" data-uml="cinema-uc">
+      <div class="lab-head">
+        <h4>Exercise — the cinema ticketing system</h4>
+        <span class="chip chip-vio">auto-marked</span>
+      </div>
+      <div class="studio">
+        <div class="studio-pal" data-uml-palette></div>
+        <div class="studio-main"><svg class="canvas" data-uml-canvas aria-label="Diagram canvas"></svg></div>
+        <div class="studio-side">
+          <button class="btn btn-s btn-primary" data-uml-run style="width:100%">✓ Check my diagram</button>
+          <div data-uml-check></div>
+          <hr>
+          <div data-uml-side></div>
+        </div>
+      </div>
+      <div class="lab-foot">Two actors. Do not forget the back-office work — a system where nobody can add a
+      showtime is not a system.</div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="description">7.5 — Use case descriptions</h2>
+    <p class="prose">
+      The diagram shows scope but not detail. For the main use cases, write a description. You do not need one for
+      every use case — only the ones that carry real logic.
+    </p>
+
+    <div class="tablewrap">
+      <table>
+        <tbody>
+          <tr><th style="width:150px">Use Case Name</th><td>Movie Ticket Booking (Create Booking)</td></tr>
+          <tr><th>Actor</th><td>Customer, Front Desk Officer</td></tr>
+          <tr><th>Description</th><td>Booking a ticket for a customer who wants to see a film.</td></tr>
+          <tr><th>Normal Course</th><td>The user selects the film and showtime they want and enters the booking process.
+          The system displays the details of the selected film: date, showtime, language, cinema and theatre name.
+          The system displays the seating layout, showing the seat types available and the price of each.
+          When the user selects a seat, the system shows the selected seat and the total price.
+          If the user selects a zone or a promotion, the system applies the discount or special offer.</td></tr>
+          <tr><th>Alternate Course</th><td>The seats are full. · Two users select the same seat at the same moment.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note note-exam">
+      <b>The Alternate Course is where the marks are.</b> Anyone can describe the happy path.
+      “Two users select the same seat simultaneously” is the sentence that forces you to design a seat lock —
+      a requirement that is invisible until somebody writes it down.
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="to-class">7.6 — From the domain story to a class diagram</h2>
+    <p class="prose">
+      The same picture feeds the structural design too. The mapping is direct:
+    </p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>In the domain story</th><th>In the class diagram</th><th>Cinema example</th></tr></thead>
+        <tbody>
+          <tr><td><b>Actor</b></td><td>a class — and if there are several similar ones, look for a common parent</td><td><code>Customer</code>, <code>Staff</code> → both inherit <code>User</code></td></tr>
+          <tr><td><b>Work object</b></td><td>a class</td><td><code>Movie</code>, <code>Show</code>, <code>SeatingPlan</code>, <code>Seat</code>, <code>Reservation</code></td></tr>
+          <tr><td><b>Activity</b></td><td>a <b>method</b> on the class that owns the data</td><td><i>selects a seat</i> → <code>Reservation.select_seat(seat)</code></td></tr>
+          <tr><td>(implied)</td><td>classes the story never named but the structure needs</td><td>a <code>Seat</code> is in a <code>CinemaHall</code>; a cineplex has many halls</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="prose">
+      Then apply the four design principles from <a href="04-class-diagram.html#principles">chapter 4</a> —
+      Creator, Information Expert, Low Coupling, Controller — to decide which class each method lands on.
+    </p>
+
+    <h3 id="check">Check yourself</h3>
+
+    <div class="quiz" data-quiz>
+      <p class="quiz-q">On Shopee you must order a product before you can pay for it. Which relationship, and which direction?</p>
+      <ul class="quiz-opts">
+        <li><button data-correct data-why="Paying cannot complete without an order, so the relationship is «include»: “Pay includes Place Order” — the arrow points at the included use case.">«include», from Pay to Place Order</button></li>
+        <li><button data-why="Right idea about direction, wrong relationship: payment is not optional extra behaviour on top of ordering.">«extend», from Pay to Place Order</button></li>
+        <li><button data-why="Generalization means one is a kind of the other. Paying is not a kind of ordering.">Generalization</button></li>
+      </ul>
+    </div>
+
+    <div class="quiz" data-quiz>
+      <p class="quiz-q">While viewing a product you may add it to a wishlist, but only if logged in. How do you draw it?</p>
+      <ul class="quiz-opts">
+        <li><button data-why="Half right. Add to Wishlist does extend View Product, but the login requirement also has to appear — and it is not optional.">«extend» from Add to Wishlist to View Product, and nothing else</button></li>
+        <li><button data-correct data-why="Two different relationships, because the two conditions are different: adding to the wishlist is optional behaviour on viewing («extend»), while being logged in is mandatory for it («include»).">«extend» from Add to Wishlist to View Product, and «include» from Add to Wishlist to Log In</button></li>
+        <li><button data-why="That would say you must add every product you view to your wishlist.">«include» from View Product to Add to Wishlist</button></li>
+      </ul>
+    </div>
+
+    <div class="quiz" data-quiz>
+      <p class="quiz-q">A student writes a use case called “Booking”. What is wrong with it?</p>
+      <ul class="quiz-opts">
+        <li><button data-why="The length is fine. The word class is the problem.">It is too short</button></li>
+        <li><button data-correct data-why="Use cases are named with verbs because they are things an actor does — “Book Ticket”, “Cancel Booking”. A noun hides whether it is one action or three.">It is a noun; a use case is named with a verb</button></li>
+        <li><button data-why="Use cases are not required to be «include»d by anything — many stand alone.">It has no «include» relationship</button></li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="chapnav">
+    <a class="prev" href="06-polymorphism.html"><span class="dir">← Previous</span><span class="nm">Abstraction &amp; polymorphism</span></a>
+    <a class="next" href="08-sequence-diagram.html"><span class="dir">Chapter 8 →</span><span class="nm">Sequence diagrams</span></a>
+  </div>
+
+  </div>
+  <aside class="toc" data-toc="main" aria-label="On this page"><h2>On this page</h2></aside>
+  </div>
+</div>
+</main>
+
+<footer class="footer">
+  <div class="wrap"><p class="mb-0">01276131 Object-Oriented Programming · Department of Computer Engineering, KMITL.</p></div>
+</footer>
+
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/viz.js"></script>
+<script src="../assets/js/uml-exercises.js"></script>
+<script src="../assets/js/uml.js"></script>
+</body>
+</html>

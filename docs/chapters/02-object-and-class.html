@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2 · Objects, classes and instances — OOP 01276131</title>
+<meta name="description" content="Classes as blueprints, constructors, self, instances in memory, dot notation, and the relationships between classes.">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23ff7a2f'/%3E%3Ctext x='16' y='23' font-family='sans-serif' font-size='18' font-weight='bold' fill='white' text-anchor='middle'%3EO%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<a class="skiplink" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">OO</span>
+      <span class="brand-txt">Object-Oriented Programming<small>01276131 · KMITL</small></span>
+    </a>
+    <button class="iconbtn navtoggle" data-nav-toggle aria-expanded="false" aria-label="Menu">☰</button>
+    <nav class="navlinks" aria-label="Main">
+      <a href="../index.html">Home</a>
+      <a href="../syllabus.html">Syllabus</a>
+      <a href="../studio/index.html">UML Studio</a>
+      <a href="../labs/index.html">Labs</a>
+      <a href="../sandbox/index.html">Playground</a>
+      <button class="iconbtn" data-theme-toggle aria-label="Toggle theme">☀</button>
+    </nav>
+  </div>
+  <div class="progressbar"></div>
+</header>
+
+<main id="main">
+<div class="wrap">
+  <div class="chaphead">
+    <span class="chapnum">CHAPTER 2 · WEEK 2</span>
+    <h1>Objects, classes and instances</h1>
+    <p class="lede">
+      A class is a blueprint. An instance is a thing built from it, at its own address in memory.
+      Getting this distinction physically clear is the difference between fluency and guessing for the rest of the course.
+    </p>
+    <ul class="objectives">
+      <li>Write a class with a constructor, following Python naming conventions</li>
+      <li>Explain what <code>self</code> refers to, and why it must appear in every method signature</li>
+      <li>Predict what happens in memory when two instances are created from one class</li>
+      <li>Store one object inside another to model a relationship</li>
+    </ul>
+  </div>
+
+  <div class="chapter-layout">
+  <div>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="blueprint">2.1 — Class = blueprint, instance = thing</h2>
+    <p class="prose">
+      A <b>class</b> defines what every object of that kind will know (attributes) and be able to do (behaviours).
+      It is a plan, not a building. Nothing exists in memory until you build from it.
+    </p>
+
+    <figure class="figframe">
+      <svg viewBox="0 0 760 230" role="img" aria-label="One Student class blueprint producing three separate student instances">
+        <g font-size="12">
+          <rect x="18" y="46" width="186" height="132" rx="6" fill="color-mix(in srgb,var(--accent) 7%,var(--surface))" stroke="var(--accent)" stroke-dasharray="6 4"/>
+          <text x="111" y="36"  text-anchor="middle" class="svg-acc" font-size="10.5" font-weight="700" letter-spacing="1.4">BLUEPRINT (class)</text>
+          <text x="111" y="74"  text-anchor="middle" class="svg-ink" font-weight="700" font-size="14">Student</text>
+          <line x1="34" y1="86" x2="188" y2="86" class="svg-line"/>
+          <text x="40" y="106" class="svg-ink2 svg-mono" font-size="11">student_id</text>
+          <text x="40" y="124" class="svg-ink2 svg-mono" font-size="11">name</text>
+          <line x1="34" y1="136" x2="188" y2="136" class="svg-line"/>
+          <text x="40" y="156" class="svg-ink2 svg-mono" font-size="11">enroll()</text>
+
+          <text x="246" y="112" class="svg-acc" font-size="22">→</text>
+          <text x="258" y="136" class="svg-ink3" font-size="10">Student(…)</text>
+
+          <g>
+            <rect x="320" y="30"  width="180" height="56" rx="6" class="svg-surf"/>
+            <text x="334" y="50"  class="svg-ink svg-mono" font-size="11">stu1</text>
+            <text x="486" y="50"  text-anchor="end" class="svg-ink3 svg-mono" font-size="10">0x1a4c</text>
+            <text x="334" y="68"  class="svg-ink2 svg-mono" font-size="10.5">'001' · John</text>
+          </g>
+          <g>
+            <rect x="320" y="98"  width="180" height="56" rx="6" class="svg-surf"/>
+            <text x="334" y="118" class="svg-ink svg-mono" font-size="11">stu2</text>
+            <text x="486" y="118" text-anchor="end" class="svg-ink3 svg-mono" font-size="10">0x2f80</text>
+            <text x="334" y="136" class="svg-ink2 svg-mono" font-size="10.5">'002' · Peter</text>
+          </g>
+          <g>
+            <rect x="320" y="166" width="180" height="56" rx="6" class="svg-surf"/>
+            <text x="334" y="186" class="svg-ink svg-mono" font-size="11">stu3</text>
+            <text x="486" y="186" text-anchor="end" class="svg-ink3 svg-mono" font-size="10">0x3b18</text>
+            <text x="334" y="204" class="svg-ink2 svg-mono" font-size="10.5">'003' · Mary</text>
+          </g>
+
+          <text x="636" y="100" text-anchor="middle" class="svg-ink2" font-size="11">Same shape.</text>
+          <text x="636" y="120" text-anchor="middle" class="svg-ink2" font-size="11">Different addresses.</text>
+          <text x="636" y="140" text-anchor="middle" class="svg-ink2" font-size="11">Different data.</text>
+          <text x="636" y="166" text-anchor="middle" class="svg-ink3" font-size="10.5">stu1.name is not stu2.name</text>
+        </g>
+      </svg>
+      <figcaption>One class, three <b>instances</b>. We say “instance” rather than “object” from here on, because
+      the word <i>object</i> can also mean the class itself.</figcaption>
+    </figure>
+
+    <h3 id="naming">Naming conventions you are marked on</h3>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Thing</th><th>Convention</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td>Class name</td><td><b>PascalCase</b>, a <b>noun</b></td><td><code>Student</code>, <code>BankAccount</code>, <code>BookItem</code></td></tr>
+          <tr><td>Method name</td><td><b>snake_case</b>, a <b>verb</b></td><td><code>enroll_to_subject()</code>, <code>calculate_price()</code></td></tr>
+          <tr><td>Attribute</td><td><b>snake_case</b>, a noun</td><td><code>student_id</code>, <code>due_date</code></td></tr>
+          <tr><td>Protected member</td><td>single leading underscore</td><td><code>_year</code></td></tr>
+          <tr><td>Private member</td><td>double leading underscore</td><td><code>__gpa</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="codeblock">
+      <div class="codehead">the minimum class</div>
+<pre><code>class Student:          # 'class', lowercase · PascalCase name · colon
+    pass                # body goes here</code></pre>
+    </div>
+    <p class="prose">
+      In Python 3 you no longer write <code>class Student(object):</code> — every class inherits from
+      <code>object</code> automatically. You will still see the old form in older code and in some textbooks.
+    </p>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="constructor">2.2 — The constructor</h2>
+    <p class="prose">
+      You could create an empty instance and then assign every attribute by hand. With twelve attributes that is
+      twelve lines, repeated at every creation site, and nothing forces you to set them all. The
+      <b>constructor</b> solves this: it runs automatically whenever an instance is created.
+    </p>
+
+    <div class="codeblock">
+      <div class="codehead">__init__ — three things that look alike but are not</div>
+<pre data-hl="2,3,4"><code>class Student:
+    def __init__(self, student_id, name):
+        self.student_id = student_id
+        self.name = name</code></pre>
+    </div>
+
+    <figure class="figframe">
+      <svg viewBox="0 0 700 160" role="img" aria-label="Diagram labelling self, parameters and instance attributes in a constructor">
+        <g font-size="12">
+          <text x="30" y="40" class="svg-mono svg-ink" font-size="13">def __init__(</text>
+          <text x="128" y="40" class="svg-mono" font-size="13" fill="#c4a6ff">self</text>
+          <text x="162" y="40" class="svg-mono svg-ink" font-size="13">, </text>
+          <text x="176" y="40" class="svg-mono" font-size="13" fill="#7dd3fc">student_id</text>
+          <text x="262" y="40" class="svg-mono svg-ink" font-size="13">, </text>
+          <text x="276" y="40" class="svg-mono" font-size="13" fill="#7dd3fc">name</text>
+          <text x="314" y="40" class="svg-mono svg-ink" font-size="13">):</text>
+
+          <text x="54" y="72" class="svg-mono" font-size="13" fill="#ffd166">self.student_id</text>
+          <text x="186" y="72" class="svg-mono svg-ink" font-size="13">=</text>
+          <text x="206" y="72" class="svg-mono" font-size="13" fill="#7dd3fc">student_id</text>
+
+          <path d="M140 48 v22" stroke="#c4a6ff" stroke-width="1.3" fill="none"/>
+          <text x="148" y="104" fill="#c4a6ff" font-size="11">self — the address of the instance being built</text>
+
+          <path d="M250 94 v-14" stroke="#7dd3fc" stroke-width="1.3" fill="none" stroke-dasharray="3 3"/>
+          <text x="258" y="126" fill="#7dd3fc" font-size="11">parameter — the value handed in from outside</text>
+
+          <path d="M110 80 v12 h-70" stroke="#ffd166" stroke-width="1.3" fill="none"/>
+          <text x="30" y="148" fill="#ffd166" font-size="11">instance attribute — stored on this instance, forever</text>
+        </g>
+      </svg>
+      <figcaption>The left of the <code>=</code> is <b>storage on the instance</b>. The right is <b>a value passed in</b>.
+      They are usually spelled the same, which is exactly why students confuse them.</figcaption>
+    </figure>
+
+    <div class="note note-why">
+      <b>Why <code>self</code> must be there.</b> <code>self</code> is the address of the instance currently being
+      worked on. Without it Python would have no way to know <i>whose</i> <code>student_id</code> you mean.
+      <code>stu1.student_id</code> and <code>stu2.student_id</code> are different memory, even though the name is identical.
+    </div>
+
+    <h3 id="errors">The four mistakes everyone makes once</h3>
+    <ul class="breaks prose-wide">
+      <li><b>Forgot <code>def</code></b> — <code>__init__(self, …)</code> on its own is a call, not a definition.</li>
+      <li><b>Single underscores</b> — <code>_init_()</code> is just an ordinary method. Python never calls it, so your
+      attributes are never set and you get <code>AttributeError</code> on first use.</li>
+      <li><b>Forgot <code>self</code> in the parameters</b> — <code>def __init__(width, height):</code> makes
+      <code>width</code> receive the instance. Even a constructor with no parameters needs <code>self</code>.</li>
+      <li><b>Forgot <code>self.</code> on the left</b> — <code>name = name</code> creates a local variable that is
+      discarded the moment <code>__init__</code> returns. The instance is left with nothing.</li>
+    </ul>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="memory">2.3 — Watch it happen in memory</h2>
+    <p class="prose">
+      Step through this. The point to internalise is the moment the second instance appears: a
+      <b>second, unrelated block of memory</b> that happens to have the same field names.
+    </p>
+
+    <div data-viz="instances"></div>
+
+    <div class="note note-exam">
+      <b>Exam point.</b> <code>print(id(stu1.student_id))</code> and <code>print(id(stu2.student_id))</code> give
+      different numbers. Each instance holds its own data at its own address. Creating from the same class guarantees
+      the same <i>shape</i>, never shared <i>values</i>.
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="dot">2.4 — Dot notation: reading and changing state</h2>
+    <p class="prose">
+      Once an instance exists, you reach its data with <b>dot notation</b>: the instance name, a dot,
+      then the attribute name. Writing to it changes the <b>state</b> of that one instance.
+    </p>
+
+    <div class="codeblock">
+      <div class="codehead">read, then write</div>
+<pre><code>stu1 = Student('001', 'John')
+
+print(stu1.name)        # read  -> John
+stu1.name = 'Johnny'    # write -> this instance only
+print(stu1.name)        # read  -> Johnny
+
+# inside the class, 'self' plays the role of the instance name
+class Student:
+    def rename(self, new_name):
+        self.name = new_name</code></pre>
+    </div>
+
+    <div class="note note-trap">
+      <b>Hold this thought — it is chapter 3's entire subject.</b> Nothing above stopped us writing
+      <code>stu1.name = 42</code>, or <code>stu1.gpa = -5</code>. Direct attribute access from outside the class
+      breaks <i>information hiding</i>. Next chapter we take that ability away, on purpose.
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="relations">2.5 — One object inside another</h2>
+    <p class="prose">
+      Real systems are objects that hold other objects. A <code>Subject</code> needs to know which students enrolled.
+      It stores the <b>whole instance</b>, not a copy of the name — that is what keeps one fact in one place.
+    </p>
+
+    <div class="vs">
+      <div class="vs-side vs-bad">
+        <div class="vs-head">✗ storing a copy of the data</div>
+<pre><code>class Subject:
+    def __init__(self, subject_id, subject_name):
+        self.subject_id = subject_id
+        self.subject_name = subject_name
+        self.student_names = []
+
+oop = Subject('CS101', 'OOP')
+oop.student_names.append('John')
+
+# John changes his legal name…
+stu1.name = 'Jonathan'
+print(oop.student_names)   # ['John'] — stale forever</code></pre>
+        <div class="vs-note">The name now exists in two places and they have drifted apart. This is the
+        parallel-list bug from chapter 1, wearing a class.</div>
+      </div>
+      <div class="vs-side vs-good">
+        <div class="vs-head">✓ storing the instance</div>
+<pre><code>class Subject:
+    def __init__(self, subject_id, subject_name):
+        self.subject_id = subject_id
+        self.subject_name = subject_name
+        self.student_list = []
+
+oop = Subject('CS101', 'OOP')
+oop.student_list.append(stu1)      # the whole object
+
+stu1.name = 'Jonathan'
+print(oop.student_list[0].name)    # Jonathan — always current</code></pre>
+        <div class="vs-note">One <code>Student</code> object, referenced from wherever it is needed.
+        Change it once and every holder sees the change.</div>
+      </div>
+    </div>
+
+    <p class="prose">
+      This is also why lab briefs say <b>“do not duplicate data”</b> and <b>“data stored in a non-basic class must be
+      an instance of the basic class only.”</b> It is not style — it is the bug above.
+    </p>
+
+    <h3 id="selfref">A class can reference its own kind</h3>
+    <p class="prose">
+      A student can have a mentor (พี่รหัส), who is also a student. A person has friends, who are people.
+      In a class diagram this is a <b>self-association</b> (chapter 4).
+    </p>
+    <div class="codeblock">
+      <div class="codehead">self-association</div>
+<pre><code>class Student:
+    def __init__(self, student_id, name, year):
+        self.student_id = student_id
+        self.name = name
+        self.year = year
+        self.mentor = None          # another Student, or None
+
+a = Student('a', 'Ann', 1)
+b = Student('b', 'Ben', 2)
+a.mentor = b                        # Ben mentors Ann
+
+def mentor_chain(student):
+    while student.mentor is not None:
+        print(student.name, '→', student.mentor.name)
+        student = student.mentor</code></pre>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <section>
+    <h2 id="activity">2.6 — Activities for this week</h2>
+
+    <div class="panel">
+      <p class="panel-title"><span class="ic">◆</span> Activity 1 — find the objects</p>
+      <p>In groups of 2–3, pick a business or activity. List its objects, and for each one write its attributes
+      and behaviours. 15 minutes. Expected output: the named business, the list of objects, and the
+      attributes/behaviours of each.</p>
+    </div>
+
+    <div class="panel">
+      <p class="panel-title"><span class="ic">◆</span> Activity 2 — build the registration model</p>
+      <p>Write classes <code>Student</code> (<code>stu_id</code>, <code>name</code>),
+      <code>Subject</code> (<code>subject_id</code>, <code>subject_name</code>, <code>section</code>, <code>credit</code>)
+      and <code>Teacher</code> (<code>teacher_id</code>, <code>teacher_name</code>). Then:</p>
+      <ul>
+        <li>create 5 students and 2 teachers;</li>
+        <li>create the OOP course in 2 sections, each with a different teacher and at least 2 students;</li>
+        <li>given a teacher code, report which students study with that teacher;</li>
+        <li>given a student code, report which subjects they take.</li>
+      </ul>
+      <p class="mb-0"><a class="btn btn-s" href="../sandbox/index.html?load=activity2">Open this in the playground →</a></p>
+    </div>
+
+    <div class="panel">
+      <p class="panel-title"><span class="ic">◆</span> Activity 3 — the mentor chain</p>
+      <p>Add a <code>student_mentor</code> attribute to <code>Student</code>. Create four students: <code>a</code>
+      is year 1; <code>b</code> is year 2 and mentors <code>a</code>; <code>c</code> is year 3 and mentors
+      <code>b</code>; <code>d</code> is year 4 and mentors <code>c</code>. Then answer:
+      <i>who is the mentor of student x?</i> and <i>are x and y in the same mentor chain?</i></p>
+    </div>
+
+    <h3 id="check">Check yourself</h3>
+
+    <div class="quiz" data-quiz>
+      <p class="quiz-q">What does this print?<br>
+      <code>stu1 = Student('001','John'); stu2 = stu1; stu2.name = 'Peter'; print(stu1.name)</code></p>
+      <ul class="quiz-opts">
+        <li><button data-why="That would be true if stu2 were a new instance. It is not — no second Student(…) call was made.">John</button></li>
+        <li><button data-correct data-why="<code>stu2 = stu1</code> copies the <i>address</i>, not the object. Both names point at the same block of memory, so changing one changes 'both'. Creating an instance requires calling the class.">Peter</button></li>
+        <li><button data-why="No error — assigning one name to another is always legal in Python.">AttributeError</button></li>
+      </ul>
+    </div>
+
+    <div class="quiz" data-quiz>
+      <p class="quiz-q">Why does <code>def __init__(width, height):</code> fail?</p>
+      <ul class="quiz-opts">
+        <li><button data-why="The name <code>__init__</code> is correct — the problem is the parameter list.">Because <code>__init__</code> is misspelled</button></li>
+        <li><button data-correct data-why="Python passes the instance as the first positional argument automatically. With no <code>self</code>, <code>width</code> receives the instance and <code>height</code> receives the real width — then the call complains about the count.">Because the instance is passed as the first argument, so <code>width</code> becomes <code>self</code></button></li>
+        <li><button data-why="A constructor may take any number of parameters. Two is fine — as long as <code>self</code> is first.">Because a constructor cannot take two parameters</button></li>
+      </ul>
+    </div>
+
+    <div class="quiz" data-quiz>
+      <p class="quiz-q">A <code>Subject</code> needs to know its enrolled students. What should go in its list?</p>
+      <ul class="quiz-opts">
+        <li><button data-why="Storing names duplicates data that already lives on the Student. When the student is updated, the copy goes stale.">The students' names, as strings</button></li>
+        <li><button data-correct data-why="One fact, one place. Everything else — name, id, year — is reached through the reference and is always current.">The <code>Student</code> instances themselves</button></li>
+        <li><button data-why="An id is a weaker version of the same mistake: you then need a lookup everywhere, and nothing stops the id referring to a student that no longer exists.">Only the student ids</button></li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="chapnav">
+    <a class="prev" href="01-introduction.html"><span class="dir">← Previous</span><span class="nm">Introduction</span></a>
+    <a class="next" href="03-encapsulation.html"><span class="dir">Chapter 3 →</span><span class="nm">Encapsulation &amp; methods</span></a>
+  </div>
+
+  </div>
+  <aside class="toc" data-toc="main" aria-label="On this page"><h2>On this page</h2></aside>
+  </div>
+</div>
+</main>
+
+<footer class="footer">
+  <div class="wrap"><p class="mb-0">01276131 Object-Oriented Programming · Department of Computer Engineering, KMITL.</p></div>
+</footer>
+
+<script src="../assets/js/site.js"></script>
+<script src="../assets/js/viz.js"></script>
+</body>
+</html>

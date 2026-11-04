@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Object-Oriented Programming · 01276131 · KMITL International Program</title>
+<meta name="description" content="A visual, interactive course in object-oriented programming with Python and UML, for the international programme at the Department of Computer Engineering, KMITL.">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23ff7a2f'/%3E%3Ctext x='16' y='23' font-family='sans-serif' font-size='18' font-weight='bold' fill='white' text-anchor='middle'%3EO%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<a class="skiplink" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">OO</span>
+      <span class="brand-txt">Object-Oriented Programming<small>01276131 · KMITL</small></span>
+    </a>
+    <button class="iconbtn navtoggle" data-nav-toggle aria-expanded="false" aria-label="Menu">☰</button>
+    <nav class="navlinks" aria-label="Main">
+      <a href="index.html">Home</a>
+      <a href="syllabus.html">Syllabus</a>
+      <a href="studio/index.html">UML Studio</a>
+      <a href="labs/index.html">Labs</a>
+      <a href="sandbox/index.html">Playground</a>
+      <button class="iconbtn" data-theme-toggle aria-label="Toggle theme">☀</button>
+    </nav>
+  </div>
+  <div class="progressbar"></div>
+</header>
+
+<main id="main">
+
+<!-- ============ hero ============ -->
+<section class="hero">
+  <div class="wrap hero-in">
+    <p class="eyebrow">Department of Computer Engineering · International Program</p>
+    <h1>Stop writing code that<br>falls apart when it grows.</h1>
+    <p class="lede">
+      This is the course site for <b>01276131 Object-Oriented Programming</b>. Ten chapters, each built the same way:
+      first we break a program <i>without</i> the principle, then we fix it <i>with</i> the principle — so you learn not
+      just how encapsulation or polymorphism works, but what it costs you to skip it.
+    </p>
+    <div class="row" style="margin-top:1.6rem">
+      <a class="btn btn-primary" href="chapters/01-introduction.html">Start chapter 1 →</a>
+      <a class="btn" href="studio/index.html">Draw a diagram</a>
+      <a class="btn btn-ghost" href="sandbox/index.html">Run Python in the browser</a>
+    </div>
+
+    <div class="grid grid-4" style="margin-top:2.6rem">
+      <div class="card"><h3 style="font-size:1.6rem;margin:0;color:var(--accent)">10</h3><p class="muted mb-0" style="font-size:.86rem">chapters, one per teaching week</p></div>
+      <div class="card"><h3 style="font-size:1.6rem;margin:0;color:var(--accent)">11</h3><p class="muted mb-0" style="font-size:.86rem">interactive explainers you can poke at</p></div>
+      <div class="card"><h3 style="font-size:1.6rem;margin:0;color:var(--accent)">10</h3><p class="muted mb-0" style="font-size:.86rem">auto-marked diagram exercises</p></div>
+      <div class="card"><h3 style="font-size:1.6rem;margin:0;color:var(--accent)">5</h3><p class="muted mb-0" style="font-size:.86rem">weekly labs with runnable skeletons</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ the four pillars ============ -->
+<section class="wrap reveal">
+  <h2 id="pillars">The four ideas everything else rests on</h2>
+  <p class="prose muted">
+    Every chapter in this course is an answer to one of these four. If you can say <i>which problem each one solves</i>,
+    you can design; if you can only define them, you can only pass a vocabulary quiz.
+  </p>
+
+  <div class="four-pillars">
+    <a class="pillar card-link" href="chapters/03-encapsulation.html" style="--c:#38bdf8">
+      <span class="gk">capsule + make</span>
+      <h4>Encapsulation</h4>
+      <p>Keep data and the code that guards it in one place, and let nothing else touch the data directly.
+      <b>Solves:</b> an object being put into a state that should be impossible.</p>
+    </a>
+    <a class="pillar card-link" href="chapters/06-polymorphism.html#abstraction" style="--c:#a78bfa">
+      <span class="gk">abs + trahere — draw away</span>
+      <h4>Abstraction</h4>
+      <p>Show the interface, hide the implementation; and pull what is common up into one place.
+      <b>Solves:</b> having to understand all of a system in order to change part of it.</p>
+    </a>
+    <a class="pillar card-link" href="chapters/05-inheritance.html" style="--c:#2fbf71">
+      <span class="gk">is-a</span>
+      <h4>Inheritance</h4>
+      <p>A specific class takes everything a general class has, then adds its own specifics.
+      <b>Solves:</b> the same rule copy-pasted into eight files, seven of which you forget to update.</p>
+    </a>
+    <a class="pillar card-link" href="chapters/06-polymorphism.html" style="--c:#ff7a2f">
+      <span class="gk">poly + morph — many forms</span>
+      <h4>Polymorphism</h4>
+      <p>One method name, many different bodies, chosen by the object itself at run time.
+      <b>Solves:</b> the <code>if/elif</code> chain that grows every time the business adds a product.</p>
+    </a>
+  </div>
+
+  <div class="note note-why">
+    <b>Read this before chapter 1.</b> OOP is not a rule book to obey. It is a set of trades: you accept more
+    classes and more indirection, and in return you get fewer places to change when a requirement moves.
+    Every chapter here states that trade explicitly, including the cases where the honest answer is
+    <i>“don't use OOP for this.”</i>
+  </div>
+</section>
+
+<!-- ============ the chapters ============ -->
+<section class="wrap reveal">
+  <h2 id="chapters">Chapters</h2>
+  <p class="prose muted">Follow in order — chapters 4 onward assume the vocabulary of the ones before.</p>
+
+  <div class="weeks">
+    <a class="week" href="chapters/01-introduction.html">
+      <span class="wk">WEEK 1</span>
+      <span><span class="ti">Introduction &amp; the development process</span><br><span class="su">Requirements → analysis → design → code. Where each diagram fits, and what this course grades.</span></span>
+      <span class="chip">overview</span>
+    </a>
+    <a class="week" href="chapters/02-object-and-class.html">
+      <span class="wk">WEEK 2</span>
+      <span><span class="ti">Objects, classes and instances</span><br><span class="su">Blueprint versus thing. <code>__init__</code>, <code>self</code>, dot notation, and why two instances are never the same object.</span></span>
+      <span class="chip chip-accent">2 interactives</span>
+    </a>
+    <a class="week" href="chapters/03-encapsulation.html">
+      <span class="wk">WEEK 3</span>
+      <span><span class="ti">Encapsulation, access levels and methods</span><br><span class="su">Public, protected, private; getters, setters, validation; <code>@property</code>, closures and decorators.</span></span>
+      <span class="chip chip-accent">4 interactives</span>
+    </a>
+    <a class="week" href="chapters/04-class-diagram.html">
+      <span class="wk">WEEK 4</span>
+      <span><span class="ti">Class diagrams, relationships, multiplicity</span><br><span class="su">Association, dependency, aggregation, composition — and a five-step method for designing from a written spec.</span></span>
+      <span class="chip chip-vio">4 graded exercises</span>
+    </a>
+    <a class="week" href="chapters/05-inheritance.html">
+      <span class="wk">WEEK 5</span>
+      <span><span class="ti">Inheritance</span><br><span class="su">is-a versus has-a, <code>super()</code>, method overriding, and the Open–Closed Principle in practice.</span></span>
+      <span class="chip chip-accent">2 interactives</span>
+    </a>
+    <a class="week" href="chapters/06-polymorphism.html">
+      <span class="wk">WEEK 6</span>
+      <span><span class="ti">Abstraction, polymorphism &amp; magic methods</span><br><span class="su">Abstract base classes, duck typing, <code>__str__</code>, <code>__add__</code>, and composition as the alternative.</span></span>
+      <span class="chip chip-accent">3 interactives</span>
+    </a>
+    <a class="week" href="chapters/07-use-case-diagram.html">
+      <span class="wk">WEEK 7</span>
+      <span><span class="ti">Finding requirements &amp; use case diagrams</span><br><span class="su">Personas, user stories, domain storytelling, actors, «include» versus «extend».</span></span>
+      <span class="chip chip-vio">2 graded exercises</span>
+    </a>
+    <a class="week" href="chapters/08-sequence-diagram.html">
+      <span class="wk">WEEK 8</span>
+      <span><span class="ti">Sequence diagrams</span><br><span class="su">Lifelines, activation bars, synchronous and asynchronous messages, <code>alt</code> / <code>opt</code> / <code>loop</code> fragments.</span></span>
+      <span class="chip chip-vio">player + 2 builders</span>
+    </a>
+    <a class="week" href="chapters/09-multiple-inheritance.html">
+      <span class="wk">WEEK 9</span>
+      <span><span class="ti">Multiple inheritance, MRO and mixins</span><br><span class="su">The diamond problem, <code>super()</code> versus class-name calls, <code>**kwargs</code>, mixins, custom exceptions.</span></span>
+      <span class="chip chip-accent">1 interactive</span>
+    </a>
+    <a class="week" href="chapters/10-solid.html">
+      <span class="wk">WEEK 10</span>
+      <span><span class="ti">The SOLID principles</span><br><span class="su">Five refactors of one god class, each one driven by a principle and a concrete failure it prevents.</span></span>
+      <span class="chip chip-accent">stepper + exercise</span>
+    </a>
+  </div>
+
+  <div class="grid grid-3" style="margin-top:1.6rem">
+    <a class="card card-link" href="studio/index.html">
+      <h3>UML Studio</h3>
+      <p class="muted mb-0">Drag classes and relationship arrows onto a canvas, then press <b>Check</b>.
+      It marks your multiplicities, tells aggregation from composition, and explains every mistake.</p>
+    </a>
+    <a class="card card-link" href="labs/index.html">
+      <h3>Weekly labs</h3>
+      <p class="muted mb-0">The five lab briefs, the test cases the staff will run, the rules that lose marks,
+      and a worked walk-through of the registration lab.</p>
+    </a>
+    <a class="card card-link" href="sandbox/index.html">
+      <h3>Python playground</h3>
+      <p class="muted mb-0">Real Python in the browser — no install. Preloaded with the lab skeletons
+      and every example from the chapters.</p>
+    </a>
+  </div>
+</section>
+
+<!-- ============ how to use ============ -->
+<section class="wrap reveal">
+  <h2 id="how">How to get the most out of this site</h2>
+  <ol class="steps prose-wide">
+    <li><b>Read the “What breaks” box first.</b> Each chapter opens with a program that works today and will hurt you
+    later. If you cannot see the pain, the principle will feel like bureaucracy.</li>
+    <li><b>Break the interactives on purpose.</b> They are built to be abused — assign a negative GPA, delete half a list,
+    add a seventh subclass. The failure messages are the lesson.</li>
+    <li><b>Draw before you code.</b> Every lab from week 3 onward is marked on the diagram first. Use the
+    <a href="studio/index.html">UML Studio</a> until <b>Check</b> comes back all green, then write the class skeletons from it.</li>
+    <li><b>Answer the “Choose correctly” questions.</b> Knowing <i>that</i> composition exists is worth nothing in the exam;
+    knowing <i>when</i> to pick it over inheritance is most of the marks.</li>
+  </ol>
+
+  <div class="note note-exam">
+    <b>Where the marks are.</b> Lecture: mini-project 30%, midterm 30%, final 40%.
+    Lab: weekly labs 50%, lab exam 30%, mini-project 20%.
+    Full breakdown and the assignment briefs are on the <a href="syllabus.html">syllabus page</a>.
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <h4>Course</h4>
+        <ul>
+          <li><a href="syllabus.html">Syllabus &amp; assessment</a></li>
+          <li><a href="syllabus.html#assignments">Assignments</a></li>
+          <li><a href="labs/index.html">Weekly labs</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Tools</h4>
+        <ul>
+          <li><a href="studio/index.html">UML Studio</a></li>
+          <li><a href="sandbox/index.html">Python playground</a></li>
+          <li><a href="reference.html">Quick reference</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Official channels</h4>
+        <ul>
+          <li><a href="https://sites.google.com/kmitl.ac.th/object-oriented-programming/home">Course Google Site</a></li>
+          <li><a href="https://classroom.google.com">Google Classroom</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>About</h4>
+        <p style="margin:0;font-size:.85rem">
+          Department of Computer Engineering,<br>
+          Faculty of Engineering,<br>
+          King Mongkut's Institute of Technology Ladkrabang.
+        </p>
+      </div>
+    </div>
+    <p style="margin:0">
+      Slides, labs and worked examples remain the course material of record. This site is a visual companion to them.
+    </p>
+  </div>
+</footer>
+
+<script src="assets/js/site.js"></script>
+<script src="assets/js/viz.js"></script>
+</body>
+</html>
