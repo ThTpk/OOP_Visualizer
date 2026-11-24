@@ -857,9 +857,13 @@
           "    def pay_debit(self, order, security_code): ...\n" +
           "    def pay_credit(self, order, security_code): ...",
         hl: [5, 6, 7],
-        why: "Order now has <b>one</b> reason to change. Payment has its own. " +
+        why: "Order has gone from <b>three</b> reasons to change to <b>two</b> — the basket rules and the " +
+             "pricing rules are both still in it. Payment now has a reason of its own. " +
              "“A class should have one and only one reason to change.”",
-        breaks: ["Still broken: adding PromptPay means <b>editing PaymentProcessor</b>"]
+        breaks: [
+          "Still broken: adding PromptPay means <b>editing PaymentProcessor</b>",
+          "Not finished either: pricing could leave Order as well — whether that earns its own class is a <b>judgement</b>, and 10.9 is about not overpaying for it"
+        ]
       },
       {
         tag: "O", chip: "chip-accent",
