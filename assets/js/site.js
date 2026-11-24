@@ -397,9 +397,78 @@
     }).join("\n");
   };
 
+  /* ---------- 10. simulab embeds ----------
+     <figure class="labembed" data-lab="lab05-inheritance"
+             data-lab-title="..." data-lab-note="...">
+     A lab is one self-contained offline page (~0.5 MB), so it loads only when
+     it scrolls into view, and on narrow screens only when asked for.         */
+  function initLab() {
+    var hosts = $$("[data-lab]");
+    if (!hosts.length) return;
+    var link = $('link[rel="stylesheet"]');
+    var base = link ? link.getAttribute("href").split("css/site.css")[0] : "assets/";
+
+    hosts.forEach(function (host) {
+      var title = host.getAttribute("data-lab-title") || "Interactive lab";
+      var src = base + "figures/" + host.getAttribute("data-lab") + ".html";
+
+      var head = el("div", "labembed-head");
+      var h = el("b", null, title);
+      var out = el("a", "labembed-out", "Open full screen ↗");
+      out.href = src; out.target = "_blank"; out.rel = "noopener";
+      head.appendChild(h); head.appendChild(out);
+
+      var stage = el("div", "labembed-stage");
+      var loaded = false;
+      function load() {
+        if (loaded) return;
+        loaded = true;
+        stage.innerHTML = "";
+        stage.classList.add("is-loaded");
+        var fr = document.createElement("iframe");
+        fr.src = src;
+        fr.title = title;
+        fr.loading = "lazy";
+
+        /* the lab lays itself out, so let it say how tall it needs to be */
+        function fit() {
+          try {
+            var d = fr.contentDocument;
+            if (!d || !d.body) return;
+            var h = Math.max(d.body.scrollHeight, d.documentElement.scrollHeight);
+            if (h > 120) stage.style.height = h + "px";
+          } catch (e) { /* cross-origin: the CSS aspect ratio stands */ }
+        }
+        fr.addEventListener("load", function () { fit(); setTimeout(fit, 500); });
+        var tid = 0;
+        window.addEventListener("resize", function () {
+          clearTimeout(tid);
+          tid = setTimeout(fit, 160);
+        });
+        stage.appendChild(fr);
+      }
+      var btn = el("button", "btn labembed-load", "▶ Load the lab");
+      btn.addEventListener("click", load);
+      stage.appendChild(btn);
+
+      host.appendChild(head);
+      host.appendChild(stage);
+      var note = host.getAttribute("data-lab-note");
+      if (note) host.appendChild(el("div", "labembed-note", note));
+
+      /* wide screens load it on approach; narrow ones wait to be asked */
+      if (window.innerWidth >= 720 && "IntersectionObserver" in window) {
+        var o = new IntersectionObserver(function (es) {
+          es.forEach(function (e) { if (e.isIntersecting) { load(); o.unobserve(e.target); } });
+        }, { rootMargin: "320px 0px", threshold: 0 });
+        o.observe(host);
+      }
+    });
+  }
+
   /* ---------- boot ---------- */
   function boot() {
-    initChrome(); initCode(); initToc(); initQuiz(); initReveal();
+    initChrome(); initCode(); initToc(); initQuiz(); initReveal(); initLab();
     document.dispatchEvent(new CustomEvent("oop:ready"));
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);

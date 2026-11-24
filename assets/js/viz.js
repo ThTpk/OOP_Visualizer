@@ -485,7 +485,8 @@
 
     function draw() {
       var dupLines = types * (shared + 2);
-      var inhLines = (shared + 2) + types * 3;
+      // 4 lines per subclass: the class line, def __init__, super().__init__, self._extra
+      var inhLines = (shared + 2) + types * 4;
       var dupEdits = types, inhEdits = 1;
 
       stats.innerHTML = "";

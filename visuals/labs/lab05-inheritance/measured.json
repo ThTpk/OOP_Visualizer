@@ -1,0 +1,417 @@
+{
+ "generator": "port of assets/js/viz.js VIZ[\"duplication\"] (lines 462-540)",
+ "python": "3.12.10",
+ "shared_fields": 6,
+ "added_field": "salary",
+ "rows": [
+  {
+   "subtypes": 2,
+   "loc_dup": 16,
+   "loc_inh": 16,
+   "edits_dup": 2,
+   "edits_inh": 1,
+   "edited_classes_dup": [
+    "Engineer",
+    "Manager"
+   ],
+   "edited_classes_inh": [
+    "Employee"
+   ],
+   "run_dup_complete": {
+    "has_field": [
+     "Manager",
+     "Engineer"
+    ],
+    "missing_field": [],
+    "error": null
+   },
+   "run_inh_complete": {
+    "has_field": [
+     "Manager",
+     "Engineer"
+    ],
+    "missing_field": [],
+    "error": null
+   },
+   "run_dup_missed_one": {
+    "has_field": [
+     "Manager"
+    ],
+    "missing_field": [
+     "Engineer"
+    ],
+    "error": "TypeError: Engineer.__init__() takes 8 positional arguments but 9 were given"
+   }
+  },
+  {
+   "subtypes": 3,
+   "loc_dup": 24,
+   "loc_inh": 20,
+   "edits_dup": 3,
+   "edits_inh": 1,
+   "edited_classes_dup": [
+    "Engineer",
+    "Intern",
+    "Manager"
+   ],
+   "edited_classes_inh": [
+    "Employee"
+   ],
+   "run_dup_complete": {
+    "has_field": [
+     "Manager",
+     "Engineer",
+     "Intern"
+    ],
+    "missing_field": [],
+    "error": null
+   },
+   "run_inh_complete": {
+    "has_field": [
+     "Manager",
+     "Engineer",
+     "Intern"
+    ],
+    "missing_field": [],
+    "error": null
+   },
+   "run_dup_missed_one": {
+    "has_field": [
+     "Manager",
+     "Engineer"
+    ],
+    "missing_field": [
+     "Intern"
+    ],
+    "error": "TypeError: Intern.__init__() takes 8 positional arguments but 9 were given"
+   }
+  },
+  {
+   "subtypes": 4,
+   "loc_dup": 32,
+   "loc_inh": 24,
+   "edits_dup": 4,
+   "edits_inh": 1,
+   "edited_classes_dup": [
+    "Designer",
+    "Engineer",
+    "Intern",
+    "Manager"
+   ],
+   "edited_classes_inh": [
+    "Employee"
+   ],
+   "run_dup_complete": {
+    "has_field": [
+     "Manager",
+     "Engineer",
+     "Intern",
+     "Designer"
+    ],
+    "missing_field": [],
+    "error": null
+   },
+   "run_inh_complete": {
+    "has_field": [
+     "Manager",
+     "Engineer",
+     "Intern",
+     "Designer"
+    ],
+    "missing_field": [],
+    "error": null
+   },
+   "run_dup_missed_one": {
+    "has_field": [
+     "Manager",
+     "Engineer",
+     "Intern"
+    ],
+    "missing_field": [
+     "Designer"
+    ],
+    "error": "TypeError: Designer.__init__() takes 8 positional arguments but 9 were given"
+   }
+  },
+  {
+   "subtypes": 5,
+   "loc_dup": 40,
+   "loc_inh": 28,
+   "edits_dup": 5,
+   "edits_inh": 1,
+   "edited_classes_dup": [
+    "Analyst",
+    "Designer",
+    "Engineer",
+    "Intern",
+    "Manager"
+   ],
+   "edited_classes_inh": [
+    "Employee"
+   ],
+   "run_dup_complete": {
+    "has_field": [
+     "Manager",
+     "Engineer",
+     "Intern",
+     "Designer",
+     "Analyst"
+    ],
+    "missing_field": [],
+    "error": null
+   },
+   "run_inh_complete": {
+    "has_field": [
+     "Manager",
+     "Engineer",
+     "Intern",
+     "Designer",
+     "Analyst"
+    ],
+    "missing_field": [],
+    "error": null
+   },
+   "run_dup_missed_one": {
+    "has_field": [
+     "Manager",
+     "Engineer",
+     "Intern",
+     "Designer"
+    ],
+    "missing_field": [
+     "Analyst"
+    ],
+    "error": "TypeError: Analyst.__init__() takes 8 positional arguments but 9 were given"
+   }
+  },
+  {
+   "subtypes": 6,
+   "loc_dup": 48,
+   "loc_inh": 32,
+   "edits_dup": 6,
+   "edits_inh": 1,
+   "edited_classes_dup": [
+    "Analyst",
+    "Designer",
+    "Engineer",
+    "Intern",
+    "Manager",
+    "Sales"
+   ],
+   "edited_classes_inh": [
+    "Employee"
+   ],
+   "run_dup_complete": {
+    "has_field": [
+     "Manager",
+     "Engineer",
+     "Intern",
+     "Designer",
+     "Analyst",
+     "Sales"
+    ],
+    "missing_field": [],
+    "error": null
+   },
+   "run_inh_complete": {
+    "has_field": [
+     "Manager",
+     "Engineer",
+     "Intern",
+     "Designer",
+     "Analyst",
+     "Sales"
+    ],
+    "missing_field": [],
+    "error": null
+   },
+   "run_dup_missed_one": {
+    "has_field": [
+     "Manager",
+     "Engineer",
+     "Intern",
+     "Designer",
+     "Analyst"
+    ],
+    "missing_field": [
+     "Sales"
+    ],
+    "error": "TypeError: Sales.__init__() takes 8 positional arguments but 9 were given"
+   }
+  },
+  {
+   "subtypes": 7,
+   "loc_dup": 56,
+   "loc_inh": 36,
+   "edits_dup": 7,
+   "edits_inh": 1,
+   "edited_classes_dup": [
+    "Analyst",
+    "Designer",
+    "Engineer",
+    "Intern",
+    "Manager",
+    "Sales",
+    "Support"
+   ],
+   "edited_classes_inh": [
+    "Employee"
+   ],
+   "run_dup_complete": {
+    "has_field": [
+     "Manager",
+     "Engineer",
+     "Intern",
+     "Designer",
+     "Analyst",
+     "Sales",
+     "Support"
+    ],
+    "missing_field": [],
+    "error": null
+   },
+   "run_inh_complete": {
+    "has_field": [
+     "Manager",
+     "Engineer",
+     "Intern",
+     "Designer",
+     "Analyst",
+     "Sales",
+     "Support"
+    ],
+    "missing_field": [],
+    "error": null
+   },
+   "run_dup_missed_one": {
+    "has_field": [
+     "Manager",
+     "Engineer",
+     "Intern",
+     "Designer",
+     "Analyst",
+     "Sales"
+    ],
+    "missing_field": [
+     "Support"
+    ],
+    "error": "TypeError: Support.__init__() takes 8 positional arguments but 9 were given"
+   }
+  },
+  {
+   "subtypes": 8,
+   "loc_dup": 64,
+   "loc_inh": 40,
+   "edits_dup": 8,
+   "edits_inh": 1,
+   "edited_classes_dup": [
+    "Analyst",
+    "Designer",
+    "Director",
+    "Engineer",
+    "Intern",
+    "Manager",
+    "Sales",
+    "Support"
+   ],
+   "edited_classes_inh": [
+    "Employee"
+   ],
+   "run_dup_complete": {
+    "has_field": [
+     "Manager",
+     "Engineer",
+     "Intern",
+     "Designer",
+     "Analyst",
+     "Sales",
+     "Support",
+     "Director"
+    ],
+    "missing_field": [],
+    "error": null
+   },
+   "run_inh_complete": {
+    "has_field": [
+     "Manager",
+     "Engineer",
+     "Intern",
+     "Designer",
+     "Analyst",
+     "Sales",
+     "Support",
+     "Director"
+    ],
+    "missing_field": [],
+    "error": null
+   },
+   "run_dup_missed_one": {
+    "has_field": [
+     "Manager",
+     "Engineer",
+     "Intern",
+     "Designer",
+     "Analyst",
+     "Sales",
+     "Support"
+    ],
+    "missing_field": [
+     "Director"
+    ],
+    "error": "TypeError: Director.__init__() takes 8 positional arguments but 9 were given"
+   }
+  }
+ ],
+ "formula_check": [
+  {
+   "subtypes": 2,
+   "site_loc_dup": 16,
+   "measured_loc_dup": 16,
+   "site_loc_inh": 14,
+   "measured_loc_inh": 16
+  },
+  {
+   "subtypes": 3,
+   "site_loc_dup": 24,
+   "measured_loc_dup": 24,
+   "site_loc_inh": 17,
+   "measured_loc_inh": 20
+  },
+  {
+   "subtypes": 4,
+   "site_loc_dup": 32,
+   "measured_loc_dup": 32,
+   "site_loc_inh": 20,
+   "measured_loc_inh": 24
+  },
+  {
+   "subtypes": 5,
+   "site_loc_dup": 40,
+   "measured_loc_dup": 40,
+   "site_loc_inh": 23,
+   "measured_loc_inh": 28
+  },
+  {
+   "subtypes": 6,
+   "site_loc_dup": 48,
+   "measured_loc_dup": 48,
+   "site_loc_inh": 26,
+   "measured_loc_inh": 32
+  },
+  {
+   "subtypes": 7,
+   "site_loc_dup": 56,
+   "measured_loc_dup": 56,
+   "site_loc_inh": 29,
+   "measured_loc_inh": 36
+  },
+  {
+   "subtypes": 8,
+   "site_loc_dup": 64,
+   "measured_loc_dup": 64,
+   "site_loc_inh": 32,
+   "measured_loc_inh": 40
+  }
+ ],
+ "files_written": "C:\\Users\\THANUN~1\\AppData\\Local\\Temp\\oop05_3e5_krsc"
+}

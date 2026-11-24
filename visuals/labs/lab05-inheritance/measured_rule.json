@@ -1,0 +1,279 @@
+{
+ "rule": "a shared validating setter is tightened (store the address lower-case)",
+ "python": "3.12.10",
+ "rows": [
+  {
+   "subtypes": 2,
+   "edits_dup": 2,
+   "edits_inh": 1,
+   "dup_all_updated": {
+    "normalised": [
+     "Manager",
+     "Engineer"
+    ],
+    "kept_raw": [],
+    "raised": []
+   },
+   "dup_missed_one": {
+    "normalised": [
+     "Manager"
+    ],
+    "kept_raw": [
+     "Engineer"
+    ],
+    "raised": []
+   },
+   "inh_one_edit": {
+    "normalised": [
+     "Manager",
+     "Engineer"
+    ],
+    "kept_raw": [],
+    "raised": []
+   }
+  },
+  {
+   "subtypes": 3,
+   "edits_dup": 3,
+   "edits_inh": 1,
+   "dup_all_updated": {
+    "normalised": [
+     "Manager",
+     "Engineer",
+     "Intern"
+    ],
+    "kept_raw": [],
+    "raised": []
+   },
+   "dup_missed_one": {
+    "normalised": [
+     "Manager",
+     "Engineer"
+    ],
+    "kept_raw": [
+     "Intern"
+    ],
+    "raised": []
+   },
+   "inh_one_edit": {
+    "normalised": [
+     "Manager",
+     "Engineer",
+     "Intern"
+    ],
+    "kept_raw": [],
+    "raised": []
+   }
+  },
+  {
+   "subtypes": 4,
+   "edits_dup": 4,
+   "edits_inh": 1,
+   "dup_all_updated": {
+    "normalised": [
+     "Manager",
+     "Engineer",
+     "Intern",
+     "Designer"
+    ],
+    "kept_raw": [],
+    "raised": []
+   },
+   "dup_missed_one": {
+    "normalised": [
+     "Manager",
+     "Engineer",
+     "Intern"
+    ],
+    "kept_raw": [
+     "Designer"
+    ],
+    "raised": []
+   },
+   "inh_one_edit": {
+    "normalised": [
+     "Manager",
+     "Engineer",
+     "Intern",
+     "Designer"
+    ],
+    "kept_raw": [],
+    "raised": []
+   }
+  },
+  {
+   "subtypes": 5,
+   "edits_dup": 5,
+   "edits_inh": 1,
+   "dup_all_updated": {
+    "normalised": [
+     "Manager",
+     "Engineer",
+     "Intern",
+     "Designer",
+     "Analyst"
+    ],
+    "kept_raw": [],
+    "raised": []
+   },
+   "dup_missed_one": {
+    "normalised": [
+     "Manager",
+     "Engineer",
+     "Intern",
+     "Designer"
+    ],
+    "kept_raw": [
+     "Analyst"
+    ],
+    "raised": []
+   },
+   "inh_one_edit": {
+    "normalised": [
+     "Manager",
+     "Engineer",
+     "Intern",
+     "Designer",
+     "Analyst"
+    ],
+    "kept_raw": [],
+    "raised": []
+   }
+  },
+  {
+   "subtypes": 6,
+   "edits_dup": 6,
+   "edits_inh": 1,
+   "dup_all_updated": {
+    "normalised": [
+     "Manager",
+     "Engineer",
+     "Intern",
+     "Designer",
+     "Analyst",
+     "Sales"
+    ],
+    "kept_raw": [],
+    "raised": []
+   },
+   "dup_missed_one": {
+    "normalised": [
+     "Manager",
+     "Engineer",
+     "Intern",
+     "Designer",
+     "Analyst"
+    ],
+    "kept_raw": [
+     "Sales"
+    ],
+    "raised": []
+   },
+   "inh_one_edit": {
+    "normalised": [
+     "Manager",
+     "Engineer",
+     "Intern",
+     "Designer",
+     "Analyst",
+     "Sales"
+    ],
+    "kept_raw": [],
+    "raised": []
+   }
+  },
+  {
+   "subtypes": 7,
+   "edits_dup": 7,
+   "edits_inh": 1,
+   "dup_all_updated": {
+    "normalised": [
+     "Manager",
+     "Engineer",
+     "Intern",
+     "Designer",
+     "Analyst",
+     "Sales",
+     "Support"
+    ],
+    "kept_raw": [],
+    "raised": []
+   },
+   "dup_missed_one": {
+    "normalised": [
+     "Manager",
+     "Engineer",
+     "Intern",
+     "Designer",
+     "Analyst",
+     "Sales"
+    ],
+    "kept_raw": [
+     "Support"
+    ],
+    "raised": []
+   },
+   "inh_one_edit": {
+    "normalised": [
+     "Manager",
+     "Engineer",
+     "Intern",
+     "Designer",
+     "Analyst",
+     "Sales",
+     "Support"
+    ],
+    "kept_raw": [],
+    "raised": []
+   }
+  },
+  {
+   "subtypes": 8,
+   "edits_dup": 8,
+   "edits_inh": 1,
+   "dup_all_updated": {
+    "normalised": [
+     "Manager",
+     "Engineer",
+     "Intern",
+     "Designer",
+     "Analyst",
+     "Sales",
+     "Support",
+     "Director"
+    ],
+    "kept_raw": [],
+    "raised": []
+   },
+   "dup_missed_one": {
+    "normalised": [
+     "Manager",
+     "Engineer",
+     "Intern",
+     "Designer",
+     "Analyst",
+     "Sales",
+     "Support"
+    ],
+    "kept_raw": [
+     "Director"
+    ],
+    "raised": []
+   },
+   "inh_one_edit": {
+    "normalised": [
+     "Manager",
+     "Engineer",
+     "Intern",
+     "Designer",
+     "Analyst",
+     "Sales",
+     "Support",
+     "Director"
+    ],
+    "kept_raw": [],
+    "raised": []
+   }
+  }
+ ]
+}

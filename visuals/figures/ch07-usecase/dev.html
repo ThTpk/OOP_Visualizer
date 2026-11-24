@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ch07 box office · dev</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #ebe8e2; }
+  body { display: grid; place-items: center; }
+  .card { width: min(94vw, calc((100vh - 40px) * 2.18)); aspect-ratio: 720 / 330; border-radius: 16px;
+          overflow: hidden; background: var(--fig-paper, #fdfcf8); color: #1c1c1c;
+          box-shadow: 0 0 0 1px rgba(40,34,26,.10), 0 18px 50px -18px rgba(40,34,26,.35); }
+  [data-figure], [data-figure] svg { display: block; width: 100%; height: 100%; }
+  [data-figure] svg .pp { fill: var(--paper, #fdfdfc); }
+</style>
+</head>
+<body>
+  <div class="card"><div data-figure="ch07-usecase"></div></div>
+  <script src="./dev.js"></script>
+</body>
+</html>
