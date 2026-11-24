@@ -1194,6 +1194,115 @@
     });
   };
 
+  /* ==========================================================
+     12. Where each diagram belongs — the process, and its one loop
+     ========================================================== */
+  VIZ["process"] = function (host) {
+    var body = frame(host, "Where each diagram belongs", "week 1");
+
+    var ST = [
+      { k: ["Require-", "ments"], q: "What is this software for?", out: "Software specification, in prose", wk: "7" },
+      { k: ["Analysis"], q: "Who uses it, and what can they do?", out: "Use case diagram + descriptions", wk: "7",
+        dia: "USE CASE", href: "07-use-case-diagram.html" },
+      { k: ["Design", "behaviour"], q: "In what order do objects talk to each other?", out: "Sequence diagram", wk: "8",
+        dia: "SEQUENCE", href: "08-sequence-diagram.html" },
+      { k: ["Design", "structure"], q: "Which classes exist, and how do they relate?", out: "Class diagram", wk: "4",
+        dia: "CLASS", href: "04-class-diagram.html" },
+      { k: ["Coding"], q: "—", out: "Python that mirrors the class diagram", wk: "2–10" },
+      { k: ["Testing"], q: "Does it do what was specified?", out: "Unit → integration → UAT", wk: "labs" },
+      { k: ["Deploy-", "ment"], q: "How does it reach users, often?", out: "DevOps pipeline", wk: "—" },
+    ];
+    var PITCH = 118, BW = 100, X0 = 6, TOP = 140, BH = 46;
+    var cx = function (i) { return X0 + i * PITCH + BW / 2; };
+    var sel = 1;   // the exam answer: the use case diagram comes first
+
+    var wrap = el("div");
+    wrap.style.overflowX = "auto";
+    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("viewBox", "0 0 824 250");
+    svg.setAttribute("role", "img");
+    svg.setAttribute("aria-label",
+      "The development process as seven stages. The use case diagram belongs to analysis, the sequence " +
+      "diagram and the class diagram to design, and the two design stages feed back into each other.");
+    svg.style.width = "100%"; svg.style.minWidth = "620px"; svg.style.height = "auto";
+    wrap.appendChild(svg);
+
+    var parts = ['<g font-size="11">'];
+    // the diagram cards that sit above the stages that produce them
+    ST.forEach(function (s, i) {
+      if (!s.dia) return;
+      parts.push(
+        '<rect x="' + (X0 + i * PITCH) + '" y="52" width="' + BW + '" height="34" rx="4" class="svg-surf"/>',
+        '<text x="' + cx(i) + '" y="73" text-anchor="middle" class="svg-ink" font-weight="700" font-size="10"' +
+        ' letter-spacing="1.1">' + s.dia + "</text>",
+        '<path d="M' + cx(i) + " 86 L" + cx(i) + ' ' + TOP + '" class="svg-line" stroke-dasharray="3 3"/>');
+    });
+    // the stages themselves
+    ST.forEach(function (s, i) {
+      var x = X0 + i * PITCH;
+      parts.push('<g class="pstage" data-i="' + i + '" tabindex="0" role="button" style="cursor:pointer"' +
+        ' aria-label="' + s.k.join("") + '">');
+      parts.push('<rect x="' + x + '" y="' + TOP + '" width="' + BW + '" height="' + BH + '" rx="5" class="svg-surf"/>');
+      s.k.forEach(function (line, n) {
+        parts.push('<text x="' + cx(i) + '" y="' + (TOP + (s.k.length === 1 ? 28 : 20 + n * 14)) +
+          '" text-anchor="middle" class="svg-ink" font-weight="650">' + line + "</text>");
+      });
+      parts.push("</g>");
+      if (i < ST.length - 1) {
+        var a = x + BW + 3, b = x + PITCH - 3;
+        parts.push('<path d="M' + a + " " + (TOP + BH / 2) + " L" + b + ' ' + (TOP + BH / 2) + '" class="svg-line"/>',
+          '<path d="M' + b + " " + (TOP + BH / 2) + ' l-7 -3.4 l0 6.8z" class="svg-ink2" stroke="none"/>');
+      }
+    });
+    // the one thing a table of seven rows cannot show: the two design stages feed each other
+    var l = cx(2), r = cx(3), dip = TOP + BH + 44;
+    parts.push(
+      '<path d="M' + l + " " + (TOP + BH) + " C" + l + " " + dip + " " + r + " " + dip + " " + r + ' ' + (TOP + BH) +
+      '" class="svg-line" fill="none"/>',
+      '<path d="M' + r + " " + (TOP + BH) + ' l-3.4 7 l6.8 0z" class="svg-ink2" stroke="none"/>',
+      '<path d="M' + l + " " + (TOP + BH) + ' l-3.4 7 l6.8 0z" class="svg-ink2" stroke="none"/>',
+      '<text x="' + ((l + r) / 2) + '" y="' + (dip + 4) + '" text-anchor="middle" class="svg-ink3" font-size="10.5">' +
+      "methods found here go back into the class diagram</text>");
+    parts.push("</g>");
+    svg.innerHTML = parts.join("");
+
+    var detail = el("div", "card");
+    detail.style.marginTop = "1rem";
+    var hint = el("p", "lab-hint", "Pick a stage. The three diagrams this course teaches are the three cards on top.");
+    hint.style.margin = ".55rem 0 0";
+
+    function draw() {
+      // inline styles, because .svg-surf / .svg-ink set fill in CSS and would win
+      $$(".pstage rect", svg).forEach(function (r, i) {
+        r.style.fill = i === sel ? "var(--accent)" : "var(--surface)";
+        r.style.stroke = i === sel ? "var(--accent)" : "var(--line-2)";
+      });
+      $$(".pstage text", svg).forEach(function (t) {
+        t.style.fill = +t.parentNode.getAttribute("data-i") === sel ? "var(--accent-ink)" : "var(--ink)";
+      });
+      var s = ST[sel];
+      detail.innerHTML =
+        '<div style="font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)">' +
+        s.k.join(" ") + " · week " + s.wk + "</div>" +
+        '<p style="margin:.35rem 0 .2rem;font-size:1.02rem"><b>' +
+        (s.q === "—" ? "No new diagram — you are writing the code now." : s.q) + "</b></p>" +
+        '<p class="mb-0" style="color:var(--ink-2)">Output: ' +
+        (s.href ? '<a href="' + s.href + '">' + s.out + "</a>" : s.out) + "</p>";
+    }
+    $$(".pstage", svg).forEach(function (g) {
+      var pick = function () { sel = +g.getAttribute("data-i"); draw(); };
+      g.addEventListener("click", pick);
+      g.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(); }
+      });
+    });
+
+    body.appendChild(wrap);
+    body.appendChild(detail);
+    body.appendChild(hint);
+    draw();
+  };
+
   /* ---------- boot ---------- */
   document.addEventListener("oop:ready", function () {
     $$("[data-viz]").forEach(function (host) {
