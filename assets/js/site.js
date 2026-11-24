@@ -456,10 +456,16 @@
       var note = host.getAttribute("data-lab-note");
       if (note) host.appendChild(el("div", "labembed-note", note));
 
-      /* wide screens load it on approach; narrow ones wait to be asked */
-      if (window.innerWidth >= 720 && "IntersectionObserver" in window) {
+      /* Wide screens load it on approach; narrow ones wait to be asked.
+         The width is read when the figure comes into view, not at boot — at
+         boot the viewport may not have settled, and the reader may since have
+         turned the phone or widened the window. */
+      if ("IntersectionObserver" in window) {
         var o = new IntersectionObserver(function (es) {
-          es.forEach(function (e) { if (e.isIntersecting) { load(); o.unobserve(e.target); } });
+          es.forEach(function (e) {
+            if (!e.isIntersecting) return;
+            if (window.innerWidth >= 720) { load(); o.unobserve(e.target); }
+          });
         }, { rootMargin: "320px 0px", threshold: 0 });
         o.observe(host);
       }
