@@ -79,6 +79,7 @@ labs/index.html         the five weekly lab briefs
 sandbox/index.html      Python playground (Pyodide)
 assets/
 ├── css/site.css        the whole design system
+├── figures/            built interactive labs, one self-contained page each
 └── js/
     ├── site.js         nav, theme, TOC, quizzes, Python syntax highlighting, step engine
     ├── viz.js          the chapter interactives
@@ -86,9 +87,14 @@ assets/
     ├── uml-exercises.js   the graded diagram tasks
     ├── seq.js          sequence diagram renderer, player and builder
     ├── seq-data.js     worked sequences + graded tasks
-    └── snippets.js     starter code for the playground
+    ├── snippets.js     starter code for the playground
+    └── fig-ch07.js     the chapter 7 line-art scene (built — see below)
+visuals/                sources for the built figures (never served)
 reference/              lecture slides and lab briefs (gitignored — see below)
 ```
+
+Everything under `assets/` is committed in built form, so the site itself still has no build step.
+`visuals/` holds the sources those were built from; see **Rebuilding the figures** below.
 
 ### Previewing locally
 
@@ -139,6 +145,76 @@ and ignores punctuation; `alias` accepts reasonable alternatives.
 
 **A new playground example** is one entry in `assets/js/snippets.js`; it is then reachable at
 `sandbox/?load=your-key`.
+
+### Rebuilding the figures
+
+Four figures are built rather than hand-written. **You only need any of this if you want to change
+one** — the built output is committed, so cloning the repo and opening `index.html` works as it
+always did.
+
+| Figure | Source | Built to | Needs |
+|---|---|---|---|
+| ch 1 · where each diagram belongs | `assets/js/viz.js`, `VIZ["process"]` | — | nothing, it is plain JS |
+| ch 5 · one rule, how many places? | `visuals/labs/lab05-inheritance/` | `assets/figures/lab05-inheritance.html` | the Simulab toolkit |
+| ch 7 · the domain story | `visuals/figures/ch07-usecase/` | `assets/js/fig-ch07.js` | `npx esbuild` |
+| ch 10 · what each principle buys | `visuals/labs/lab10-solid/` | `assets/figures/lab10-solid.html` | the Simulab toolkit |
+
+**The chapter 7 scene** is self-contained: its drawing library is vendored at
+`visuals/figures/ch07-usecase/lib/`, so one command rebuilds it from a clean clone.
+
+```bash
+cd visuals/figures/ch07-usecase
+npx esbuild main.ts --bundle --format=iife --target=es2019 --minify --outfile=../../../assets/js/fig-ch07.js
+```
+
+The `--format=iife` matters: the site loads classic scripts so that the pages keep working from
+`file://`, and an ES module would break that. `dev.html` in the same folder renders the scene on
+its own for editing (`python -m http.server 4173`, then
+`/visuals/figures/ch07-usecase/dev.html`); rebuild `dev.js` the same way without `--minify`.
+
+**The two labs** are the awkward ones. Only each lab's own files are committed — the engine that
+renders them is the Simulab toolkit (KAPRI LAB, MIT licensed), which lives outside this repo: it
+was installed as a Claude Code skill at `~/.claude/skills/simulab`. Without that toolkit the
+sources in `visuals/labs/` cannot be rebuilt. The committed pages in `assets/figures/` keep
+working regardless, because each is one self-contained offline HTML file with no dependencies —
+so the risk is being unable to *change* a lab, not being unable to serve one.
+
+```bash
+node ~/.claude/skills/simulab/tools/build.mjs visuals/labs/lab10-solid
+cp visuals/labs/lab10-solid/dist/index.html assets/figures/lab10-solid.html
+```
+
+`dist/`, `render/` and `shots/` under `visuals/` are gitignored build output.
+
+**The numbers in both labs are measured, not typed in.** Each lab folder carries the script that
+produces them, and those scripts are plain Python with no dependencies, so they run anywhere:
+
+```bash
+cd visuals/labs/lab10-solid && python measure.py     # -> measured.json
+```
+
+`measure.py` builds the six versions of the Order example as real code, applies three independent
+changes to each, counts which classes each change touches, and runs them all to check the
+behaviour never changed. `model.js` then holds those figures as a frozen table. **If you edit the
+teaching example, re-run the script and copy the new numbers into `model.js`** — otherwise the lab
+will quietly state figures that no longer match the code it claims to measure.
+
+### Embedding a figure in a chapter
+
+```html
+<!-- a Simulab lab: lazy-loaded in an iframe that sizes itself -->
+<figure class="labembed" data-lab="lab10-solid"
+        data-lab-title="..." data-lab-note="..."></figure>
+
+<!-- the line-art scene: needs <script src="../assets/js/fig-ch07.js"></script> on the page -->
+<figure class="linefig"><div data-figure="ch07-usecase"></div><figcaption>…</figcaption></figure>
+
+<!-- anything in viz.js -->
+<div data-viz="process"></div>
+```
+
+A lab is around half a megabyte, so `initLab()` in `site.js` only loads it once it scrolls into
+view, and on screens under 720 px it waits to be tapped instead.
 
 ### Lecture slides
 
