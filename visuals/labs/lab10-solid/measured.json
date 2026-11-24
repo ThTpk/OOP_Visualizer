@@ -1,0 +1,178 @@
+{
+ "source": "stages.py, following chapters/10-solid.html 10.2-10.7",
+ "python": "3.12.10",
+ "changes": [
+  "basket rule: no duplicate items",
+  "pricing rule: 10% off over 1000",
+  "payment rule: add PromptPay, which authenticates by phone"
+ ],
+ "rows": [
+  {
+   "stage": "START",
+   "classes": 1,
+   "loc": 22,
+   "loc_by_class": {
+    "Order": 22
+   },
+   "reasons_max": 3,
+   "reasons_by_class": {
+    "Order": 3
+   },
+   "opened_classes": [
+    "Order"
+   ],
+   "opened_lines": 3,
+   "required_by_class": {
+    "Order": 0
+   },
+   "forced_params": 0,
+   "required_if_one_fat_interface": null,
+   "injected": false,
+   "total_before": 1300,
+   "total_after_payment_change": 1300
+  },
+  {
+   "stage": "S",
+   "classes": 2,
+   "loc": 20,
+   "loc_by_class": {
+    "Order": 13,
+    "PaymentProcessor": 7
+   },
+   "reasons_max": 2,
+   "reasons_by_class": {
+    "Order": 2,
+    "PaymentProcessor": 1
+   },
+   "opened_classes": [
+    "PaymentProcessor"
+   ],
+   "opened_lines": 4,
+   "required_by_class": {
+    "Order": 0,
+    "PaymentProcessor": 0
+   },
+   "forced_params": 0,
+   "required_if_one_fat_interface": null,
+   "injected": false,
+   "total_before": 1300,
+   "total_after_payment_change": 1300
+  },
+  {
+   "stage": "O",
+   "classes": 4,
+   "loc": 26,
+   "loc_by_class": {
+    "Order": 13,
+    "PaymentProcessor": 4,
+    "DebitPaymentProcessor": 4,
+    "CreditPaymentProcessor": 4
+   },
+   "reasons_max": 2,
+   "reasons_by_class": {
+    "Order": 2
+   },
+   "opened_classes": [],
+   "opened_lines": 0,
+   "required_by_class": {
+    "Order": 0,
+    "DebitPaymentProcessor": 1,
+    "CreditPaymentProcessor": 1
+   },
+   "forced_params": 1,
+   "required_if_one_fat_interface": null,
+   "injected": false,
+   "total_before": 1300,
+   "total_after_payment_change": 1300
+  },
+  {
+   "stage": "L",
+   "classes": 4,
+   "loc": 30,
+   "loc_by_class": {
+    "Order": 13,
+    "PaymentProcessor": 4,
+    "DebitPaymentProcessor": 6,
+    "CreditPaymentProcessor": 6
+   },
+   "reasons_max": 2,
+   "reasons_by_class": {
+    "Order": 2
+   },
+   "opened_classes": [],
+   "opened_lines": 0,
+   "required_by_class": {
+    "Order": 0,
+    "DebitPaymentProcessor": 1,
+    "CreditPaymentProcessor": 1
+   },
+   "forced_params": 0,
+   "required_if_one_fat_interface": null,
+   "injected": false,
+   "total_before": 1300,
+   "total_after_payment_change": 1300
+  },
+  {
+   "stage": "I",
+   "classes": 5,
+   "loc": 39,
+   "loc_by_class": {
+    "Order": 13,
+    "PaymentProcessor": 4,
+    "PaymentProcessorSMS": 4,
+    "DebitPaymentProcessor": 11,
+    "CreditPaymentProcessor": 6
+   },
+   "reasons_max": 2,
+   "reasons_by_class": {
+    "Order": 2
+   },
+   "opened_classes": [],
+   "opened_lines": 0,
+   "required_by_class": {
+    "Order": 0,
+    "DebitPaymentProcessor": 2,
+    "CreditPaymentProcessor": 1
+   },
+   "forced_params": 0,
+   "required_if_one_fat_interface": {
+    "Order": 0,
+    "DebitPaymentProcessor": 2,
+    "CreditPaymentProcessor": 2
+   },
+   "injected": false,
+   "total_before": 1300,
+   "total_after_payment_change": 1300
+  },
+  {
+   "stage": "D",
+   "classes": 6,
+   "loc": 45,
+   "loc_by_class": {
+    "Order": 13,
+    "Authoriser": 4,
+    "SMSAuthoriser": 7,
+    "PaymentProcessor": 4,
+    "DebitPaymentProcessor": 9,
+    "CreditPaymentProcessor": 7
+   },
+   "reasons_max": 2,
+   "reasons_by_class": {
+    "Order": 2
+   },
+   "opened_classes": [],
+   "opened_lines": 0,
+   "required_by_class": {
+    "Order": 0,
+    "SMSAuthoriser": 1,
+    "DebitPaymentProcessor": 1,
+    "CreditPaymentProcessor": 1
+   },
+   "forced_params": 0,
+   "required_if_one_fat_interface": null,
+   "injected": true,
+   "total_before": 1300,
+   "total_after_payment_change": 1300
+  }
+ ]
+}

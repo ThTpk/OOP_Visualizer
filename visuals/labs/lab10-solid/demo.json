@@ -1,0 +1,10 @@
+{
+ "cover": 24.0,
+ "title": "OOP 01276131 · Lab 10 · SOLID: what each principle actually buys",
+ "note": "Every number in this lab was measured, not estimated. stages.py holds the six versions of the Order example as real runnable Python, following the refactor the chapter walks through in 10.2-10.7; measure.py applies three independent changes to each version (a basket rule, a pricing rule, and adding PromptPay), counts which classes each change touches with Python's ast, counts lines with its tokenizer, and executes every version to check they all still total the same basket (1300). Output: measured.json. Measured results: the worst class carries 3 reasons to change at START and 2 from S onward; adding PromptPay reopens 1 already-tested class at START and at S, and 0 from O onward; the base contract forces 1 credential on every processor at O and 0 from L; at I a credit card implements 1 abstract method where one fat interface would force 2; only at D is the authoriser handed in rather than constructed. The same behaviour costs 22 lines at START and 45 at D. Assumptions: the three changes are written by hand, the way a developer would write them — what is counted is the diff, not the wording; a crate's footprint is its measured line count × 0.78 cm; 'tested' is a property of the story, not of a real test suite. A correction found while measuring: the chapter's own walkthrough says Order has one reason to change after S, but by the chapter's own test it still has two, because the pricing rules never leave Order. Crates and bench are our own design, not a real product.",
+ "files": [
+  "model.js",
+  "parts.js",
+  "demo.js"
+ ]
+}

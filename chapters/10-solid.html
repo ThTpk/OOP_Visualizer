@@ -83,6 +83,23 @@
     </p>
 
     <div data-viz="solid"></div>
+
+    <p class="prose">
+      That is what the code looks like. This is what it <b>costs</b>. Below, each class is a crate on a bench —
+      its footprint is its real line count — and a crate that has been tested is sealed. At every stage the same
+      change arrives, <b>add PromptPay</b>, and the only question is how many sealed crates you have to prise open
+      to take it.
+    </p>
+
+    <figure class="labembed" data-lab="lab10-solid"
+            data-lab-title="Lab 10 · What each principle actually buys"
+            data-lab-note="Every number is measured, not estimated: the six versions are real Python, and a script applies three independent changes to each, counts which classes they touch and runs the result. Turn the knob to move through the refactor, then press P to send the change."></figure>
+
+    <div class="note note-why">
+      <b>Read the last panel.</b> The same basket totals 1300 at every stage — the behaviour never changes.
+      What changes is that adding a payment type stops costing you an edit to tested code, and that the same
+      behaviour now takes 45 lines instead of 22. That is the trade, and §10.9 is about not overpaying for it.
+    </div>
   </section>
 
   <!-- ===================================================== -->
